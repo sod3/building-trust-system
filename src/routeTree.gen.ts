@@ -25,6 +25,7 @@ import { Route as DashboardTenantsRouteImport } from './routes/dashboard.tenants
 import { Route as DashboardTenantPortalRouteImport } from './routes/dashboard.tenant-portal'
 import { Route as DashboardTasksRouteImport } from './routes/dashboard.tasks'
 import { Route as DashboardSupervisorViewRouteImport } from './routes/dashboard.supervisor-view'
+import { Route as DashboardSubmissionsRouteImport } from './routes/dashboard.submissions'
 import { Route as DashboardStaffRouteImport } from './routes/dashboard.staff'
 import { Route as DashboardOwnersRouteImport } from './routes/dashboard.owners'
 import { Route as DashboardOwnerViewRouteImport } from './routes/dashboard.owner-view'
@@ -114,6 +115,11 @@ const DashboardSupervisorViewRoute = DashboardSupervisorViewRouteImport.update({
   path: '/supervisor-view',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardSubmissionsRoute = DashboardSubmissionsRouteImport.update({
+  id: '/submissions',
+  path: '/submissions',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardStaffRoute = DashboardStaffRouteImport.update({
   id: '/staff',
   path: '/staff',
@@ -174,6 +180,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/owner-view': typeof DashboardOwnerViewRoute
   '/dashboard/owners': typeof DashboardOwnersRoute
   '/dashboard/staff': typeof DashboardStaffRoute
+  '/dashboard/submissions': typeof DashboardSubmissionsRoute
   '/dashboard/supervisor-view': typeof DashboardSupervisorViewRoute
   '/dashboard/tasks': typeof DashboardTasksRoute
   '/dashboard/tenant-portal': typeof DashboardTenantPortalRoute
@@ -199,6 +206,7 @@ export interface FileRoutesByTo {
   '/dashboard/owner-view': typeof DashboardOwnerViewRoute
   '/dashboard/owners': typeof DashboardOwnersRoute
   '/dashboard/staff': typeof DashboardStaffRoute
+  '/dashboard/submissions': typeof DashboardSubmissionsRoute
   '/dashboard/supervisor-view': typeof DashboardSupervisorViewRoute
   '/dashboard/tasks': typeof DashboardTasksRoute
   '/dashboard/tenant-portal': typeof DashboardTenantPortalRoute
@@ -226,6 +234,7 @@ export interface FileRoutesById {
   '/dashboard/owner-view': typeof DashboardOwnerViewRoute
   '/dashboard/owners': typeof DashboardOwnersRoute
   '/dashboard/staff': typeof DashboardStaffRoute
+  '/dashboard/submissions': typeof DashboardSubmissionsRoute
   '/dashboard/supervisor-view': typeof DashboardSupervisorViewRoute
   '/dashboard/tasks': typeof DashboardTasksRoute
   '/dashboard/tenant-portal': typeof DashboardTenantPortalRoute
@@ -254,6 +263,7 @@ export interface FileRouteTypes {
     | '/dashboard/owner-view'
     | '/dashboard/owners'
     | '/dashboard/staff'
+    | '/dashboard/submissions'
     | '/dashboard/supervisor-view'
     | '/dashboard/tasks'
     | '/dashboard/tenant-portal'
@@ -279,6 +289,7 @@ export interface FileRouteTypes {
     | '/dashboard/owner-view'
     | '/dashboard/owners'
     | '/dashboard/staff'
+    | '/dashboard/submissions'
     | '/dashboard/supervisor-view'
     | '/dashboard/tasks'
     | '/dashboard/tenant-portal'
@@ -305,6 +316,7 @@ export interface FileRouteTypes {
     | '/dashboard/owner-view'
     | '/dashboard/owners'
     | '/dashboard/staff'
+    | '/dashboard/submissions'
     | '/dashboard/supervisor-view'
     | '/dashboard/tasks'
     | '/dashboard/tenant-portal'
@@ -440,6 +452,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSupervisorViewRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/submissions': {
+      id: '/dashboard/submissions'
+      path: '/submissions'
+      fullPath: '/dashboard/submissions'
+      preLoaderRoute: typeof DashboardSubmissionsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/staff': {
       id: '/dashboard/staff'
       path: '/staff'
@@ -508,6 +527,7 @@ interface DashboardRouteChildren {
   DashboardOwnerViewRoute: typeof DashboardOwnerViewRoute
   DashboardOwnersRoute: typeof DashboardOwnersRoute
   DashboardStaffRoute: typeof DashboardStaffRoute
+  DashboardSubmissionsRoute: typeof DashboardSubmissionsRoute
   DashboardSupervisorViewRoute: typeof DashboardSupervisorViewRoute
   DashboardTasksRoute: typeof DashboardTasksRoute
   DashboardTenantPortalRoute: typeof DashboardTenantPortalRoute
@@ -525,6 +545,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardOwnerViewRoute: DashboardOwnerViewRoute,
   DashboardOwnersRoute: DashboardOwnersRoute,
   DashboardStaffRoute: DashboardStaffRoute,
+  DashboardSubmissionsRoute: DashboardSubmissionsRoute,
   DashboardSupervisorViewRoute: DashboardSupervisorViewRoute,
   DashboardTasksRoute: DashboardTasksRoute,
   DashboardTenantPortalRoute: DashboardTenantPortalRoute,

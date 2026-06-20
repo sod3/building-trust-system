@@ -51,6 +51,9 @@ export function Header() {
             <Languages className="h-3.5 w-3.5" />
             {lang === "en" ? "العربية" : "English"}
           </button>
+          <Button asChild size="sm" variant="outline" className="hidden border-border md:inline-flex">
+            <Link to="/dashboard">Launch Dashboard</Link>
+          </Button>
           <Button asChild size="sm" className="hidden bg-navy text-primary-foreground hover:bg-navy/90 md:inline-flex">
             <Link to="/contact">{t("nav.demo")}</Link>
           </Button>

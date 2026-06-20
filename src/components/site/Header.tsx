@@ -87,8 +87,11 @@ export function Header() {
               <Languages className="h-4 w-4" />
               {lang === "en" ? "العربية" : "English"}
             </button>
+            <Button asChild variant="outline" className="mt-2 border-border">
+              <Link to="/dashboard" onClick={()=>setOpen(false)}>Launch Dashboard</Link>
+            </Button>
             <Button asChild className="mt-2 bg-navy text-primary-foreground hover:bg-navy/90">
-              <Link to="/contact">{t("nav.demo")}</Link>
+              <Link to="/contact" onClick={()=>setOpen(false)}>{t("nav.demo")}</Link>
             </Button>
           </div>
         </div>

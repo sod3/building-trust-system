@@ -20,6 +20,7 @@ import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as DashboardTasksRouteImport } from './routes/dashboard.tasks'
 import { Route as DashboardBuildingsRouteImport } from './routes/dashboard.buildings'
 
 const SolutionsRoute = SolutionsRouteImport.update({
@@ -77,6 +78,11 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardTasksRoute = DashboardTasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardBuildingsRoute = DashboardBuildingsRouteImport.update({
   id: '/buildings',
   path: '/buildings',
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
   '/dashboard/buildings': typeof DashboardBuildingsRoute
+  '/dashboard/tasks': typeof DashboardTasksRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
   '/dashboard/buildings': typeof DashboardBuildingsRoute
+  '/dashboard/tasks': typeof DashboardTasksRoute
   '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
@@ -123,6 +131,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
   '/dashboard/buildings': typeof DashboardBuildingsRoute
+  '/dashboard/tasks': typeof DashboardTasksRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
@@ -139,6 +148,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/solutions'
     | '/dashboard/buildings'
+    | '/dashboard/tasks'
     | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -152,6 +162,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/solutions'
     | '/dashboard/buildings'
+    | '/dashboard/tasks'
     | '/dashboard'
   id:
     | '__root__'
@@ -166,6 +177,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/solutions'
     | '/dashboard/buildings'
+    | '/dashboard/tasks'
     | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
@@ -261,6 +273,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/tasks': {
+      id: '/dashboard/tasks'
+      path: '/tasks'
+      fullPath: '/dashboard/tasks'
+      preLoaderRoute: typeof DashboardTasksRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/buildings': {
       id: '/dashboard/buildings'
       path: '/buildings'
@@ -273,11 +292,13 @@ declare module '@tanstack/react-router' {
 
 interface DashboardRouteChildren {
   DashboardBuildingsRoute: typeof DashboardBuildingsRoute
+  DashboardTasksRoute: typeof DashboardTasksRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardBuildingsRoute: DashboardBuildingsRoute,
+  DashboardTasksRoute: DashboardTasksRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
 

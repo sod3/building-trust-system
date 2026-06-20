@@ -36,6 +36,7 @@ import { Route as DashboardMaintenanceRouteImport } from './routes/dashboard.mai
 import { Route as DashboardComplaintsRouteImport } from './routes/dashboard.complaints'
 import { Route as DashboardCalendarRouteImport } from './routes/dashboard.calendar'
 import { Route as DashboardBuildingsRouteImport } from './routes/dashboard.buildings'
+import { Route as DashboardBillingRouteImport } from './routes/dashboard.billing'
 import { Route as DashboardApprovalsRouteImport } from './routes/dashboard.approvals'
 
 const SolutionsRoute = SolutionsRouteImport.update({
@@ -173,6 +174,11 @@ const DashboardBuildingsRoute = DashboardBuildingsRouteImport.update({
   path: '/buildings',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardBillingRoute = DashboardBillingRouteImport.update({
+  id: '/billing',
+  path: '/billing',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardApprovalsRoute = DashboardApprovalsRouteImport.update({
   id: '/approvals',
   path: '/approvals',
@@ -191,6 +197,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
   '/dashboard/approvals': typeof DashboardApprovalsRoute
+  '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/buildings': typeof DashboardBuildingsRoute
   '/dashboard/calendar': typeof DashboardCalendarRoute
   '/dashboard/complaints': typeof DashboardComplaintsRoute
@@ -220,6 +227,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
   '/dashboard/approvals': typeof DashboardApprovalsRoute
+  '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/buildings': typeof DashboardBuildingsRoute
   '/dashboard/calendar': typeof DashboardCalendarRoute
   '/dashboard/complaints': typeof DashboardComplaintsRoute
@@ -251,6 +259,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
   '/dashboard/approvals': typeof DashboardApprovalsRoute
+  '/dashboard/billing': typeof DashboardBillingRoute
   '/dashboard/buildings': typeof DashboardBuildingsRoute
   '/dashboard/calendar': typeof DashboardCalendarRoute
   '/dashboard/complaints': typeof DashboardComplaintsRoute
@@ -283,6 +292,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/solutions'
     | '/dashboard/approvals'
+    | '/dashboard/billing'
     | '/dashboard/buildings'
     | '/dashboard/calendar'
     | '/dashboard/complaints'
@@ -312,6 +322,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/solutions'
     | '/dashboard/approvals'
+    | '/dashboard/billing'
     | '/dashboard/buildings'
     | '/dashboard/calendar'
     | '/dashboard/complaints'
@@ -342,6 +353,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/solutions'
     | '/dashboard/approvals'
+    | '/dashboard/billing'
     | '/dashboard/buildings'
     | '/dashboard/calendar'
     | '/dashboard/complaints'
@@ -565,6 +577,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardBuildingsRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/billing': {
+      id: '/dashboard/billing'
+      path: '/billing'
+      fullPath: '/dashboard/billing'
+      preLoaderRoute: typeof DashboardBillingRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/approvals': {
       id: '/dashboard/approvals'
       path: '/approvals'
@@ -577,6 +596,7 @@ declare module '@tanstack/react-router' {
 
 interface DashboardRouteChildren {
   DashboardApprovalsRoute: typeof DashboardApprovalsRoute
+  DashboardBillingRoute: typeof DashboardBillingRoute
   DashboardBuildingsRoute: typeof DashboardBuildingsRoute
   DashboardCalendarRoute: typeof DashboardCalendarRoute
   DashboardComplaintsRoute: typeof DashboardComplaintsRoute
@@ -598,6 +618,7 @@ interface DashboardRouteChildren {
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardApprovalsRoute: DashboardApprovalsRoute,
+  DashboardBillingRoute: DashboardBillingRoute,
   DashboardBuildingsRoute: DashboardBuildingsRoute,
   DashboardCalendarRoute: DashboardCalendarRoute,
   DashboardComplaintsRoute: DashboardComplaintsRoute,

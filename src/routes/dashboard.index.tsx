@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Kpi, Card, SectionTitle, StatusPill } from "@/components/dashboard/ui";
 import {
   Building2, Users, ListChecks, AlertTriangle, MessageSquareWarning,
-  ShieldCheck, HeartPulse, ImageCheck, FileBarChart2, Clock,
+  ShieldCheck, HeartPulse, Images, FileBarChart2, Clock,
 } from "lucide-react";
 import {
   overviewKpis, tasks, complaints, taskTrend, complaintCategories,
@@ -55,7 +55,7 @@ function DashboardOverview() {
         <Kpi label="Active labor" value={k.activeLabor} icon={<Users className="h-4 w-4" />} />
         <Kpi label="Pending tasks" value={k.pendingTasks} icon={<Clock className="h-4 w-4" />} />
         <Kpi label="Overdue tasks" value={k.overdueTasks} icon={<AlertTriangle className="h-4 w-4" />} />
-        <Kpi label="Verified photos" value="1.2K" sub="this week" icon={<ImageCheck className="h-4 w-4" />} />
+        <Kpi label="Verified photos" value="1.2K" sub="this week" icon={<Images className="h-4 w-4" />} />
         <Kpi label="Owner report" value="Ready" sub="June 2026" icon={<FileBarChart2 className="h-4 w-4" />} />
       </div>
 

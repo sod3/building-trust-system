@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard, Building2, Layers, Users, Crown, UserSquare2,
-  ListChecks, CalendarDays, ImageCheck, ShieldCheck, MessageSquareWarning,
+  ListChecks, CalendarDays, Images, ShieldCheck, MessageSquareWarning,
   Wrench, FileBarChart2, Bell, CreditCard, Settings, Smartphone, QrCode,
   Eye, ClipboardCheck,
 } from "lucide-react";
@@ -28,7 +28,7 @@ const groups = [
     items: [
       { to: "/dashboard/tasks", icon: ListChecks, label: "Tasks" },
       { to: "/dashboard/calendar", icon: CalendarDays, label: "Task Calendar" },
-      { to: "/dashboard/submissions", icon: ImageCheck, label: "Submissions" },
+      { to: "/dashboard/submissions", icon: Images, label: "Submissions" },
       { to: "/dashboard/approvals", icon: ShieldCheck, label: "Approvals" },
       { to: "/dashboard/complaints", icon: MessageSquareWarning, label: "Complaints" },
       { to: "/dashboard/maintenance", icon: Wrench, label: "Maintenance" },

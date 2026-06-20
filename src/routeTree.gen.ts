@@ -30,6 +30,7 @@ import { Route as DashboardOwnersRouteImport } from './routes/dashboard.owners'
 import { Route as DashboardOwnerViewRouteImport } from './routes/dashboard.owner-view'
 import { Route as DashboardMobileLaborRouteImport } from './routes/dashboard.mobile-labor'
 import { Route as DashboardComplaintsRouteImport } from './routes/dashboard.complaints'
+import { Route as DashboardCalendarRouteImport } from './routes/dashboard.calendar'
 import { Route as DashboardBuildingsRouteImport } from './routes/dashboard.buildings'
 import { Route as DashboardApprovalsRouteImport } from './routes/dashboard.approvals'
 
@@ -138,6 +139,11 @@ const DashboardComplaintsRoute = DashboardComplaintsRouteImport.update({
   path: '/complaints',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardCalendarRoute = DashboardCalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardBuildingsRoute = DashboardBuildingsRouteImport.update({
   id: '/buildings',
   path: '/buildings',
@@ -162,6 +168,7 @@ export interface FileRoutesByFullPath {
   '/solutions': typeof SolutionsRoute
   '/dashboard/approvals': typeof DashboardApprovalsRoute
   '/dashboard/buildings': typeof DashboardBuildingsRoute
+  '/dashboard/calendar': typeof DashboardCalendarRoute
   '/dashboard/complaints': typeof DashboardComplaintsRoute
   '/dashboard/mobile-labor': typeof DashboardMobileLaborRoute
   '/dashboard/owner-view': typeof DashboardOwnerViewRoute
@@ -186,6 +193,7 @@ export interface FileRoutesByTo {
   '/solutions': typeof SolutionsRoute
   '/dashboard/approvals': typeof DashboardApprovalsRoute
   '/dashboard/buildings': typeof DashboardBuildingsRoute
+  '/dashboard/calendar': typeof DashboardCalendarRoute
   '/dashboard/complaints': typeof DashboardComplaintsRoute
   '/dashboard/mobile-labor': typeof DashboardMobileLaborRoute
   '/dashboard/owner-view': typeof DashboardOwnerViewRoute
@@ -212,6 +220,7 @@ export interface FileRoutesById {
   '/solutions': typeof SolutionsRoute
   '/dashboard/approvals': typeof DashboardApprovalsRoute
   '/dashboard/buildings': typeof DashboardBuildingsRoute
+  '/dashboard/calendar': typeof DashboardCalendarRoute
   '/dashboard/complaints': typeof DashboardComplaintsRoute
   '/dashboard/mobile-labor': typeof DashboardMobileLaborRoute
   '/dashboard/owner-view': typeof DashboardOwnerViewRoute
@@ -239,6 +248,7 @@ export interface FileRouteTypes {
     | '/solutions'
     | '/dashboard/approvals'
     | '/dashboard/buildings'
+    | '/dashboard/calendar'
     | '/dashboard/complaints'
     | '/dashboard/mobile-labor'
     | '/dashboard/owner-view'
@@ -263,6 +273,7 @@ export interface FileRouteTypes {
     | '/solutions'
     | '/dashboard/approvals'
     | '/dashboard/buildings'
+    | '/dashboard/calendar'
     | '/dashboard/complaints'
     | '/dashboard/mobile-labor'
     | '/dashboard/owner-view'
@@ -288,6 +299,7 @@ export interface FileRouteTypes {
     | '/solutions'
     | '/dashboard/approvals'
     | '/dashboard/buildings'
+    | '/dashboard/calendar'
     | '/dashboard/complaints'
     | '/dashboard/mobile-labor'
     | '/dashboard/owner-view'
@@ -463,6 +475,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardComplaintsRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/calendar': {
+      id: '/dashboard/calendar'
+      path: '/calendar'
+      fullPath: '/dashboard/calendar'
+      preLoaderRoute: typeof DashboardCalendarRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/buildings': {
       id: '/dashboard/buildings'
       path: '/buildings'
@@ -483,6 +502,7 @@ declare module '@tanstack/react-router' {
 interface DashboardRouteChildren {
   DashboardApprovalsRoute: typeof DashboardApprovalsRoute
   DashboardBuildingsRoute: typeof DashboardBuildingsRoute
+  DashboardCalendarRoute: typeof DashboardCalendarRoute
   DashboardComplaintsRoute: typeof DashboardComplaintsRoute
   DashboardMobileLaborRoute: typeof DashboardMobileLaborRoute
   DashboardOwnerViewRoute: typeof DashboardOwnerViewRoute
@@ -499,6 +519,7 @@ interface DashboardRouteChildren {
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardApprovalsRoute: DashboardApprovalsRoute,
   DashboardBuildingsRoute: DashboardBuildingsRoute,
+  DashboardCalendarRoute: DashboardCalendarRoute,
   DashboardComplaintsRoute: DashboardComplaintsRoute,
   DashboardMobileLaborRoute: DashboardMobileLaborRoute,
   DashboardOwnerViewRoute: DashboardOwnerViewRoute,

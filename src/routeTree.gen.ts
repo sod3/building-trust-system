@@ -9,38 +9,480 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SolutionsRouteImport } from './routes/solutions'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SecurityRouteImport } from './routes/security'
+import { Route as ProductRouteImport } from './routes/product'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as DemoRouteImport } from './routes/demo'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as BlogRouteImport } from './routes/blog'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as DashboardUnitsRouteImport } from './routes/dashboard.units'
+import { Route as DashboardTenantsRouteImport } from './routes/dashboard.tenants'
+import { Route as DashboardTenantPortalRouteImport } from './routes/dashboard.tenant-portal'
+import { Route as DashboardTasksRouteImport } from './routes/dashboard.tasks'
+import { Route as DashboardSupervisorViewRouteImport } from './routes/dashboard.supervisor-view'
+import { Route as DashboardSubmissionsRouteImport } from './routes/dashboard.submissions'
+import { Route as DashboardStaffRouteImport } from './routes/dashboard.staff'
+import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
+import { Route as DashboardReportsRouteImport } from './routes/dashboard.reports'
+import { Route as DashboardOwnersRouteImport } from './routes/dashboard.owners'
+import { Route as DashboardOwnerViewRouteImport } from './routes/dashboard.owner-view'
+import { Route as DashboardNotificationsRouteImport } from './routes/dashboard.notifications'
+import { Route as DashboardMobileLaborRouteImport } from './routes/dashboard.mobile-labor'
+import { Route as DashboardMaintenanceRouteImport } from './routes/dashboard.maintenance'
+import { Route as DashboardComplaintsRouteImport } from './routes/dashboard.complaints'
+import { Route as DashboardCalendarRouteImport } from './routes/dashboard.calendar'
+import { Route as DashboardBuildingsRouteImport } from './routes/dashboard.buildings'
+import { Route as DashboardBillingRouteImport } from './routes/dashboard.billing'
+import { Route as DashboardApprovalsRouteImport } from './routes/dashboard.approvals'
 
+const SolutionsRoute = SolutionsRouteImport.update({
+  id: '/solutions',
+  path: '/solutions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SecurityRoute = SecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductRoute = ProductRouteImport.update({
+  id: '/product',
+  path: '/product',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoRoute = DemoRouteImport.update({
+  id: '/demo',
+  path: '/demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardUnitsRoute = DashboardUnitsRouteImport.update({
+  id: '/units',
+  path: '/units',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardTenantsRoute = DashboardTenantsRouteImport.update({
+  id: '/tenants',
+  path: '/tenants',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardTenantPortalRoute = DashboardTenantPortalRouteImport.update({
+  id: '/tenant-portal',
+  path: '/tenant-portal',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardTasksRoute = DashboardTasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSupervisorViewRoute = DashboardSupervisorViewRouteImport.update({
+  id: '/supervisor-view',
+  path: '/supervisor-view',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSubmissionsRoute = DashboardSubmissionsRouteImport.update({
+  id: '/submissions',
+  path: '/submissions',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardStaffRoute = DashboardStaffRouteImport.update({
+  id: '/staff',
+  path: '/staff',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardReportsRoute = DashboardReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardOwnersRoute = DashboardOwnersRouteImport.update({
+  id: '/owners',
+  path: '/owners',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardOwnerViewRoute = DashboardOwnerViewRouteImport.update({
+  id: '/owner-view',
+  path: '/owner-view',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardNotificationsRoute = DashboardNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardMobileLaborRoute = DashboardMobileLaborRouteImport.update({
+  id: '/mobile-labor',
+  path: '/mobile-labor',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardMaintenanceRoute = DashboardMaintenanceRouteImport.update({
+  id: '/maintenance',
+  path: '/maintenance',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardComplaintsRoute = DashboardComplaintsRouteImport.update({
+  id: '/complaints',
+  path: '/complaints',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardCalendarRoute = DashboardCalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardBuildingsRoute = DashboardBuildingsRouteImport.update({
+  id: '/buildings',
+  path: '/buildings',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardBillingRoute = DashboardBillingRouteImport.update({
+  id: '/billing',
+  path: '/billing',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardApprovalsRoute = DashboardApprovalsRouteImport.update({
+  id: '/approvals',
+  path: '/approvals',
+  getParentRoute: () => DashboardRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/blog': typeof BlogRoute
+  '/contact': typeof ContactRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/demo': typeof DemoRoute
+  '/pricing': typeof PricingRoute
+  '/product': typeof ProductRoute
+  '/security': typeof SecurityRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/solutions': typeof SolutionsRoute
+  '/dashboard/approvals': typeof DashboardApprovalsRoute
+  '/dashboard/billing': typeof DashboardBillingRoute
+  '/dashboard/buildings': typeof DashboardBuildingsRoute
+  '/dashboard/calendar': typeof DashboardCalendarRoute
+  '/dashboard/complaints': typeof DashboardComplaintsRoute
+  '/dashboard/maintenance': typeof DashboardMaintenanceRoute
+  '/dashboard/mobile-labor': typeof DashboardMobileLaborRoute
+  '/dashboard/notifications': typeof DashboardNotificationsRoute
+  '/dashboard/owner-view': typeof DashboardOwnerViewRoute
+  '/dashboard/owners': typeof DashboardOwnersRoute
+  '/dashboard/reports': typeof DashboardReportsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/staff': typeof DashboardStaffRoute
+  '/dashboard/submissions': typeof DashboardSubmissionsRoute
+  '/dashboard/supervisor-view': typeof DashboardSupervisorViewRoute
+  '/dashboard/tasks': typeof DashboardTasksRoute
+  '/dashboard/tenant-portal': typeof DashboardTenantPortalRoute
+  '/dashboard/tenants': typeof DashboardTenantsRoute
+  '/dashboard/units': typeof DashboardUnitsRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/blog': typeof BlogRoute
+  '/contact': typeof ContactRoute
+  '/demo': typeof DemoRoute
+  '/pricing': typeof PricingRoute
+  '/product': typeof ProductRoute
+  '/security': typeof SecurityRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/solutions': typeof SolutionsRoute
+  '/dashboard/approvals': typeof DashboardApprovalsRoute
+  '/dashboard/billing': typeof DashboardBillingRoute
+  '/dashboard/buildings': typeof DashboardBuildingsRoute
+  '/dashboard/calendar': typeof DashboardCalendarRoute
+  '/dashboard/complaints': typeof DashboardComplaintsRoute
+  '/dashboard/maintenance': typeof DashboardMaintenanceRoute
+  '/dashboard/mobile-labor': typeof DashboardMobileLaborRoute
+  '/dashboard/notifications': typeof DashboardNotificationsRoute
+  '/dashboard/owner-view': typeof DashboardOwnerViewRoute
+  '/dashboard/owners': typeof DashboardOwnersRoute
+  '/dashboard/reports': typeof DashboardReportsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/staff': typeof DashboardStaffRoute
+  '/dashboard/submissions': typeof DashboardSubmissionsRoute
+  '/dashboard/supervisor-view': typeof DashboardSupervisorViewRoute
+  '/dashboard/tasks': typeof DashboardTasksRoute
+  '/dashboard/tenant-portal': typeof DashboardTenantPortalRoute
+  '/dashboard/tenants': typeof DashboardTenantsRoute
+  '/dashboard/units': typeof DashboardUnitsRoute
+  '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/blog': typeof BlogRoute
+  '/contact': typeof ContactRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/demo': typeof DemoRoute
+  '/pricing': typeof PricingRoute
+  '/product': typeof ProductRoute
+  '/security': typeof SecurityRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/solutions': typeof SolutionsRoute
+  '/dashboard/approvals': typeof DashboardApprovalsRoute
+  '/dashboard/billing': typeof DashboardBillingRoute
+  '/dashboard/buildings': typeof DashboardBuildingsRoute
+  '/dashboard/calendar': typeof DashboardCalendarRoute
+  '/dashboard/complaints': typeof DashboardComplaintsRoute
+  '/dashboard/maintenance': typeof DashboardMaintenanceRoute
+  '/dashboard/mobile-labor': typeof DashboardMobileLaborRoute
+  '/dashboard/notifications': typeof DashboardNotificationsRoute
+  '/dashboard/owner-view': typeof DashboardOwnerViewRoute
+  '/dashboard/owners': typeof DashboardOwnersRoute
+  '/dashboard/reports': typeof DashboardReportsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/staff': typeof DashboardStaffRoute
+  '/dashboard/submissions': typeof DashboardSubmissionsRoute
+  '/dashboard/supervisor-view': typeof DashboardSupervisorViewRoute
+  '/dashboard/tasks': typeof DashboardTasksRoute
+  '/dashboard/tenant-portal': typeof DashboardTenantPortalRoute
+  '/dashboard/tenants': typeof DashboardTenantsRoute
+  '/dashboard/units': typeof DashboardUnitsRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/blog'
+    | '/contact'
+    | '/dashboard'
+    | '/demo'
+    | '/pricing'
+    | '/product'
+    | '/security'
+    | '/sitemap.xml'
+    | '/solutions'
+    | '/dashboard/approvals'
+    | '/dashboard/billing'
+    | '/dashboard/buildings'
+    | '/dashboard/calendar'
+    | '/dashboard/complaints'
+    | '/dashboard/maintenance'
+    | '/dashboard/mobile-labor'
+    | '/dashboard/notifications'
+    | '/dashboard/owner-view'
+    | '/dashboard/owners'
+    | '/dashboard/reports'
+    | '/dashboard/settings'
+    | '/dashboard/staff'
+    | '/dashboard/submissions'
+    | '/dashboard/supervisor-view'
+    | '/dashboard/tasks'
+    | '/dashboard/tenant-portal'
+    | '/dashboard/tenants'
+    | '/dashboard/units'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/about'
+    | '/blog'
+    | '/contact'
+    | '/demo'
+    | '/pricing'
+    | '/product'
+    | '/security'
+    | '/sitemap.xml'
+    | '/solutions'
+    | '/dashboard/approvals'
+    | '/dashboard/billing'
+    | '/dashboard/buildings'
+    | '/dashboard/calendar'
+    | '/dashboard/complaints'
+    | '/dashboard/maintenance'
+    | '/dashboard/mobile-labor'
+    | '/dashboard/notifications'
+    | '/dashboard/owner-view'
+    | '/dashboard/owners'
+    | '/dashboard/reports'
+    | '/dashboard/settings'
+    | '/dashboard/staff'
+    | '/dashboard/submissions'
+    | '/dashboard/supervisor-view'
+    | '/dashboard/tasks'
+    | '/dashboard/tenant-portal'
+    | '/dashboard/tenants'
+    | '/dashboard/units'
+    | '/dashboard'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/blog'
+    | '/contact'
+    | '/dashboard'
+    | '/demo'
+    | '/pricing'
+    | '/product'
+    | '/security'
+    | '/sitemap.xml'
+    | '/solutions'
+    | '/dashboard/approvals'
+    | '/dashboard/billing'
+    | '/dashboard/buildings'
+    | '/dashboard/calendar'
+    | '/dashboard/complaints'
+    | '/dashboard/maintenance'
+    | '/dashboard/mobile-labor'
+    | '/dashboard/notifications'
+    | '/dashboard/owner-view'
+    | '/dashboard/owners'
+    | '/dashboard/reports'
+    | '/dashboard/settings'
+    | '/dashboard/staff'
+    | '/dashboard/submissions'
+    | '/dashboard/supervisor-view'
+    | '/dashboard/tasks'
+    | '/dashboard/tenant-portal'
+    | '/dashboard/tenants'
+    | '/dashboard/units'
+    | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  BlogRoute: typeof BlogRoute
+  ContactRoute: typeof ContactRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
+  DemoRoute: typeof DemoRoute
+  PricingRoute: typeof PricingRoute
+  ProductRoute: typeof ProductRoute
+  SecurityRoute: typeof SecurityRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SolutionsRoute: typeof SolutionsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/solutions': {
+      id: '/solutions'
+      path: '/solutions'
+      fullPath: '/solutions'
+      preLoaderRoute: typeof SolutionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/security': {
+      id: '/security'
+      path: '/security'
+      fullPath: '/security'
+      preLoaderRoute: typeof SecurityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product': {
+      id: '/product'
+      path: '/product'
+      fullPath: '/product'
+      preLoaderRoute: typeof ProductRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo': {
+      id: '/demo'
+      path: '/demo'
+      fullPath: '/demo'
+      preLoaderRoute: typeof DemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +490,212 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/units': {
+      id: '/dashboard/units'
+      path: '/units'
+      fullPath: '/dashboard/units'
+      preLoaderRoute: typeof DashboardUnitsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/tenants': {
+      id: '/dashboard/tenants'
+      path: '/tenants'
+      fullPath: '/dashboard/tenants'
+      preLoaderRoute: typeof DashboardTenantsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/tenant-portal': {
+      id: '/dashboard/tenant-portal'
+      path: '/tenant-portal'
+      fullPath: '/dashboard/tenant-portal'
+      preLoaderRoute: typeof DashboardTenantPortalRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/tasks': {
+      id: '/dashboard/tasks'
+      path: '/tasks'
+      fullPath: '/dashboard/tasks'
+      preLoaderRoute: typeof DashboardTasksRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/supervisor-view': {
+      id: '/dashboard/supervisor-view'
+      path: '/supervisor-view'
+      fullPath: '/dashboard/supervisor-view'
+      preLoaderRoute: typeof DashboardSupervisorViewRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/submissions': {
+      id: '/dashboard/submissions'
+      path: '/submissions'
+      fullPath: '/dashboard/submissions'
+      preLoaderRoute: typeof DashboardSubmissionsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/staff': {
+      id: '/dashboard/staff'
+      path: '/staff'
+      fullPath: '/dashboard/staff'
+      preLoaderRoute: typeof DashboardStaffRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/settings': {
+      id: '/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof DashboardSettingsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/reports': {
+      id: '/dashboard/reports'
+      path: '/reports'
+      fullPath: '/dashboard/reports'
+      preLoaderRoute: typeof DashboardReportsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/owners': {
+      id: '/dashboard/owners'
+      path: '/owners'
+      fullPath: '/dashboard/owners'
+      preLoaderRoute: typeof DashboardOwnersRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/owner-view': {
+      id: '/dashboard/owner-view'
+      path: '/owner-view'
+      fullPath: '/dashboard/owner-view'
+      preLoaderRoute: typeof DashboardOwnerViewRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/notifications': {
+      id: '/dashboard/notifications'
+      path: '/notifications'
+      fullPath: '/dashboard/notifications'
+      preLoaderRoute: typeof DashboardNotificationsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/mobile-labor': {
+      id: '/dashboard/mobile-labor'
+      path: '/mobile-labor'
+      fullPath: '/dashboard/mobile-labor'
+      preLoaderRoute: typeof DashboardMobileLaborRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/maintenance': {
+      id: '/dashboard/maintenance'
+      path: '/maintenance'
+      fullPath: '/dashboard/maintenance'
+      preLoaderRoute: typeof DashboardMaintenanceRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/complaints': {
+      id: '/dashboard/complaints'
+      path: '/complaints'
+      fullPath: '/dashboard/complaints'
+      preLoaderRoute: typeof DashboardComplaintsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/calendar': {
+      id: '/dashboard/calendar'
+      path: '/calendar'
+      fullPath: '/dashboard/calendar'
+      preLoaderRoute: typeof DashboardCalendarRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/buildings': {
+      id: '/dashboard/buildings'
+      path: '/buildings'
+      fullPath: '/dashboard/buildings'
+      preLoaderRoute: typeof DashboardBuildingsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/billing': {
+      id: '/dashboard/billing'
+      path: '/billing'
+      fullPath: '/dashboard/billing'
+      preLoaderRoute: typeof DashboardBillingRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/approvals': {
+      id: '/dashboard/approvals'
+      path: '/approvals'
+      fullPath: '/dashboard/approvals'
+      preLoaderRoute: typeof DashboardApprovalsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
   }
 }
 
+interface DashboardRouteChildren {
+  DashboardApprovalsRoute: typeof DashboardApprovalsRoute
+  DashboardBillingRoute: typeof DashboardBillingRoute
+  DashboardBuildingsRoute: typeof DashboardBuildingsRoute
+  DashboardCalendarRoute: typeof DashboardCalendarRoute
+  DashboardComplaintsRoute: typeof DashboardComplaintsRoute
+  DashboardMaintenanceRoute: typeof DashboardMaintenanceRoute
+  DashboardMobileLaborRoute: typeof DashboardMobileLaborRoute
+  DashboardNotificationsRoute: typeof DashboardNotificationsRoute
+  DashboardOwnerViewRoute: typeof DashboardOwnerViewRoute
+  DashboardOwnersRoute: typeof DashboardOwnersRoute
+  DashboardReportsRoute: typeof DashboardReportsRoute
+  DashboardSettingsRoute: typeof DashboardSettingsRoute
+  DashboardStaffRoute: typeof DashboardStaffRoute
+  DashboardSubmissionsRoute: typeof DashboardSubmissionsRoute
+  DashboardSupervisorViewRoute: typeof DashboardSupervisorViewRoute
+  DashboardTasksRoute: typeof DashboardTasksRoute
+  DashboardTenantPortalRoute: typeof DashboardTenantPortalRoute
+  DashboardTenantsRoute: typeof DashboardTenantsRoute
+  DashboardUnitsRoute: typeof DashboardUnitsRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardApprovalsRoute: DashboardApprovalsRoute,
+  DashboardBillingRoute: DashboardBillingRoute,
+  DashboardBuildingsRoute: DashboardBuildingsRoute,
+  DashboardCalendarRoute: DashboardCalendarRoute,
+  DashboardComplaintsRoute: DashboardComplaintsRoute,
+  DashboardMaintenanceRoute: DashboardMaintenanceRoute,
+  DashboardMobileLaborRoute: DashboardMobileLaborRoute,
+  DashboardNotificationsRoute: DashboardNotificationsRoute,
+  DashboardOwnerViewRoute: DashboardOwnerViewRoute,
+  DashboardOwnersRoute: DashboardOwnersRoute,
+  DashboardReportsRoute: DashboardReportsRoute,
+  DashboardSettingsRoute: DashboardSettingsRoute,
+  DashboardStaffRoute: DashboardStaffRoute,
+  DashboardSubmissionsRoute: DashboardSubmissionsRoute,
+  DashboardSupervisorViewRoute: DashboardSupervisorViewRoute,
+  DashboardTasksRoute: DashboardTasksRoute,
+  DashboardTenantPortalRoute: DashboardTenantPortalRoute,
+  DashboardTenantsRoute: DashboardTenantsRoute,
+  DashboardUnitsRoute: DashboardUnitsRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  BlogRoute: BlogRoute,
+  ContactRoute: ContactRoute,
+  DashboardRoute: DashboardRouteWithChildren,
+  DemoRoute: DemoRoute,
+  PricingRoute: PricingRoute,
+  ProductRoute: ProductRoute,
+  SecurityRoute: SecurityRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SolutionsRoute: SolutionsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

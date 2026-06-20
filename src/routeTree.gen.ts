@@ -21,6 +21,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as DashboardTasksRouteImport } from './routes/dashboard.tasks'
+import { Route as DashboardComplaintsRouteImport } from './routes/dashboard.complaints'
 import { Route as DashboardBuildingsRouteImport } from './routes/dashboard.buildings'
 import { Route as DashboardApprovalsRouteImport } from './routes/dashboard.approvals'
 
@@ -84,6 +85,11 @@ const DashboardTasksRoute = DashboardTasksRouteImport.update({
   path: '/tasks',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardComplaintsRoute = DashboardComplaintsRouteImport.update({
+  id: '/complaints',
+  path: '/complaints',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardBuildingsRoute = DashboardBuildingsRouteImport.update({
   id: '/buildings',
   path: '/buildings',
@@ -108,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/solutions': typeof SolutionsRoute
   '/dashboard/approvals': typeof DashboardApprovalsRoute
   '/dashboard/buildings': typeof DashboardBuildingsRoute
+  '/dashboard/complaints': typeof DashboardComplaintsRoute
   '/dashboard/tasks': typeof DashboardTasksRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
@@ -123,6 +130,7 @@ export interface FileRoutesByTo {
   '/solutions': typeof SolutionsRoute
   '/dashboard/approvals': typeof DashboardApprovalsRoute
   '/dashboard/buildings': typeof DashboardBuildingsRoute
+  '/dashboard/complaints': typeof DashboardComplaintsRoute
   '/dashboard/tasks': typeof DashboardTasksRoute
   '/dashboard': typeof DashboardIndexRoute
 }
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/solutions': typeof SolutionsRoute
   '/dashboard/approvals': typeof DashboardApprovalsRoute
   '/dashboard/buildings': typeof DashboardBuildingsRoute
+  '/dashboard/complaints': typeof DashboardComplaintsRoute
   '/dashboard/tasks': typeof DashboardTasksRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
     | '/solutions'
     | '/dashboard/approvals'
     | '/dashboard/buildings'
+    | '/dashboard/complaints'
     | '/dashboard/tasks'
     | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
@@ -173,6 +183,7 @@ export interface FileRouteTypes {
     | '/solutions'
     | '/dashboard/approvals'
     | '/dashboard/buildings'
+    | '/dashboard/complaints'
     | '/dashboard/tasks'
     | '/dashboard'
   id:
@@ -189,6 +200,7 @@ export interface FileRouteTypes {
     | '/solutions'
     | '/dashboard/approvals'
     | '/dashboard/buildings'
+    | '/dashboard/complaints'
     | '/dashboard/tasks'
     | '/dashboard/'
   fileRoutesById: FileRoutesById
@@ -292,6 +304,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardTasksRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/complaints': {
+      id: '/dashboard/complaints'
+      path: '/complaints'
+      fullPath: '/dashboard/complaints'
+      preLoaderRoute: typeof DashboardComplaintsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/buildings': {
       id: '/dashboard/buildings'
       path: '/buildings'
@@ -312,6 +331,7 @@ declare module '@tanstack/react-router' {
 interface DashboardRouteChildren {
   DashboardApprovalsRoute: typeof DashboardApprovalsRoute
   DashboardBuildingsRoute: typeof DashboardBuildingsRoute
+  DashboardComplaintsRoute: typeof DashboardComplaintsRoute
   DashboardTasksRoute: typeof DashboardTasksRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
@@ -319,6 +339,7 @@ interface DashboardRouteChildren {
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardApprovalsRoute: DashboardApprovalsRoute,
   DashboardBuildingsRoute: DashboardBuildingsRoute,
+  DashboardComplaintsRoute: DashboardComplaintsRoute,
   DashboardTasksRoute: DashboardTasksRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }

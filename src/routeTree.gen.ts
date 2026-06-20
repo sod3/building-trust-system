@@ -20,6 +20,7 @@ import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as DashboardTenantsRouteImport } from './routes/dashboard.tenants'
 import { Route as DashboardTenantPortalRouteImport } from './routes/dashboard.tenant-portal'
 import { Route as DashboardTasksRouteImport } from './routes/dashboard.tasks'
 import { Route as DashboardSupervisorViewRouteImport } from './routes/dashboard.supervisor-view'
@@ -84,6 +85,11 @@ const IndexRoute = IndexRouteImport.update({
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardTenantsRoute = DashboardTenantsRouteImport.update({
+  id: '/tenants',
+  path: '/tenants',
   getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardTenantPortalRoute = DashboardTenantPortalRouteImport.update({
@@ -158,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/supervisor-view': typeof DashboardSupervisorViewRoute
   '/dashboard/tasks': typeof DashboardTasksRoute
   '/dashboard/tenant-portal': typeof DashboardTenantPortalRoute
+  '/dashboard/tenants': typeof DashboardTenantsRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
@@ -180,6 +187,7 @@ export interface FileRoutesByTo {
   '/dashboard/supervisor-view': typeof DashboardSupervisorViewRoute
   '/dashboard/tasks': typeof DashboardTasksRoute
   '/dashboard/tenant-portal': typeof DashboardTenantPortalRoute
+  '/dashboard/tenants': typeof DashboardTenantsRoute
   '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
@@ -204,6 +212,7 @@ export interface FileRoutesById {
   '/dashboard/supervisor-view': typeof DashboardSupervisorViewRoute
   '/dashboard/tasks': typeof DashboardTasksRoute
   '/dashboard/tenant-portal': typeof DashboardTenantPortalRoute
+  '/dashboard/tenants': typeof DashboardTenantsRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
     | '/dashboard/supervisor-view'
     | '/dashboard/tasks'
     | '/dashboard/tenant-portal'
+    | '/dashboard/tenants'
     | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -251,6 +261,7 @@ export interface FileRouteTypes {
     | '/dashboard/supervisor-view'
     | '/dashboard/tasks'
     | '/dashboard/tenant-portal'
+    | '/dashboard/tenants'
     | '/dashboard'
   id:
     | '__root__'
@@ -274,6 +285,7 @@ export interface FileRouteTypes {
     | '/dashboard/supervisor-view'
     | '/dashboard/tasks'
     | '/dashboard/tenant-portal'
+    | '/dashboard/tenants'
     | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
@@ -369,6 +381,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/tenants': {
+      id: '/dashboard/tenants'
+      path: '/tenants'
+      fullPath: '/dashboard/tenants'
+      preLoaderRoute: typeof DashboardTenantsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/tenant-portal': {
       id: '/dashboard/tenant-portal'
       path: '/tenant-portal'
@@ -453,6 +472,7 @@ interface DashboardRouteChildren {
   DashboardSupervisorViewRoute: typeof DashboardSupervisorViewRoute
   DashboardTasksRoute: typeof DashboardTasksRoute
   DashboardTenantPortalRoute: typeof DashboardTenantPortalRoute
+  DashboardTenantsRoute: typeof DashboardTenantsRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
@@ -467,6 +487,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardSupervisorViewRoute: DashboardSupervisorViewRoute,
   DashboardTasksRoute: DashboardTasksRoute,
   DashboardTenantPortalRoute: DashboardTenantPortalRoute,
+  DashboardTenantsRoute: DashboardTenantsRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
 

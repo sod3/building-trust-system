@@ -27,6 +27,7 @@ import { Route as DashboardTasksRouteImport } from './routes/dashboard.tasks'
 import { Route as DashboardSupervisorViewRouteImport } from './routes/dashboard.supervisor-view'
 import { Route as DashboardSubmissionsRouteImport } from './routes/dashboard.submissions'
 import { Route as DashboardStaffRouteImport } from './routes/dashboard.staff'
+import { Route as DashboardReportsRouteImport } from './routes/dashboard.reports'
 import { Route as DashboardOwnersRouteImport } from './routes/dashboard.owners'
 import { Route as DashboardOwnerViewRouteImport } from './routes/dashboard.owner-view'
 import { Route as DashboardMobileLaborRouteImport } from './routes/dashboard.mobile-labor'
@@ -126,6 +127,11 @@ const DashboardStaffRoute = DashboardStaffRouteImport.update({
   path: '/staff',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardReportsRoute = DashboardReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardOwnersRoute = DashboardOwnersRouteImport.update({
   id: '/owners',
   path: '/owners',
@@ -186,6 +192,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/mobile-labor': typeof DashboardMobileLaborRoute
   '/dashboard/owner-view': typeof DashboardOwnerViewRoute
   '/dashboard/owners': typeof DashboardOwnersRoute
+  '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/staff': typeof DashboardStaffRoute
   '/dashboard/submissions': typeof DashboardSubmissionsRoute
   '/dashboard/supervisor-view': typeof DashboardSupervisorViewRoute
@@ -213,6 +220,7 @@ export interface FileRoutesByTo {
   '/dashboard/mobile-labor': typeof DashboardMobileLaborRoute
   '/dashboard/owner-view': typeof DashboardOwnerViewRoute
   '/dashboard/owners': typeof DashboardOwnersRoute
+  '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/staff': typeof DashboardStaffRoute
   '/dashboard/submissions': typeof DashboardSubmissionsRoute
   '/dashboard/supervisor-view': typeof DashboardSupervisorViewRoute
@@ -242,6 +250,7 @@ export interface FileRoutesById {
   '/dashboard/mobile-labor': typeof DashboardMobileLaborRoute
   '/dashboard/owner-view': typeof DashboardOwnerViewRoute
   '/dashboard/owners': typeof DashboardOwnersRoute
+  '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/staff': typeof DashboardStaffRoute
   '/dashboard/submissions': typeof DashboardSubmissionsRoute
   '/dashboard/supervisor-view': typeof DashboardSupervisorViewRoute
@@ -272,6 +281,7 @@ export interface FileRouteTypes {
     | '/dashboard/mobile-labor'
     | '/dashboard/owner-view'
     | '/dashboard/owners'
+    | '/dashboard/reports'
     | '/dashboard/staff'
     | '/dashboard/submissions'
     | '/dashboard/supervisor-view'
@@ -299,6 +309,7 @@ export interface FileRouteTypes {
     | '/dashboard/mobile-labor'
     | '/dashboard/owner-view'
     | '/dashboard/owners'
+    | '/dashboard/reports'
     | '/dashboard/staff'
     | '/dashboard/submissions'
     | '/dashboard/supervisor-view'
@@ -327,6 +338,7 @@ export interface FileRouteTypes {
     | '/dashboard/mobile-labor'
     | '/dashboard/owner-view'
     | '/dashboard/owners'
+    | '/dashboard/reports'
     | '/dashboard/staff'
     | '/dashboard/submissions'
     | '/dashboard/supervisor-view'
@@ -478,6 +490,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardStaffRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/reports': {
+      id: '/dashboard/reports'
+      path: '/reports'
+      fullPath: '/dashboard/reports'
+      preLoaderRoute: typeof DashboardReportsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/owners': {
       id: '/dashboard/owners'
       path: '/owners'
@@ -546,6 +565,7 @@ interface DashboardRouteChildren {
   DashboardMobileLaborRoute: typeof DashboardMobileLaborRoute
   DashboardOwnerViewRoute: typeof DashboardOwnerViewRoute
   DashboardOwnersRoute: typeof DashboardOwnersRoute
+  DashboardReportsRoute: typeof DashboardReportsRoute
   DashboardStaffRoute: typeof DashboardStaffRoute
   DashboardSubmissionsRoute: typeof DashboardSubmissionsRoute
   DashboardSupervisorViewRoute: typeof DashboardSupervisorViewRoute
@@ -565,6 +585,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardMobileLaborRoute: DashboardMobileLaborRoute,
   DashboardOwnerViewRoute: DashboardOwnerViewRoute,
   DashboardOwnersRoute: DashboardOwnersRoute,
+  DashboardReportsRoute: DashboardReportsRoute,
   DashboardStaffRoute: DashboardStaffRoute,
   DashboardSubmissionsRoute: DashboardSubmissionsRoute,
   DashboardSupervisorViewRoute: DashboardSupervisorViewRoute,

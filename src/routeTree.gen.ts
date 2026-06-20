@@ -21,6 +21,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as DashboardTasksRouteImport } from './routes/dashboard.tasks'
+import { Route as DashboardMobileLaborRouteImport } from './routes/dashboard.mobile-labor'
 import { Route as DashboardComplaintsRouteImport } from './routes/dashboard.complaints'
 import { Route as DashboardBuildingsRouteImport } from './routes/dashboard.buildings'
 import { Route as DashboardApprovalsRouteImport } from './routes/dashboard.approvals'
@@ -85,6 +86,11 @@ const DashboardTasksRoute = DashboardTasksRouteImport.update({
   path: '/tasks',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardMobileLaborRoute = DashboardMobileLaborRouteImport.update({
+  id: '/mobile-labor',
+  path: '/mobile-labor',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardComplaintsRoute = DashboardComplaintsRouteImport.update({
   id: '/complaints',
   path: '/complaints',
@@ -115,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/approvals': typeof DashboardApprovalsRoute
   '/dashboard/buildings': typeof DashboardBuildingsRoute
   '/dashboard/complaints': typeof DashboardComplaintsRoute
+  '/dashboard/mobile-labor': typeof DashboardMobileLaborRoute
   '/dashboard/tasks': typeof DashboardTasksRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
@@ -131,6 +138,7 @@ export interface FileRoutesByTo {
   '/dashboard/approvals': typeof DashboardApprovalsRoute
   '/dashboard/buildings': typeof DashboardBuildingsRoute
   '/dashboard/complaints': typeof DashboardComplaintsRoute
+  '/dashboard/mobile-labor': typeof DashboardMobileLaborRoute
   '/dashboard/tasks': typeof DashboardTasksRoute
   '/dashboard': typeof DashboardIndexRoute
 }
@@ -149,6 +157,7 @@ export interface FileRoutesById {
   '/dashboard/approvals': typeof DashboardApprovalsRoute
   '/dashboard/buildings': typeof DashboardBuildingsRoute
   '/dashboard/complaints': typeof DashboardComplaintsRoute
+  '/dashboard/mobile-labor': typeof DashboardMobileLaborRoute
   '/dashboard/tasks': typeof DashboardTasksRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
@@ -168,6 +177,7 @@ export interface FileRouteTypes {
     | '/dashboard/approvals'
     | '/dashboard/buildings'
     | '/dashboard/complaints'
+    | '/dashboard/mobile-labor'
     | '/dashboard/tasks'
     | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
     | '/dashboard/approvals'
     | '/dashboard/buildings'
     | '/dashboard/complaints'
+    | '/dashboard/mobile-labor'
     | '/dashboard/tasks'
     | '/dashboard'
   id:
@@ -201,6 +212,7 @@ export interface FileRouteTypes {
     | '/dashboard/approvals'
     | '/dashboard/buildings'
     | '/dashboard/complaints'
+    | '/dashboard/mobile-labor'
     | '/dashboard/tasks'
     | '/dashboard/'
   fileRoutesById: FileRoutesById
@@ -304,6 +316,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardTasksRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/mobile-labor': {
+      id: '/dashboard/mobile-labor'
+      path: '/mobile-labor'
+      fullPath: '/dashboard/mobile-labor'
+      preLoaderRoute: typeof DashboardMobileLaborRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/complaints': {
       id: '/dashboard/complaints'
       path: '/complaints'
@@ -332,6 +351,7 @@ interface DashboardRouteChildren {
   DashboardApprovalsRoute: typeof DashboardApprovalsRoute
   DashboardBuildingsRoute: typeof DashboardBuildingsRoute
   DashboardComplaintsRoute: typeof DashboardComplaintsRoute
+  DashboardMobileLaborRoute: typeof DashboardMobileLaborRoute
   DashboardTasksRoute: typeof DashboardTasksRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
@@ -340,6 +360,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardApprovalsRoute: DashboardApprovalsRoute,
   DashboardBuildingsRoute: DashboardBuildingsRoute,
   DashboardComplaintsRoute: DashboardComplaintsRoute,
+  DashboardMobileLaborRoute: DashboardMobileLaborRoute,
   DashboardTasksRoute: DashboardTasksRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }

@@ -28,43 +28,75 @@ function Home() {
       <Header />
 
       {/* HERO */}
-      <section className="relative overflow-hidden bg-navy-gradient bg-mesh text-primary-foreground">
-        <div className="mx-auto grid max-w-7xl gap-12 px-4 py-20 sm:px-6 lg:grid-cols-12 lg:gap-8 lg:px-8 lg:py-28">
+<section 
+        className="relative min-h-[100dvh] flex items-center overflow-hidden bg-navy-gradient text-primary-foreground"
+        style={{
+          backgroundImage: `url(${heroImg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+        }}
+      >
+        {/* Dark overlay for text readability + depth */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/60 to-black/40" />
+        
+        {/* Subtle mesh/grid overlay for premium tech feel */}
+        <div className="absolute inset-0 bg-mesh opacity-30 mix-blend-overlay" />
+        
+        {/* Top accent glow */}
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+        
+        <div className="relative z-10 mx-auto grid max-w-7xl gap-12 px-4 py-20 sm:px-6 lg:grid-cols-12 lg:gap-8 lg:px-8 lg:py-28">
           <div className="lg:col-span-7">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/80 backdrop-blur">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-medium text-white backdrop-blur-md shadow-inner">
               <Sparkles className="h-3.5 w-3.5 text-gold" />
               {t("badge.kingdom")}
             </span>
-            <h1 className="mt-6 text-balance font-display text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
+            
+            <h1 className="mt-8 text-balance font-display text-5xl font-semibold leading-[1.05] tracking-tighter sm:text-6xl lg:text-7xl drop-shadow-2xl">
               {t("hero.title")}
             </h1>
-            <p className="mt-6 max-w-2xl text-balance text-base leading-relaxed text-white/75 sm:text-lg">
+            
+            <p className="mt-6 max-w-xl text-balance text-lg leading-relaxed text-white/90 drop-shadow-md">
               {t("hero.sub")}
             </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Button asChild size="lg" className="bg-white text-navy hover:bg-white/90">
+            
+            <div className="mt-10 flex flex-wrap items-center gap-4">
+              <Button 
+                asChild 
+                size="lg" 
+                className="bg-white text-navy hover:bg-white/95 active:scale-[0.985] transition-all duration-200 shadow-xl shadow-black/30 font-semibold"
+              >
                 <Link to="/contact">
                   {t("cta.demo")}
                   <ArrowRight className="ms-2 h-4 w-4 rtl:rotate-180" />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="border-white/25 bg-white/0 text-white hover:bg-white/10 hover:text-white">
+              
+              <Button 
+                asChild 
+                size="lg" 
+                variant="outline" 
+                className="border-white/30 bg-white/10 text-white hover:bg-white/15 hover:border-white/50 backdrop-blur-md transition-all duration-200"
+              >
                 <Link to="/product">{t("cta.view")}</Link>
               </Button>
             </div>
-            <p className="mt-8 text-xs uppercase tracking-widest text-white/55">{t("hero.trust")}</p>
-            <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white/60">
-              <span>Riyadh</span><span>·</span><span>Jeddah</span><span>·</span><span>Dammam</span><span>·</span><span>Dubai</span><span>·</span><span>Doha</span>
+
+            <div className="mt-12">
+              <p className="text-xs uppercase tracking-[3px] text-white/60 mb-3">{t("hero.trust")}</p>
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white/80">
+                <span>Riyadh</span><span>·</span><span>Jeddah</span><span>·</span><span>Dammam</span><span>·</span><span>Dubai</span><span>·</span><span>Doha</span>
+              </div>
             </div>
           </div>
 
-          <div className="relative lg:col-span-5">
-            <div className="absolute -inset-6 rounded-3xl bg-gradient-to-tr from-accent/30 to-transparent blur-2xl" aria-hidden />
-            <div className="relative overflow-hidden rounded-2xl border border-white/10 shadow-elevated">
-              <img src={heroImg} alt="Smart building with operations dashboard" width={1600} height={1200} className="h-full w-full object-cover" />
-            </div>
-          </div>
+          {/* Empty right column - image is now full background */}
+          <div className="lg:col-span-5 hidden lg:block" />
         </div>
+
+        {/* Bottom fade to next section */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent pointer-events-none" />
       </section>
 
       {/* PROBLEM */}

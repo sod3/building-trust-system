@@ -4,9 +4,9 @@ import { useLang } from "@/lib/i18n";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { Button } from "@/components/ui/button";
-import heroImg from "@/assets/hero-building.jpg";
-import laborImg from "@/assets/labor-app.jpg";
-import ownerImg from "@/assets/owner-dashboard.jpg";
+import heroImg from "@/assets/hero-building1.png";
+import laborImg from "@/assets/labor-app1.png";
+import ownerImg from "@/assets/owner-dashboard1.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({

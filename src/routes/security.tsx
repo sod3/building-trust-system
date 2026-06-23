@@ -7,9 +7,9 @@ import { Lock, Shield, FileCheck, Database, KeyRound, Activity, ServerCog, Scrol
 export const Route = createFileRoute("/security")({
   head: () => ({
     meta: [
-      { title: "Security & Compliance — FacilityOS Arabia" },
+      { title: "Security & Compliance - FacilityOS Arabia" },
       { name: "description", content: "How FacilityOS Arabia protects your buildings, photos and tenants. RBAC, audit logs, encrypted storage, PDPL-aware." },
-      { property: "og:title", content: "Security & Compliance — FacilityOS Arabia" },
+      { property: "og:title", content: "Security & Compliance - FacilityOS Arabia" },
       { property: "og:description", content: "Enterprise security from day one." },
     ],
   }),
@@ -19,7 +19,7 @@ export const Route = createFileRoute("/security")({
 function SecurityPage() {
   const { t, lang } = useLang();
   const controls = [
-    { i: KeyRound, n: lang === "ar" ? "صلاحيات حسب الدور" : "Role-based access control", b: lang === "ar" ? "كل دور يرى ما يحتاجه فقط — لا أكثر." : "Each role sees only what they need — nothing more." },
+    { i: KeyRound, n: lang === "ar" ? "صلاحيات حسب الدور" : "Role-based access control", b: lang === "ar" ? "كل دور يرى ما يحتاجه فقط - لا أكثر." : "Each role sees only what they need - nothing more." },
     { i: Lock, n: lang === "ar" ? "تشفير عند التخزين والنقل" : "Encryption at rest and in transit", b: lang === "ar" ? "TLS 1.3 وتشفير بمستوى الكائن في التخزين." : "TLS 1.3 and object-level encryption in storage." },
     { i: Shield, n: lang === "ar" ? "مصادقة آمنة" : "Secure authentication", b: lang === "ar" ? "JWT / جلسات آمنة وكلمات مرور مجزّأة." : "JWT / secure sessions and hashed passwords." },
     { i: Activity, n: lang === "ar" ? "سجلات التدقيق" : "Audit logs", b: lang === "ar" ? "كل إجراء مهم مسجّل وقابل للتصدير." : "Every meaningful action logged and exportable." },

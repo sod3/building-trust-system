@@ -20,7 +20,7 @@ const seedUnits = (b: typeof buildings[number]) =>
 function UnitsPage() {
   return (
     <div className="space-y-6">
-      <PageHeader title="Floors & Units" subtitle="Drill into every unit — tenant assignment, complaints, last inspection, QR status." />
+      <PageHeader title="Floors & Units" subtitle="Drill into every unit - tenant assignment, complaints, last inspection, QR status." />
       <div className="space-y-6">
         {buildings.slice(0,3).map(b => {
           const units = seedUnits(b);

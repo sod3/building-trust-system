@@ -37,7 +37,7 @@ function DashboardOverview() {
         <div>
           <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Operations overview</div>
           <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            Good morning, Omar — your portfolio is performing at <span className="text-emerald-600">92%</span>.
+            Good morning, Omar - your portfolio is performing at <span className="text-emerald-600">92%</span>.
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">{k.totalBuildings} buildings · {k.activeLabor} active labor · {k.pendingApprovals} approvals waiting on supervisors.</p>
         </div>

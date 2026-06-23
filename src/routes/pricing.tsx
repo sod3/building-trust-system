@@ -8,9 +8,9 @@ import { Check } from "lucide-react";
 export const Route = createFileRoute("/pricing")({
   head: () => ({
     meta: [
-      { title: "Pricing — FacilityOS Arabia" },
+      { title: "Pricing - FacilityOS Arabia" },
       { name: "description", content: "Simple SAR pricing per portfolio. Pilot from 499 SAR/mo. Enterprise plans for facility management companies." },
-      { property: "og:title", content: "Pricing — FacilityOS Arabia" },
+      { property: "og:title", content: "Pricing - FacilityOS Arabia" },
       { property: "og:description", content: "From 499 SAR/mo to enterprise. WhatsApp, white-label and API add-ons available." },
     ],
   }),

@@ -4,7 +4,7 @@ import { DashboardTopbar } from "@/components/dashboard/DashboardTopbar";
 import { RoleProvider } from "@/lib/role-context";
 
 export const Route = createFileRoute("/dashboard")({
-  head: () => ({ meta: [{ title: "Riyadh OS — Dashboard" }] }),
+  head: () => ({ meta: [{ title: "Riyadh OS - Dashboard" }] }),
   component: DashboardLayout,
 });
 

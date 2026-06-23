@@ -1,5 +1,5 @@
 // Centralized dummy data for the Riyadh OS / FacilityOS Arabia frontend demo.
-// Everything here is fake — no backend calls. Names, IDs, timestamps are realistic.
+// Everything here is fake - no backend calls. Names, IDs, timestamps are realistic.
 
 export type Status = "excellent" | "good" | "attention" | "critical";
 
@@ -111,7 +111,7 @@ const taskNames: { name: string; cat: TaskCategory }[] = [
   { name: "Clean lobby glass doors", cat: "Cleaning" },
   { name: "Check generator fuel level", cat: "Electrical" },
   { name: "Inspect plumbing in mechanical room", cat: "Plumbing" },
-  { name: "Landscape watering — front lawn", cat: "Landscaping" },
+  { name: "Landscape watering - front lawn", cat: "Landscaping" },
 ];
 
 const statusPool: TaskStatus[] = ["pending","submitted","approved","rejected","overdue","submitted","approved","approved","pending"];
@@ -137,7 +137,7 @@ export const tasks: Task[] = Array.from({ length: 48 }).map((_, i) => {
     status: st,
     proof: (st === "submitted" || st === "approved" || st === "rejected") ? proofPhotos[i % proofPhotos.length] : undefined,
     submittedAt: (st !== "pending" && st !== "overdue") ? `Today, ${(8 + (i % 9)).toString().padStart(2,"0")}:${(10 + i * 3 % 50).toString().padStart(2,"0")}` : undefined,
-    comment: (st === "rejected") ? "Photo blurry — please retake." : undefined,
+    comment: (st === "rejected") ? "Photo blurry - please retake." : undefined,
   };
 });
 
@@ -279,11 +279,11 @@ export const overviewKpis = {
 
 export const notifications = [
   { id: "N1", type: "overdue", title: "Task overdue: Clean main entrance", body: "Riyadh Tower A · assigned Ahmed Khan · 1 hr late", time: "12 min ago", unread: true },
-  { id: "N2", type: "complaint", title: "New complaint CMP-2026-0048", body: "Elevator not working — Khobar Heights, Unit 312", time: "34 min ago", unread: true },
-  { id: "N3", type: "approval", title: "Supervisor rejected a task", body: "Khalid Al-Otaibi rejected TSK-2618 — photo blurry", time: "1 hr ago", unread: true },
+  { id: "N2", type: "complaint", title: "New complaint CMP-2026-0048", body: "Elevator not working - Khobar Heights, Unit 312", time: "34 min ago", unread: true },
+  { id: "N3", type: "approval", title: "Supervisor rejected a task", body: "Khalid Al-Otaibi rejected TSK-2618 - photo blurry", time: "1 hr ago", unread: true },
   { id: "N4", type: "report", title: "Owner weekly summary is ready", body: "Abdulrahman Al-Saud · 3 buildings · ready to send", time: "2 hr ago", unread: false },
   { id: "N5", type: "complaint", title: "Complaint resolved CMP-2026-0041", body: "Corridor light fixed in Olaya Residence", time: "3 hr ago", unread: false },
-  { id: "N6", type: "maintenance", title: "Maintenance escalated", body: "Plumbing leak — Olaya Residence basement", time: "5 hr ago", unread: false },
+  { id: "N6", type: "maintenance", title: "Maintenance escalated", body: "Plumbing leak - Olaya Residence basement", time: "5 hr ago", unread: false },
 ];
 
 export const auditLogs = Array.from({ length: 14 }).map((_, i) => ({

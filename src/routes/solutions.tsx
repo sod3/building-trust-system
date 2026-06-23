@@ -8,10 +8,10 @@ import { Building2, Landmark, Store, Home, ShieldCheck, Briefcase } from "lucide
 export const Route = createFileRoute("/solutions")({
   head: () => ({
     meta: [
-      { title: "Solutions — FacilityOS Arabia" },
+      { title: "Solutions - FacilityOS Arabia" },
       { name: "description", content: "Tailored solutions for facility management companies, developers, owners, malls, compounds and government assets." },
-      { property: "og:title", content: "Solutions — FacilityOS Arabia" },
-      { property: "og:description", content: "From three towers to three hundred — FacilityOS Arabia adapts." },
+      { property: "og:title", content: "Solutions - FacilityOS Arabia" },
+      { property: "og:description", content: "From three towers to three hundred - FacilityOS Arabia adapts." },
     ],
   }),
   component: SolutionsPage,

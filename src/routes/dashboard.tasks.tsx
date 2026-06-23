@@ -93,7 +93,7 @@ function TasksPage() {
                   <td className="px-4 py-3">
                     {t.proof
                       ? <img src={t.proof} alt="" className="h-9 w-9 rounded-md object-cover ring-1 ring-border" />
-                      : <span className="inline-flex items-center gap-1 text-xs text-muted-foreground"><Camera className="h-3 w-3" /> —</span>}
+                      : <span className="inline-flex items-center gap-1 text-xs text-muted-foreground"><Camera className="h-3 w-3" /> -</span>}
                   </td>
                   <td className="px-4 py-3"><StatusPill status={t.status} /></td>
                 </tr>
@@ -121,7 +121,7 @@ function TasksPage() {
               <Field label="Frequency"><select className="field"><option>Daily</option><option>Weekly</option><option>Monthly</option></select></Field>
               <Field label="Due time"><input className="field" defaultValue="09:00" /></Field>
               <Field label="Priority"><select className="field"><option>Medium</option><option>High</option><option>Low</option></select></Field>
-              <Field label="Photo required"><label className="mt-1 inline-flex items-center gap-2 text-xs"><input type="checkbox" defaultChecked /> Yes — mandatory photo</label></Field>
+              <Field label="Photo required"><label className="mt-1 inline-flex items-center gap-2 text-xs"><input type="checkbox" defaultChecked /> Yes - mandatory photo</label></Field>
               <Field label="Notes" full><textarea className="field h-20" placeholder="Optional instructions for the labor team" /></Field>
             </div>
             <div className="mt-5 flex justify-end gap-2">

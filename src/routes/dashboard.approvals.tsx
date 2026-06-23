@@ -70,7 +70,7 @@ function ApprovalsPage() {
           <div className="w-full max-w-md rounded-2xl bg-card p-6 shadow-elevated">
             <h3 className="font-display text-lg font-semibold">Reject submission</h3>
             <p className="mt-1 text-sm text-muted-foreground">Give the labor team a clear reason. They will re-submit on their mobile app.</p>
-            <textarea value={reason} onChange={e=>setReason(e.target.value)} placeholder="Photo blurry — please retake from a wider angle"
+            <textarea value={reason} onChange={e=>setReason(e.target.value)} placeholder="Photo blurry - please retake from a wider angle"
               className="mt-3 h-24 w-full rounded-md border border-border bg-background p-2 text-sm outline-none focus:ring-2 focus:ring-ring/30" />
             <div className="mt-4 flex justify-end gap-2">
               <button onClick={()=>setRejectFor(null)} className="rounded-md border border-border px-3 py-2 text-sm hover:bg-secondary">Cancel</button>

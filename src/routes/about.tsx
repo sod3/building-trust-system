@@ -6,9 +6,9 @@ import { useLang } from "@/lib/i18n";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About — FacilityOS Arabia" },
+      { title: "About - FacilityOS Arabia" },
       { name: "description", content: "Built by operators who have run facility teams across Saudi Arabia and the Gulf." },
-      { property: "og:title", content: "About — FacilityOS Arabia" },
+      { property: "og:title", content: "About - FacilityOS Arabia" },
       { property: "og:description", content: "Built by operators, for operators." },
     ],
   }),

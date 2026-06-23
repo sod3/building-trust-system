@@ -12,7 +12,7 @@ export const Route = createFileRoute("/dashboard/notifications")({
 function NotificationsPage() {
   return (
     <div className="space-y-6">
-      <PageHeader title="Notifications" subtitle="Operational alerts, complaint updates and owner summaries — in one feed." />
+      <PageHeader title="Notifications" subtitle="Operational alerts, complaint updates and owner summaries - in one feed." />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_320px]">
         <Card className="!p-0 overflow-hidden">
           <div className="divide-y divide-border">

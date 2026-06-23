@@ -13,7 +13,7 @@ function TenantPortal() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Tenant Complaint Portal" subtitle="Tenants scan a QR sticker in the lobby — no login required. Each complaint becomes a tracked ticket." />
+      <PageHeader title="Tenant Complaint Portal" subtitle="Tenants scan a QR sticker in the lobby - no login required. Each complaint becomes a tracked ticket." />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_420px]">
         {/* Phone-style portal */}
@@ -66,8 +66,8 @@ function TenantPortal() {
               <div className="rounded-2xl border border-border p-4">
                 <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Status timeline</div>
                 <ol className="mt-3 relative ml-2 space-y-3 border-l border-border pl-4">
-                  <Step time="Received"   desc="11:42 — your complaint reached the building" done />
-                  <Step time="Assigned"   desc="11:45 — routed to Supervisor Khalid Al-Otaibi" done />
+                  <Step time="Received"   desc="11:42 - your complaint reached the building" done />
+                  <Step time="Assigned"   desc="11:45 - routed to Supervisor Khalid Al-Otaibi" done />
                   <Step time="In progress" desc="Technician dispatched, ETA 15 min" />
                   <Step time="Resolved"   desc="You'll be notified by SMS / WhatsApp" />
                 </ol>

@@ -13,7 +13,7 @@ const timeslots = ["07:00","09:00","11:00","13:00","16:00","18:00"];
 function CalendarPage() {
   return (
     <div className="space-y-6">
-      <PageHeader title="Task Calendar" subtitle="Weekly view of every scheduled task — daily, weekly and monthly recurrences."
+      <PageHeader title="Task Calendar" subtitle="Weekly view of every scheduled task - daily, weekly and monthly recurrences."
         actions={
           <div className="flex items-center gap-2">
             <button className="grid h-8 w-8 place-items-center rounded-md border border-border hover:bg-secondary"><ChevronLeft className="h-4 w-4" /></button>

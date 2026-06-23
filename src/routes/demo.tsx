@@ -7,7 +7,7 @@ import { ArrowRight, LayoutDashboard, Crown, ClipboardCheck, Smartphone, QrCode 
 export const Route = createFileRoute("/demo")({
   head: () => ({
     meta: [
-      { title: "Platform Demo — Riyadh OS / FacilityOS Arabia" },
+      { title: "Platform Demo - Riyadh OS / FacilityOS Arabia" },
       { name: "description", content: "Explore the Riyadh OS dashboard with dummy data: super admin, owner, supervisor, labor app, and tenant complaint portal." },
     ],
   }),
@@ -31,7 +31,7 @@ function DemoPage() {
           <div className="max-w-3xl">
             <div className="text-xs font-semibold uppercase tracking-wider text-gold">Live platform preview</div>
             <h1 className="mt-3 font-display text-4xl font-semibold leading-tight sm:text-5xl">
-              See every dashboard, every role, every screen — with dummy data.
+              See every dashboard, every role, every screen - with dummy data.
             </h1>
             <p className="mt-4 text-lg text-white/70">No signup. Switch between Super Admin, Owner, Supervisor, Labor and Tenant views inside the dashboard's role switcher.</p>
             <div className="mt-6 flex flex-wrap gap-3">

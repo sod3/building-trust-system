@@ -88,7 +88,7 @@ function SettingsPage() {
                 <li>Role-based access control</li>
                 <li>Encrypted storage of photos & PII</li>
                 <li>Tenant data scoped to building team only</li>
-                <li>Owners get read-only access — no PII downloads</li>
+                <li>Owners get read-only access - no PII downloads</li>
                 <li>PDPL-aware data handling</li>
               </ul>
             </div>

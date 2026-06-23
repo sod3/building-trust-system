@@ -7,9 +7,9 @@ import { ArrowUpRight } from "lucide-react";
 export const Route = createFileRoute("/blog")({
   head: () => ({
     meta: [
-      { title: "Resources — FacilityOS Arabia" },
+      { title: "Resources - FacilityOS Arabia" },
       { name: "description", content: "Playbooks and field notes for Saudi & Gulf facility management teams." },
-      { property: "og:title", content: "Resources — FacilityOS Arabia" },
+      { property: "og:title", content: "Resources - FacilityOS Arabia" },
       { property: "og:description", content: "Playbooks for facility teams." },
     ],
   }),

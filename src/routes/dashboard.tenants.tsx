@@ -10,7 +10,7 @@ function TenantsPage() {
   const tenants = users.filter(u => u.role === "tenant");
   return (
     <div className="space-y-6">
-      <PageHeader title="Tenants" subtitle="Tenants who have submitted complaints via the QR portal. No login required for them — only the building team sees this list." />
+      <PageHeader title="Tenants" subtitle="Tenants who have submitted complaints via the QR portal. No login required for them - only the building team sees this list." />
       <Card className="!p-0 overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-secondary/60 text-left text-[11px] uppercase tracking-wider text-muted-foreground">
@@ -22,8 +22,8 @@ function TenantsPage() {
               return (
                 <tr key={t.id} className="hover:bg-secondary/30">
                   <td className="px-4 py-3 font-medium">{t.name}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{tc[0]?.unit || "—"}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{tc[0]?.building || "—"}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{tc[0]?.unit || "-"}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{tc[0]?.building || "-"}</td>
                   <td className="px-4 py-3 text-muted-foreground">{t.phone}</td>
                   <td className="px-4 py-3 text-muted-foreground">{tc.length}</td>
                   <td className="px-4 py-3"><StatusPill status={tc.filter(c=>c.status==="open"||c.status==="in-progress").length ? "open" : "resolved"} /></td>

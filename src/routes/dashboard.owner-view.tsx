@@ -27,7 +27,7 @@ function OwnerView() {
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 text-[11px] uppercase tracking-wider text-white/60">
-              <Crown className="h-3.5 w-3.5 text-gold" /> Owner — Abdulrahman Al-Saud
+              <Crown className="h-3.5 w-3.5 text-gold" /> Owner - Abdulrahman Al-Saud
             </div>
             <h2 className="mt-1 font-display text-3xl font-semibold">Your portfolio is at <span className="text-gold">88%</span> health.</h2>
             <p className="mt-1 text-sm text-white/70">4 buildings · 348 units · {ownerBuildings.reduce((s,b)=>s+b.openComplaints,0)} open complaints · monthly report ready.</p>

@@ -28,8 +28,8 @@ export const dict: Dict = {
     ar: "إدارة تشغيل المباني الذكية لفرق العقارات في السعودية والخليج",
   },
   "hero.sub": {
-    en: "Manage daily tasks, labor photo proof, supervisor approvals, tenant complaints, owner reports and building health — from one Arabic-first platform.",
-    ar: "إدارة المهام اليومية، إثبات العمل بالصور، اعتماد المشرفين، شكاوى المستأجرين، تقارير الملاك وصحة المبنى — من منصة واحدة عربية أولاً.",
+    en: "Manage daily tasks, labor photo proof, supervisor approvals, tenant complaints, owner reports and building health - from one Arabic-first platform.",
+    ar: "إدارة المهام اليومية، إثبات العمل بالصور، اعتماد المشرفين، شكاوى المستأجرين، تقارير الملاك وصحة المبنى - من منصة واحدة عربية أولاً.",
   },
   "hero.trust": {
     en: "Trusted by facility teams across Riyadh, Jeddah, Dammam, Dubai and Doha.",
@@ -38,7 +38,7 @@ export const dict: Dict = {
 
   // Bento
   "bento.tasks.title": { en: "Daily tasks & recurring schedules", ar: "المهام اليومية والجداول المتكررة" },
-  "bento.tasks.body": { en: "Plan cleaning, MEP rounds, inspections — daily, weekly or monthly with priorities.", ar: "خطّط لمهام النظافة والصيانة والتفتيش يومياً وأسبوعياً وشهرياً مع تحديد الأولويات." },
+  "bento.tasks.body": { en: "Plan cleaning, MEP rounds, inspections - daily, weekly or monthly with priorities.", ar: "خطّط لمهام النظافة والصيانة والتفتيش يومياً وأسبوعياً وشهرياً مع تحديد الأولويات." },
   "bento.proof.title": { en: "Photo proof from labor", ar: "إثبات العمل بالصور" },
   "bento.proof.body": { en: "Every task ends with a mandatory photo. No more guesswork.", ar: "كل مهمة تُختم بصورة إلزامية. لا مزيد من التخمين." },
   "bento.approve.title": { en: "Supervisor approvals", ar: "اعتماد المشرفين" },
@@ -52,7 +52,7 @@ export const dict: Dict = {
   "bento.health.title": { en: "Building health score", ar: "مؤشّر صحة المبنى" },
   "bento.health.body": { en: "A single number combines cleaning, MEP, complaints and overdue tasks.", ar: "رقم واحد يجمع النظافة والكهروميكانيكا والشكاوى والمهام المتأخرة." },
   "bento.rtl.title": { en: "Arabic-first, RTL by default", ar: "عربية أولاً، RTL افتراضياً" },
-  "bento.rtl.body": { en: "Designed in Arabic and English from day one — not translated.", ar: "صُمّم بالعربية والإنجليزية منذ اليوم الأول، وليس مترجماً." },
+  "bento.rtl.body": { en: "Designed in Arabic and English from day one - not translated.", ar: "صُمّم بالعربية والإنجليزية منذ اليوم الأول، وليس مترجماً." },
 
   // Sections
   "sec.problem.kicker": { en: "The problem", ar: "المشكلة" },
@@ -97,7 +97,7 @@ export const dict: Dict = {
   "sec.faq.kicker": { en: "FAQ", ar: "الأسئلة" },
   "sec.faq.title": { en: "Questions facility teams ask us.", ar: "أسئلة تطرحها فرق التشغيل." },
   "faq.q1": { en: "Do labor workers need to be tech-savvy?", ar: "هل يحتاج العمّال لخبرة تقنية؟" },
-  "faq.a1": { en: "No. The labor app is two big buttons: Done and Not Done — with a mandatory photo.", ar: "لا. التطبيق عبارة عن زرّين كبيرين: تمّ ولم يتم، مع صورة إلزامية." },
+  "faq.a1": { en: "No. The labor app is two big buttons: Done and Not Done - with a mandatory photo.", ar: "لا. التطبيق عبارة عن زرّين كبيرين: تمّ ولم يتم، مع صورة إلزامية." },
   "faq.q2": { en: "Does it work offline on site?", ar: "هل يعمل دون إنترنت في الموقع؟" },
   "faq.a2": { en: "Yes. Tasks queue locally and sync the moment connection returns.", ar: "نعم. تُخزَّن المهام محلياً وتُزامَن فور عودة الاتصال." },
   "faq.q3": { en: "Can owners only see their buildings?", ar: "هل يرى المالك مبانيه فقط؟" },
@@ -126,11 +126,11 @@ export const dict: Dict = {
 
   // Product page
   "product.title": { en: "One platform. Every role.", ar: "منصة واحدة. كل الأدوار." },
-  "product.sub": { en: "From Super Admin to housemaster — each role gets exactly the screen they need.", ar: "من المسؤول الأعلى إلى العامل — كل دور يحصل تماماً على الشاشة التي يحتاجها." },
+  "product.sub": { en: "From Super Admin to housemaster - each role gets exactly the screen they need.", ar: "من المسؤول الأعلى إلى العامل - كل دور يحصل تماماً على الشاشة التي يحتاجها." },
 
   // Solutions page
   "sol.title": { en: "Solutions for every building portfolio", ar: "حلول لكل محفظة عقارية" },
-  "sol.sub": { en: "Whether you run three towers or three hundred — FacilityOS Arabia adapts.", ar: "سواء تدير ثلاثة أبراج أو ثلاثمئة — تتكيّف فاسيليتي أو إس مع احتياجك." },
+  "sol.sub": { en: "Whether you run three towers or three hundred - FacilityOS Arabia adapts.", ar: "سواء تدير ثلاثة أبراج أو ثلاثمئة - تتكيّف فاسيليتي أو إس مع احتياجك." },
 
   // About
   "about.title": { en: "Built by operators, for operators.", ar: "صُمّمت من قبل المشغّلين للمشغّلين." },
@@ -145,7 +145,7 @@ export const dict: Dict = {
   "contact.buildings": { en: "Number of buildings", ar: "عدد المباني" },
   "contact.message": { en: "How can we help?", ar: "كيف يمكننا المساعدة؟" },
   "contact.submit": { en: "Request demo", ar: "طلب العرض" },
-  "contact.sent": { en: "Thanks — we'll be in touch shortly.", ar: "شكراً — سنتواصل معك قريباً." },
+  "contact.sent": { en: "Thanks - we'll be in touch shortly.", ar: "شكراً - سنتواصل معك قريباً." },
 
   // Security page
   "sec.page.title": { en: "Security & Compliance", ar: "الأمان والامتثال" },

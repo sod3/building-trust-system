@@ -22,7 +22,7 @@ function ComplaintsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Complaints" subtitle="Every complaint is a ticket — with status, SLA, and an owner-visible audit trail." />
+      <PageHeader title="Complaints" subtitle="Every complaint is a ticket - with status, SLA, and an owner-visible audit trail." />
 
       <Card className="!p-3">
         <div className="flex flex-wrap items-center gap-2">

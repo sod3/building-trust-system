@@ -8,9 +8,9 @@ import { Shield, Users, Wrench, Eye, ClipboardCheck, Smartphone, MessageSquare, 
 export const Route = createFileRoute("/product")({
   head: () => ({
     meta: [
-      { title: "Product — FacilityOS Arabia" },
-      { name: "description", content: "Every role on FacilityOS Arabia: Admin, Owner, Supervisor, Labor and Tenant — one platform, six tailored experiences." },
-      { property: "og:title", content: "Product — FacilityOS Arabia" },
+      { title: "Product - FacilityOS Arabia" },
+      { name: "description", content: "Every role on FacilityOS Arabia: Admin, Owner, Supervisor, Labor and Tenant - one platform, six tailored experiences." },
+      { property: "og:title", content: "Product - FacilityOS Arabia" },
       { property: "og:description", content: "Six tailored experiences in one Arabic-first facility platform." },
     ],
   }),

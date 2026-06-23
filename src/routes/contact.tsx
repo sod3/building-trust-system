@@ -12,9 +12,9 @@ import { CheckCircle2, Mail, Phone, MapPin } from "lucide-react";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Book a Demo — FacilityOS Arabia" },
+      { title: "Book a Demo - FacilityOS Arabia" },
       { name: "description", content: "Request a demo of FacilityOS Arabia. We respond within one business day." },
-      { property: "og:title", content: "Book a Demo — FacilityOS Arabia" },
+      { property: "og:title", content: "Book a Demo - FacilityOS Arabia" },
       { property: "og:description", content: "Tell us about your portfolio." },
     ],
   }),

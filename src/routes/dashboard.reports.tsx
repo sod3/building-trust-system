@@ -39,7 +39,7 @@ function ReportsPage() {
       </div>
 
       <Card>
-        <SectionTitle title="Owner report preview — Riyadh Tower A · June 2026" action={<button className="inline-flex items-center gap-1.5 rounded-md bg-navy px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-navy/90"><Download className="h-3 w-3" />Download PDF</button>} />
+        <SectionTitle title="Owner report preview - Riyadh Tower A · June 2026" action={<button className="inline-flex items-center gap-1.5 rounded-md bg-navy px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-navy/90"><Download className="h-3 w-3" />Download PDF</button>} />
         <div className="overflow-hidden rounded-2xl border border-border bg-surface-2/40 p-6">
           <div className="flex flex-wrap items-end justify-between gap-3 border-b border-border pb-4">
             <div>
@@ -47,7 +47,7 @@ function ReportsPage() {
               <h2 className="font-display text-2xl font-semibold">{b.name}</h2>
               <p className="text-sm text-muted-foreground">{b.city} · {b.floors} floors · {b.units} units</p>
             </div>
-            <div className="text-right text-xs text-muted-foreground"><div>Report period</div><div className="font-medium text-foreground">01 — 30 June 2026</div></div>
+            <div className="text-right text-xs text-muted-foreground"><div>Report period</div><div className="font-medium text-foreground">01 - 30 June 2026</div></div>
           </div>
 
           <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -71,7 +71,7 @@ function ReportsPage() {
             <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-foreground">
               <li>Schedule preventive elevator maintenance every 2 months.</li>
               <li>Add cleaning round to staircase floors 14–18 (high traffic).</li>
-              <li>Replace lobby door rubber seals — small budget item.</li>
+              <li>Replace lobby door rubber seals - small budget item.</li>
             </ul>
           </div>
         </div>

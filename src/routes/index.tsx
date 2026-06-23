@@ -11,9 +11,9 @@ import ownerImg from "@/assets/owner-dashboard1.png";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "FacilityOS Arabia — Smart Building Operations Platform" },
+      { title: "FacilityOS Arabia - Smart Building Operations Platform" },
       { name: "description", content: "Arabic-first smart building ops: tasks, photo proof, supervisor approvals, tenant complaints, owner reports. Built for Saudi & Gulf." },
-      { property: "og:title", content: "FacilityOS Arabia — Smart Building Operations Platform" },
+      { property: "og:title", content: "FacilityOS Arabia - Smart Building Operations Platform" },
       { property: "og:description", content: "One platform for facility teams across Saudi Arabia and the Gulf." },
     ],
   }),

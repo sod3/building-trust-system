@@ -127,7 +127,7 @@ function MobileLabor() {
             <ul className="mt-3 space-y-2 text-sm">
               <Bullet>Big <b>DONE</b> & <b>NOT DONE</b> buttons</Bullet>
               <Bullet>Mandatory photo before submit</Bullet>
-              <Bullet>Works offline — syncs when online</Bullet>
+              <Bullet>Works offline - syncs when online</Bullet>
               <Bullet>Auto-captured: timestamp, user, building, GPS</Bullet>
               <Bullet>Arabic / English toggle</Bullet>
             </ul>
@@ -137,7 +137,7 @@ function MobileLabor() {
             <div className="mt-3 flex items-center justify-between rounded-xl border border-border bg-secondary/40 p-3">
               <div>
                 <div className="text-xs font-semibold">Network</div>
-                <div className="text-[11px] text-muted-foreground">{online ? "Connected — auto-sync active" : "Offline — tasks queued locally"}</div>
+                <div className="text-[11px] text-muted-foreground">{online ? "Connected - auto-sync active" : "Offline - tasks queued locally"}</div>
               </div>
               <button onClick={()=>setOnline(!online)} className="rounded-md border border-border bg-background px-3 py-1.5 text-xs hover:bg-secondary">
                 Simulate {online ? "offline" : "online"}

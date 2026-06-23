@@ -59,8 +59,8 @@ function StaffPage() {
                 <td className="px-4 py-3 text-muted-foreground capitalize">{u.role.replace("-"," ")}</td>
                 <td className="px-4 py-3 text-muted-foreground">{u.phone}</td>
                 <td className="px-4 py-3 text-muted-foreground">{u.buildings.map(id => buildings.find(b=>b.id===id)?.name.split(" ").slice(0,2).join(" ")).filter(Boolean).join(", ")}</td>
-                <td className="px-4 py-3 text-muted-foreground">{u.tasksDone ?? "—"}</td>
-                <td className="px-4 py-3 text-muted-foreground">{u.approvalRate ? `${u.approvalRate}%` : "—"}</td>
+                <td className="px-4 py-3 text-muted-foreground">{u.tasksDone ?? "-"}</td>
+                <td className="px-4 py-3 text-muted-foreground">{u.approvalRate ? `${u.approvalRate}%` : "-"}</td>
                 <td className="px-4 py-3 text-muted-foreground">{u.lastActive}</td>
                 <td className="px-4 py-3"><StatusPill status={u.status} /></td>
               </tr>

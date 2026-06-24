@@ -4,6 +4,7 @@ import { Plus, UserX } from "lucide-react";
 import { PageHeader, Card, StatusPill, ProgressBar, Modal, FormInput, FormSelect, Btn, Toast, EmptyState } from "@/components/dashboard/ui";
 import { useAuth } from "@/lib/auth-context";
 import { mockOwners, mockLabour, mockBuildings, type MockLabour } from "@/lib/mock-data";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard/owner/labour")({
   head: () => ({ meta: [{ title: "Labour — Owner Dashboard" }] }),
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/dashboard/owner/labour")({
 
 function OwnerLabour() {
   const { user } = useAuth();
+  const { t } = useLang();
   const owner = mockOwners.find(o => o.id === user?.ownerId) || mockOwners[0];
   const myBuildings = mockBuildings.filter(b => owner.buildingIds.includes(b.id));
   const [labour, setLabour] = useState<MockLabour[]>(mockLabour.filter(l => l.ownerId === owner.id));
@@ -44,11 +46,11 @@ function OwnerLabour() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="My Labour"
-        subtitle={`${labour.length} workers assigned to your buildings.`}
+        title={t("dashboard.owner.nav.labour", { fallback: "My Labour" })}
+        subtitle={t("owner.labour.subtitle", { count: labour.length, fallback: `${labour.length} workers assigned to your buildings.` })}
         actions={
           <Btn onClick={() => { setShowAdd(true); setForm({ name: "", phone: "", email: "", buildingId: "" }); }}>
-            <Plus className="h-4 w-4" /> Add Labour
+            <Plus className="h-4 w-4" /> {t("admin.labour.add", { fallback: "Add Labour" })}
           </Btn>
         }
       />
@@ -57,8 +59,8 @@ function OwnerLabour() {
         <Card>
           <EmptyState
             icon={<UserX className="h-6 w-6" />}
-            title="No labour assigned yet"
-            body="Add labour workers to your buildings to start tracking daily tasks."
+            title={t("owner.labour.empty_title", { fallback: "No labour assigned yet" })}
+            body={t("owner.labour.empty_desc", { fallback: "Add labour workers to your buildings to start tracking daily tasks." })}
           />
         </Card>
       ) : (
@@ -78,11 +80,11 @@ function OwnerLabour() {
 
               <div className="mt-4 space-y-2 text-xs">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Building</span>
+                  <span className="text-muted-foreground">{t("common.building", { fallback: "Building" })}</span>
                   <span className="font-medium">{l.buildingName}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Tasks today</span>
+                  <span className="text-muted-foreground">{t("admin.labour.tasks_today", { fallback: "Tasks today" })}</span>
                   <span className="font-semibold">{l.completedTasksToday}/{l.totalTasksToday}</span>
                 </div>
                 <ProgressBar
@@ -91,18 +93,18 @@ function OwnerLabour() {
                   color={l.completedTasksToday === l.totalTasksToday ? "emerald" : l.completedTasksToday > 0 ? "amber" : "rose"}
                 />
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Last active</span>
+                  <span className="text-muted-foreground">{t("owner.labour.last_active", { fallback: "Last active" })}</span>
                   <span>{l.lastSubmission}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Week performance</span>
+                  <span className="text-muted-foreground">{t("admin.labour.week_performance", { fallback: "Week performance" })}</span>
                   <span className="font-semibold text-emerald-700">{l.performanceWeek}%</span>
                 </div>
               </div>
 
               <div className="mt-4 flex gap-2">
                 <Btn size="sm" variant="outline" className="flex-1" onClick={() => showToast(`Viewing ${l.name}'s checklist (demo)`)}>
-                  View Checklist
+                  {t("admin.labour.view_checklist", { fallback: "View Checklist" })}
                 </Btn>
                 <Btn size="sm" variant="ghost" onClick={() => {
                   setLabour(prev => prev.filter(x => x.id !== l.id));
@@ -116,17 +118,17 @@ function OwnerLabour() {
         </div>
       )}
 
-      <Modal open={showAdd} onClose={() => setShowAdd(false)} title="Add Labour">
+      <Modal open={showAdd} onClose={() => setShowAdd(false)} title={t("admin.labour.add", { fallback: "Add Labour" })}>
         <div className="space-y-4">
-          <FormInput label="Full Name" value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Ali Hassan" required />
-          <FormInput label="Phone" value={form.phone} onChange={v => setForm(f => ({ ...f, phone: v }))} placeholder="+966 53 000 0000" required />
-          <FormInput label="Email" value={form.email} onChange={v => setForm(f => ({ ...f, email: v }))} placeholder="ali@example.com" type="email" />
-          <FormSelect label="Assign to Building" value={form.buildingId} onChange={v => setForm(f => ({ ...f, buildingId: v }))}
+          <FormInput label={t("common.full_name", { fallback: "Full Name" })} value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Ali Hassan" required />
+          <FormInput label={t("common.phone", { fallback: "Phone" })} value={form.phone} onChange={v => setForm(f => ({ ...f, phone: v }))} placeholder="+966 53 000 0000" required />
+          <FormInput label={t("common.email", { fallback: "Email" })} value={form.email} onChange={v => setForm(f => ({ ...f, email: v }))} placeholder="ali@example.com" type="email" />
+          <FormSelect label={t("admin.labour.assign_building", { fallback: "Assign to Building" })} value={form.buildingId} onChange={v => setForm(f => ({ ...f, buildingId: v }))}
             options={[{ value: "", label: "— Select Building —" }, ...myBuildings.map(b => ({ value: b.id, label: b.name }))]}
           />
           <div className="flex justify-end gap-2 pt-2">
-            <Btn variant="secondary" onClick={() => setShowAdd(false)}>Cancel</Btn>
-            <Btn onClick={handleAdd} disabled={!form.name || !form.phone}>Add Labour</Btn>
+            <Btn variant="secondary" onClick={() => setShowAdd(false)}>{t("common.cancel", { fallback: "Cancel" })}</Btn>
+            <Btn onClick={handleAdd} disabled={!form.name || !form.phone}>{t("admin.labour.add", { fallback: "Add Labour" })}</Btn>
           </div>
         </div>
       </Modal>

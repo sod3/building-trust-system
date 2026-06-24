@@ -5,6 +5,7 @@ import {
   PageHeader, StatusPill, Card, Modal, FormInput, FormSelect, Btn, Toast, EmptyState,
 } from "@/components/dashboard/ui";
 import { mockOwners, mockBuildings, pricingPlans, type MockOwner, type PlanType, type OwnerStatus } from "@/lib/mock-data";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard/admin/owners")({
   head: () => ({ meta: [{ title: "Owners — Admin Dashboard" }] }),
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/dashboard/admin/owners")({
 });
 
 function AdminOwners() {
+  const { t, lang } = useLang();
   const [owners, setOwners] = useState<MockOwner[]>(mockOwners);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<"All" | OwnerStatus>("All");
@@ -83,11 +85,11 @@ function AdminOwners() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Owners"
-        subtitle="Manage all building owner accounts and their subscriptions."
+        title={t("admin.owners.title", { fallback: "Owners" })}
+        subtitle={t("admin.owners.subtitle", { fallback: "Manage all building owner accounts and their subscriptions." })}
         actions={
           <Btn onClick={() => { setShowAdd(true); setForm({ name: "", email: "", phone: "", company: "", plan: "Starter", status: "Active" }); }}>
-            <Plus className="h-4 w-4" /> Add Owner
+            <Plus className="h-4 w-4" /> {t("admin.owners.add", { fallback: "Add Owner" })}
           </Btn>
         }
       />
@@ -96,12 +98,12 @@ function AdminOwners() {
       <Card>
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-48">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
-              placeholder="Search owners by name or email…"
+              placeholder={t("admin.owners.search", { fallback: "Search owners by name or email…" })}
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="h-9 w-full rounded-xl border border-border bg-background pl-9 pr-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition"
+              className="h-9 w-full rounded-xl border border-border bg-background px-9 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -115,26 +117,26 @@ function AdminOwners() {
               </button>
             ))}
           </div>
-          <div className="text-xs text-muted-foreground ml-auto">{filtered.length} owners</div>
+          <div className="text-xs text-muted-foreground ml-auto">{filtered.length} {t("common.owners", { fallback: "owners" })}</div>
         </div>
       </Card>
 
       {/* Owners table */}
       {filtered.length === 0 ? (
-        <Card><EmptyState icon={<Search className="h-5 w-5" />} title="No matching records found" body="Try adjusting your search or filter." /></Card>
+        <Card><EmptyState icon={<Search className="h-5 w-5" />} title={t("common.no_records", { fallback: "No matching records found" })} body={t("common.no_records_body", { fallback: "Try adjusting your search or filter." })} /></Card>
       ) : (
         <Card>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="text-left text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border">
+              <thead className="text-start text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border">
                 <tr>
-                  <th className="pb-3">Owner</th>
-                  <th className="pb-3">Phone</th>
-                  <th className="pb-3">Plan</th>
-                  <th className="pb-3">Status</th>
-                  <th className="pb-3">Buildings</th>
-                  <th className="pb-3">Monthly</th>
-                  <th className="pb-3">Actions</th>
+                  <th className="pb-3">{t("common.owner", { fallback: "Owner" })}</th>
+                  <th className="pb-3">{t("common.phone", { fallback: "Phone" })}</th>
+                  <th className="pb-3">{t("common.plan", { fallback: "Plan" })}</th>
+                  <th className="pb-3">{t("common.status", { fallback: "Status" })}</th>
+                  <th className="pb-3">{t("common.buildings", { fallback: "Buildings" })}</th>
+                  <th className="pb-3">{t("common.monthly", { fallback: "Monthly" })}</th>
+                  <th className="pb-3">{t("common.actions", { fallback: "Actions" })}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -168,9 +170,9 @@ function AdminOwners() {
                     <td className="py-3.5">
                       <div className="flex items-center gap-1.5">
                         <Btn size="sm" variant="outline" onClick={() => handleEdit(o)}>
-                          <Edit className="h-3.5 w-3.5" /> Edit
+                          <Edit className="h-3.5 w-3.5" /> {t("common.edit", { fallback: "Edit" })}
                         </Btn>
-                        <Btn size="sm" variant="ghost" onClick={() => showToast("Password reset email sent (demo)")}>
+                        <Btn size="sm" variant="ghost" onClick={() => showToast(t("admin.owners.reset_sent", { fallback: "Password reset email sent" }))}>
                           <RotateCcw className="h-3.5 w-3.5" />
                         </Btn>
                       </div>
@@ -184,41 +186,57 @@ function AdminOwners() {
       )}
 
       {/* Add Owner Modal */}
-      <Modal open={showAdd} onClose={() => setShowAdd(false)} title="Add New Owner">
+      <Modal open={showAdd} onClose={() => setShowAdd(false)} title={t("admin.owners.add", { fallback: "Add New Owner" })}>
         <div className="space-y-4">
-          <FormInput label="Full Name" value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Ahmed Al-Farsi" required />
-          <FormInput label="Email" value={form.email} onChange={v => setForm(f => ({ ...f, email: v }))} placeholder="owner@example.com" type="email" required />
-          <FormInput label="Phone" value={form.phone} onChange={v => setForm(f => ({ ...f, phone: v }))} placeholder="+966 55 000 0000" />
-          <FormInput label="Company" value={form.company} onChange={v => setForm(f => ({ ...f, company: v }))} placeholder="Tower Group Ltd" />
-          <FormSelect label="Plan" value={form.plan} onChange={v => setForm(f => ({ ...f, plan: v as PlanType }))}
-            options={[{ value: "Starter", label: "Starter — SAR 299/mo" }, { value: "Professional", label: "Professional — SAR 899/mo" }, { value: "Enterprise", label: "Enterprise — SAR 1,999/mo" }]}
+          <FormInput label={t("common.full_name", { fallback: "Full Name" })} value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Ahmed Al-Farsi" required />
+          <FormInput label={t("common.email", { fallback: "Email" })} value={form.email} onChange={v => setForm(f => ({ ...f, email: v }))} placeholder="owner@example.com" type="email" required />
+          <FormInput label={t("common.phone", { fallback: "Phone" })} value={form.phone} onChange={v => setForm(f => ({ ...f, phone: v }))} placeholder="+966 55 000 0000" />
+          <FormInput label={t("common.company", { fallback: "Company" })} value={form.company} onChange={v => setForm(f => ({ ...f, company: v }))} placeholder="Tower Group Ltd" />
+          <FormSelect label={t("common.plan", { fallback: "Plan" })} value={form.plan} onChange={v => setForm(f => ({ ...f, plan: v as PlanType }))}
+            options={[
+              { value: "Starter", label: t("plan.starter", { fallback: "Starter — SAR 299/mo" }) },
+              { value: "Professional", label: t("plan.professional", { fallback: "Professional — SAR 899/mo" }) },
+              { value: "Enterprise", label: t("plan.enterprise", { fallback: "Enterprise — SAR 1,999/mo" }) }
+            ]}
           />
-          <FormSelect label="Status" value={form.status} onChange={v => setForm(f => ({ ...f, status: v as OwnerStatus }))}
-            options={[{ value: "Active", label: "Active" }, { value: "Trial", label: "Trial" }, { value: "Suspended", label: "Suspended" }]}
+          <FormSelect label={t("common.status", { fallback: "Status" })} value={form.status} onChange={v => setForm(f => ({ ...f, status: v as OwnerStatus }))}
+            options={[
+              { value: "Active", label: t("status.active", { fallback: "Active" }) },
+              { value: "Trial", label: t("status.trial", { fallback: "Trial" }) },
+              { value: "Suspended", label: t("status.suspended", { fallback: "Suspended" }) }
+            ]}
           />
           <div className="flex items-center justify-end gap-2 pt-2">
-            <Btn variant="secondary" onClick={() => setShowAdd(false)}>Cancel</Btn>
-            <Btn onClick={handleAdd} disabled={!form.name || !form.email}>Add Owner</Btn>
+            <Btn variant="secondary" onClick={() => setShowAdd(false)}>{t("common.cancel", { fallback: "Cancel" })}</Btn>
+            <Btn onClick={handleAdd} disabled={!form.name || !form.email}>{t("admin.owners.add", { fallback: "Add Owner" })}</Btn>
           </div>
         </div>
       </Modal>
 
       {/* Edit Owner Modal */}
-      <Modal open={!!editOwner} onClose={() => setEditOwner(null)} title="Edit Owner">
+      <Modal open={!!editOwner} onClose={() => setEditOwner(null)} title={t("admin.owners.edit", { fallback: "Edit Owner" })}>
         <div className="space-y-4">
-          <FormInput label="Full Name" value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} required />
-          <FormInput label="Email" value={form.email} onChange={v => setForm(f => ({ ...f, email: v }))} type="email" required />
-          <FormInput label="Phone" value={form.phone} onChange={v => setForm(f => ({ ...f, phone: v }))} />
-          <FormInput label="Company" value={form.company} onChange={v => setForm(f => ({ ...f, company: v }))} />
-          <FormSelect label="Plan" value={form.plan} onChange={v => setForm(f => ({ ...f, plan: v as PlanType }))}
-            options={[{ value: "Starter", label: "Starter — SAR 299/mo" }, { value: "Professional", label: "Professional — SAR 899/mo" }, { value: "Enterprise", label: "Enterprise — SAR 1,999/mo" }]}
+          <FormInput label={t("common.full_name", { fallback: "Full Name" })} value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} required />
+          <FormInput label={t("common.email", { fallback: "Email" })} value={form.email} onChange={v => setForm(f => ({ ...f, email: v }))} type="email" required />
+          <FormInput label={t("common.phone", { fallback: "Phone" })} value={form.phone} onChange={v => setForm(f => ({ ...f, phone: v }))} />
+          <FormInput label={t("common.company", { fallback: "Company" })} value={form.company} onChange={v => setForm(f => ({ ...f, company: v }))} />
+          <FormSelect label={t("common.plan", { fallback: "Plan" })} value={form.plan} onChange={v => setForm(f => ({ ...f, plan: v as PlanType }))}
+            options={[
+              { value: "Starter", label: t("plan.starter", { fallback: "Starter — SAR 299/mo" }) },
+              { value: "Professional", label: t("plan.professional", { fallback: "Professional — SAR 899/mo" }) },
+              { value: "Enterprise", label: t("plan.enterprise", { fallback: "Enterprise — SAR 1,999/mo" }) }
+            ]}
           />
-          <FormSelect label="Status" value={form.status} onChange={v => setForm(f => ({ ...f, status: v as OwnerStatus }))}
-            options={[{ value: "Active", label: "Active" }, { value: "Trial", label: "Trial" }, { value: "Suspended", label: "Suspended" }]}
+          <FormSelect label={t("common.status", { fallback: "Status" })} value={form.status} onChange={v => setForm(f => ({ ...f, status: v as OwnerStatus }))}
+            options={[
+              { value: "Active", label: t("status.active", { fallback: "Active" }) },
+              { value: "Trial", label: t("status.trial", { fallback: "Trial" }) },
+              { value: "Suspended", label: t("status.suspended", { fallback: "Suspended" }) }
+            ]}
           />
           <div className="flex items-center justify-end gap-2 pt-2">
-            <Btn variant="secondary" onClick={() => setEditOwner(null)}>Cancel</Btn>
-            <Btn onClick={handleSaveEdit}>Save Changes</Btn>
+            <Btn variant="secondary" onClick={() => setEditOwner(null)}>{t("common.cancel", { fallback: "Cancel" })}</Btn>
+            <Btn onClick={handleSaveEdit}>{t("common.save", { fallback: "Save Changes" })}</Btn>
           </div>
         </div>
       </Modal>

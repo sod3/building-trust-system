@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Building2, Eye, EyeOff, ArrowRight, ShieldCheck, Lock, CheckCircle2, X } from "lucide-react";
 import { useAuth, demoCredentials } from "@/lib/auth-context";
 import type { AppRole } from "@/lib/mock-data";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -15,6 +16,7 @@ export const Route = createFileRoute("/login")({
 });
 
 function LoginPage() {
+  const { t } = useLang();
   const { login, user } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -129,9 +131,9 @@ function LoginPage() {
       <div className="flex-1 flex items-center justify-center p-6 bg-background relative">
         {/* Success Toast Overlay */}
         {successToast && (
-          <div className="absolute top-6 right-6 z-50 bg-green-50 text-green-700 p-4 rounded-xl shadow-lg border border-green-200 flex items-center gap-3 animate-in slide-in-from-top-4">
+          <div className="absolute top-6 end-6 z-50 bg-green-50 text-green-700 p-4 rounded-xl shadow-lg border border-green-200 flex items-center gap-3 animate-in slide-in-from-top-4">
             <CheckCircle2 className="h-5 w-5" />
-            <span className="font-medium text-sm">Login successful! Redirecting...</span>
+            <span className="font-medium text-sm">...</span>
           </div>
         )}
 
@@ -141,13 +143,13 @@ function LoginPage() {
             <div className="bg-background rounded-2xl shadow-xl w-full max-w-sm p-6 relative border border-border">
               <button 
                 onClick={() => setShowForgotModal(false)}
-                className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"
+                className="absolute top-4 end-4 text-muted-foreground hover:text-foreground"
               >
                 <X className="h-5 w-5" />
               </button>
-              <h3 className="text-xl font-display font-semibold mb-2">Reset Password</h3>
+              <h3 className="text-xl font-display font-semibold mb-2">{t("login.forgot")}</h3>
               <p className="text-sm text-muted-foreground mb-6">
-                Password reset is not connected yet in this frontend demo. Please contact the platform admin.
+                {t("login.reset_msg")}
               </p>
               <button 
                 onClick={() => setShowForgotModal(false)}
@@ -169,13 +171,13 @@ function LoginPage() {
           </div>
 
           <div className="mb-8">
-            <h2 className="font-display text-2xl font-semibold text-foreground">Sign in to your dashboard</h2>
-            <p className="mt-2 text-sm text-muted-foreground">Enter your credentials to access your role-based dashboard.</p>
+            <h2 className="font-display text-2xl font-semibold text-foreground">{t("login.title")}</h2>
+            <p className="mt-2 text-sm text-muted-foreground">{t("login.welcome")}</p>
           </div>
 
           {/* Quick demo buttons */}
           <div className="mb-6">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Quick Demo Access</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">{t("login.demo_creds")}</p>
             <div className="grid grid-cols-3 gap-2">
               {(["admin", "owner", "labour"] as AppRole[]).map(role => (
                 <button
@@ -192,7 +194,7 @@ function LoginPage() {
                 >
                   <div className={`text-xs font-bold uppercase tracking-wider ${
                     role === "admin" ? "text-navy" : role === "owner" ? "text-accent" : "text-emerald-700"
-                  }`}>{demoCredentials[role].label}</div>
+                  }`}>{t(`role.${role}`)}</div>
                   <div className="mt-0.5 text-[10px] text-muted-foreground leading-tight truncate">{demoCredentials[role].email}</div>
                   <div className="mt-0.5 text-[10px] text-muted-foreground leading-tight">{demoCredentials[role].password}</div>
                 </button>
@@ -210,7 +212,7 @@ function LoginPage() {
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Email address</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{t("common.email")}</label>
               <input
                 type="email"
                 value={email}
@@ -221,7 +223,7 @@ function LoginPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Password</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{t("login.password")}</label>
               <div className="relative">
                 <input
                   type={showPw ? "text" : "password"}
@@ -229,12 +231,12 @@ function LoginPage() {
                   onChange={e => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
-                  className="h-11 w-full rounded-xl border border-border bg-background px-4 pr-10 text-sm outline-none placeholder:text-muted-foreground/60 focus:border-accent focus:ring-2 focus:ring-accent/20 transition"
+                  className="h-11 w-full rounded-xl border border-border bg-background px-4 pe-10 text-sm outline-none placeholder:text-muted-foreground/60 focus:border-accent focus:ring-2 focus:ring-accent/20 transition"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition"
+                  className="absolute end-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition"
                 >
                   {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -249,20 +251,20 @@ function LoginPage() {
                   checked={rememberMe}
                   onChange={e => setRememberMe(e.target.checked)}
                 />
-                <span className="text-sm text-muted-foreground">Remember me</span>
+                <span className="text-sm text-muted-foreground">{t("login.remember")}</span>
               </label>
               <button 
                 type="button" 
                 onClick={() => setShowForgotModal(true)}
                 className="text-sm font-medium text-accent hover:underline"
               >
-                Forgot password?
+                {t("login.forgot")}
               </button>
             </div>
 
             {error && (
               <div className="rounded-xl bg-rose-50 border border-rose-200 p-3 text-sm text-rose-700">
-                {error}
+                {t("login.invalid")}
               </div>
             )}
 
@@ -274,7 +276,7 @@ function LoginPage() {
               {loading ? (
                 <div className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
               ) : (
-                <>Sign In <ArrowRight className="h-4 w-4" /></>
+                <>{t("login.title")} <ArrowRight className="h-4 w-4 rtl:rotate-180" /></>
               )}
             </button>
           </form>
@@ -284,29 +286,29 @@ function LoginPage() {
             <div className="flex items-start gap-2.5 rounded-xl bg-secondary/60 border border-border p-3">
               <Lock className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
               <p className="text-xs text-muted-foreground leading-relaxed">
-                <strong className="text-foreground">Admin:</strong> Restricted to platform management only.
+                <strong className="text-foreground">{t("role.admin")}:</strong> {t("login.admin_notice")}
               </p>
             </div>
             <div className="flex items-start gap-2.5 rounded-xl bg-accent/5 border border-accent/10 p-3">
               <Building2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
               <p className="text-xs text-muted-foreground leading-relaxed">
-                <strong className="text-foreground">Owner:</strong> Available after subscription. <Link to="/pricing" className="text-accent hover:underline">View pricing</Link>.
+                <strong className="text-foreground">{t("role.owner")}:</strong> {t("login.owner_notice")}
               </p>
             </div>
             <div className="flex items-start gap-2.5 rounded-xl bg-emerald-50 border border-emerald-100 p-3">
               <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
               <p className="text-xs text-muted-foreground leading-relaxed">
-                <strong className="text-foreground">Labour:</strong> Credentials provided by building owner.
+                <strong className="text-foreground">{t("role.labour")}:</strong> {t("login.labour_notice")}
               </p>
             </div>
           </div>
 
           <div className="mt-8 flex justify-between text-sm">
-            <Link to="/" className="text-muted-foreground hover:text-foreground transition">
-              ← Back to home
+            <Link to="/" className="text-muted-foreground hover:text-foreground transition flex items-center gap-1">
+              <ArrowRight className="h-4 w-4 rotate-180 rtl:rotate-0" /> {t("login.back_home")}
             </Link>
-            <Link to="/pricing" className="text-muted-foreground hover:text-foreground transition">
-              View Pricing →
+            <Link to="/pricing" className="text-muted-foreground hover:text-foreground transition flex items-center gap-1">
+              {t("login.back_pricing")} <ArrowRight className="h-4 w-4 rtl:rotate-180" />
             </Link>
           </div>
         </div>

@@ -13,6 +13,7 @@ import {
 import {
   AreaChart, Area, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid,
 } from "recharts";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard/admin/")({
   head: () => ({ meta: [{ title: "Admin Overview — FacilityOS Arabia" }] }),
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/dashboard/admin/")({
 });
 
 function AdminOverview() {
+  const { t } = useLang();
   const todayReports = mockReports.filter(r => r.date === "Jun 24, 2026");
   const recentOwners = mockOwners.slice(0, 3);
   const recentReports = mockReports.slice(0, 5);
@@ -28,35 +30,35 @@ function AdminOverview() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Platform Control Center</div>
+        <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t("dashboard.admin.center", { fallback: "Platform Control Center" })}</div>
         <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-          Admin Overview
+          {t("dashboard.admin.nav.overview", { fallback: "Admin Overview" })}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Manage owners, buildings, subscriptions, labour activity, and daily verification reports from one place.
+          {t("dashboard.admin.desc", { fallback: "Manage owners, buildings, subscriptions, labour activity, and daily verification reports from one place." })}
         </p>
       </div>
 
       {/* KPI Cards - Row 1 */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <Kpi accent="navy" label="Monthly Revenue" value={`SAR ${adminKpis.monthlyRevenue.toLocaleString()}`} sub="3 active subscriptions" icon={<Wallet className="h-4 w-4" />} delta="+SAR 1,999 this month" tone="up" />
-        <Kpi accent="teal" label="Total Buildings" value={adminKpis.totalBuildings} sub="Across all owners" icon={<Building2 className="h-4 w-4" />} delta="+1 this month" tone="up" />
-        <Kpi accent="emerald" label="Today Submitted" value={adminKpis.todaySubmittedReports} sub={`${adminKpis.pendingReports} pending`} icon={<CheckCircle2 className="h-4 w-4" />} />
-        <Kpi accent="gold" label="Completion Rate" value={`${adminKpis.completionRate}%`} sub="Platform average today" icon={<TrendingUp className="h-4 w-4" />} />
+        <Kpi accent="navy" label={t("admin.kpi.revenue", { fallback: "Monthly Revenue" })} value={`SAR ${adminKpis.monthlyRevenue.toLocaleString()}`} sub={t("admin.kpi.revenue.sub", { fallback: "3 active subscriptions" })} icon={<Wallet className="h-4 w-4" />} delta={t("admin.kpi.revenue.delta", { fallback: "+SAR 1,999 this month" })} tone="up" />
+        <Kpi accent="teal" label={t("admin.kpi.buildings", { fallback: "Total Buildings" })} value={adminKpis.totalBuildings} sub={t("admin.kpi.buildings.sub", { fallback: "Across all owners" })} icon={<Building2 className="h-4 w-4" />} delta={t("admin.kpi.buildings.delta", { fallback: "+1 this month" })} tone="up" />
+        <Kpi accent="emerald" label={t("admin.kpi.today_submitted", { fallback: "Today Submitted" })} value={adminKpis.todaySubmittedReports} sub={`${adminKpis.pendingReports} ${t("common.pending", { fallback: "pending" })}`} icon={<CheckCircle2 className="h-4 w-4" />} />
+        <Kpi accent="gold" label={t("admin.kpi.completion", { fallback: "Completion Rate" })} value={`${adminKpis.completionRate}%`} sub={t("admin.kpi.completion.sub", { fallback: "Platform average today" })} icon={<TrendingUp className="h-4 w-4" />} />
       </div>
 
       {/* KPI Cards - Row 2 */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Kpi label="Total Owners" value={adminKpis.totalOwners} icon={<Users className="h-4 w-4" />} sub="2 active, 1 trial" />
-        <Kpi label="Active Subscriptions" value={adminKpis.activeSubscriptions} icon={<CheckCircle2 className="h-4 w-4" />} sub="Paying customers" />
-        <Kpi label="Total Labour" value={adminKpis.totalLabour} icon={<Users className="h-4 w-4" />} sub="Across 5 buildings" />
-        <Kpi label="Missed Reports" value={adminKpis.missedReports} icon={<AlertTriangle className="h-4 w-4" />} sub="Today, needs attention" delta="1 building unassigned" tone="down" />
+        <Kpi label={t("admin.kpi.owners", { fallback: "Total Owners" })} value={adminKpis.totalOwners} icon={<Users className="h-4 w-4" />} sub={t("admin.kpi.owners.sub", { fallback: "2 active, 1 trial" })} />
+        <Kpi label={t("admin.kpi.subs", { fallback: "Active Subscriptions" })} value={adminKpis.activeSubscriptions} icon={<CheckCircle2 className="h-4 w-4" />} sub={t("admin.kpi.subs.sub", { fallback: "Paying customers" })} />
+        <Kpi label={t("admin.kpi.labour", { fallback: "Total Labour" })} value={adminKpis.totalLabour} icon={<Users className="h-4 w-4" />} sub={t("admin.kpi.labour.sub", { fallback: "Across 5 buildings" })} />
+        <Kpi label={t("admin.kpi.missed", { fallback: "Missed Reports" })} value={adminKpis.missedReports} icon={<AlertTriangle className="h-4 w-4" />} sub={t("admin.kpi.missed.sub", { fallback: "Today, needs attention" })} delta={t("admin.kpi.missed.delta", { fallback: "1 building unassigned" })} tone="down" />
       </div>
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
-          <SectionTitle title="Monthly Revenue (SAR)" action={<span className="text-xs text-muted-foreground">Last 6 months</span>} />
+          <SectionTitle title={t("admin.chart.revenue", { fallback: "Monthly Revenue (SAR)" })} action={<span className="text-xs text-muted-foreground">{t("admin.chart.last_6", { fallback: "Last 6 months" })}</span>} />
           <div className="h-56">
             <ResponsiveContainer>
               <AreaChart data={revenueChart} margin={{ left: -10, right: 4, top: 8, bottom: 0 }}>
@@ -77,7 +79,7 @@ function AdminOverview() {
         </Card>
 
         <Card>
-          <SectionTitle title="Daily Completion Rate %" action={<span className="text-xs text-emerald-600">↑ improving</span>} />
+          <SectionTitle title={t("admin.chart.completion", { fallback: "Daily Completion Rate %" })} action={<span className="text-xs text-emerald-600">↑ {t("admin.chart.improving", { fallback: "improving" })}</span>} />
           <div className="h-56">
             <ResponsiveContainer>
               <BarChart data={completionChart} margin={{ left: -20, right: 4, top: 8, bottom: 0 }}>
@@ -96,8 +98,8 @@ function AdminOverview() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <SectionTitle
-            title="Building Status Today"
-            action={<span className="text-xs text-muted-foreground">{mockBuildings.length} buildings</span>}
+            title={t("admin.bstatus.title", { fallback: "Building Status Today" })}
+            action={<span className="text-xs text-muted-foreground">{mockBuildings.length} {t("common.buildings", { fallback: "buildings" })}</span>}
           />
           <div className="space-y-3">
             {mockBuildings.map(b => (
@@ -110,7 +112,7 @@ function AdminOverview() {
                     <ProgressBar value={b.completionToday} color={b.completionToday >= 80 ? "emerald" : b.completionToday >= 50 ? "amber" : "rose"} />
                   </div>
                 </div>
-                <div className="shrink-0 text-right">
+                <div className="shrink-0 text-end">
                   <div className="text-sm font-semibold">{b.completionToday}%</div>
                   <div className="text-xs text-muted-foreground">{b.doneTasksToday}/{b.totalTasksToday}</div>
                   <StatusPill status={b.status} />
@@ -123,7 +125,7 @@ function AdminOverview() {
         <div className="space-y-4">
           {/* Today's Labour Summary */}
           <Card>
-            <SectionTitle title="Labour Activity Today" />
+            <SectionTitle title={t("admin.labour_activity", { fallback: "Labour Activity Today" })} />
             <div className="space-y-2.5">
               {mockLabour.map(l => (
                 <div key={l.id} className="flex items-center gap-3">
@@ -142,7 +144,7 @@ function AdminOverview() {
 
           {/* Subscription summary */}
           <Card>
-            <SectionTitle title="Subscriptions" />
+            <SectionTitle title={t("admin.subs.title", { fallback: "Subscriptions" })} />
             <div className="space-y-2">
               {[
                 { label: "Starter (SAR 299)", count: mockSubscriptions.plans.starter, color: "bg-sky-400" },
@@ -156,7 +158,7 @@ function AdminOverview() {
                 </div>
               ))}
               <div className="mt-3 border-t border-border pt-3 flex items-center justify-between">
-                <span className="text-xs text-muted-foreground font-medium">Total MRR</span>
+                <span className="text-xs text-muted-foreground font-medium">{t("admin.subs.mrr", { fallback: "Total MRR" })}</span>
                 <span className="font-display text-base font-semibold text-foreground">SAR {mockSubscriptions.totalMRR.toLocaleString()}</span>
               </div>
             </div>
@@ -167,19 +169,19 @@ function AdminOverview() {
       {/* Recent Reports */}
       <Card>
         <SectionTitle
-          title="Recent Daily Reports"
-          action={<a href="/dashboard/admin/reports" className="text-xs text-accent hover:underline">View all</a>}
+          title={t("admin.recent.reports", { fallback: "Recent Daily Reports" })}
+          action={<a href="/dashboard/admin/reports" className="text-xs text-accent hover:underline">{t("common.view_all", { fallback: "View all" })}</a>}
         />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="text-left text-[11px] uppercase tracking-wider text-muted-foreground">
+            <thead className="text-start text-[11px] uppercase tracking-wider text-muted-foreground">
               <tr>
-                <th className="pb-2">Building</th>
-                <th className="pb-2">Labour</th>
-                <th className="pb-2">Owner</th>
-                <th className="pb-2">Tasks</th>
-                <th className="pb-2">Submitted</th>
-                <th className="pb-2">Status</th>
+                <th className="pb-2">{t("common.building", { fallback: "Building" })}</th>
+                <th className="pb-2">{t("common.labour", { fallback: "Labour" })}</th>
+                <th className="pb-2">{t("common.owner", { fallback: "Owner" })}</th>
+                <th className="pb-2">{t("common.tasks", { fallback: "Tasks" })}</th>
+                <th className="pb-2">{t("common.submitted", { fallback: "Submitted" })}</th>
+                <th className="pb-2">{t("common.status", { fallback: "Status" })}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -200,7 +202,7 @@ function AdminOverview() {
 
       {/* Recent Owners */}
       <Card>
-        <SectionTitle title="Active Owners" action={<a href="/dashboard/admin/owners" className="text-xs text-accent hover:underline">View all</a>} />
+        <SectionTitle title={t("admin.recent.owners", { fallback: "Active Owners" })} action={<a href="/dashboard/admin/owners" className="text-xs text-accent hover:underline">{t("common.view_all", { fallback: "View all" })}</a>} />
         <div className="grid gap-4 sm:grid-cols-3">
           {recentOwners.map(o => (
             <div key={o.id} className="rounded-xl border border-border p-4 hover:bg-secondary/20 transition">
@@ -213,11 +215,11 @@ function AdminOverview() {
               </div>
               <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
                 <div className="rounded-lg bg-secondary px-2 py-1.5">
-                  <div className="text-muted-foreground">Plan</div>
-                  <div className="font-semibold">{o.plan}</div>
+                  <div className="text-muted-foreground">{t("common.plan", { fallback: "Plan" })}</div>
+                  <div className="font-semibold">{t(`pricing.plan.${o.plan.toLowerCase()}`, { fallback: o.plan })}</div>
                 </div>
                 <div className="rounded-lg bg-secondary px-2 py-1.5">
-                  <div className="text-muted-foreground">Buildings</div>
+                  <div className="text-muted-foreground">{t("common.buildings", { fallback: "Buildings" })}</div>
                   <div className="font-semibold">{o.buildingIds.length}</div>
                 </div>
               </div>

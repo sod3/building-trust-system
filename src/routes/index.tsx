@@ -49,11 +49,11 @@ function Home() {
             </span>
 
             <h1 className="mt-8 text-balance font-display text-5xl font-semibold leading-[1.05] tracking-tighter sm:text-6xl lg:text-7xl drop-shadow-2xl">
-              Simple Daily Building Operations, Verified by Labour Checklists
+              {t("home.hero.title", { fallback: "Simple Daily Building Operations, Verified by Labour Checklists" })}
             </h1>
 
             <p className="mt-6 max-w-xl text-balance text-lg leading-relaxed text-white/90 drop-shadow-md">
-              Give building owners a clear dashboard to assign daily tasks, track labour work, and receive daily proof that cleaning, maintenance, elevator, water, lights, and security checks are completed.
+              {t("home.hero.subtitle", { fallback: "Give building owners a clear dashboard to assign daily tasks, track labour work, and receive daily proof that cleaning, maintenance, elevator, water, lights, and security checks are completed." })}
             </p>
 
             <div className="mt-10 flex flex-col sm:flex-row items-center gap-4">
@@ -63,7 +63,7 @@ function Home() {
                 className="w-full sm:w-auto bg-white text-navy hover:bg-white/95 active:scale-[0.985] transition-all duration-200 shadow-xl shadow-black/30 font-semibold"
               >
                 <Link to="/pricing">
-                  Get Owner Dashboard Access
+                  {t("pricing.btn.get_owner")}
                   <ArrowRight className="ms-2 h-4 w-4 rtl:rotate-180" />
                 </Link>
               </Button>
@@ -74,7 +74,7 @@ function Home() {
                 variant="outline"
                 className="w-full sm:w-auto border-white/30 bg-white/10 text-white hover:bg-white/15 hover:border-white/50 backdrop-blur-md transition-all duration-200"
               >
-                <Link to="/login">View Dashboard Demo</Link>
+                <Link to="/login">{t("product.btn.demo")}</Link>
               </Button>
             </div>
 
@@ -93,8 +93,8 @@ function Home() {
       {/* HOW IT WORKS */}
       <section className="border-b border-border bg-secondary/30">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <p className="text-xs font-semibold uppercase tracking-widest text-accent">Simple Workflow</p>
-          <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">How It Works</h2>
+          <p className="text-xs font-semibold uppercase tracking-widest text-accent">{t("home.workflow.kicker", { fallback: "Simple Workflow" })}</p>
+          <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">{t("product.how_it_works")}</h2>
 
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[
@@ -121,30 +121,30 @@ function Home() {
       <section id="features" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-accent">Platform</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-accent">{t("home.platform.kicker", { fallback: "Platform" })}</p>
             <h2 className="mt-2 max-w-2xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">
-              One Simple Platform. Three Powerful Dashboards.
+              {t("product.hero.title")}
             </h2>
           </div>
           <Link to="/product" className="inline-flex items-center gap-1 text-sm font-medium text-accent hover:text-navy">
-            Explore the platform <ArrowUpRight className="h-4 w-4" />
+            {t("home.platform.explore", { fallback: "Explore the platform" })} <ArrowUpRight className="h-4 w-4 rtl:-scale-x-100" />
           </Link>
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Admin */}
           <BentoCard className="bg-navy text-primary-foreground border-transparent flex flex-col">
-            <BentoHeader icon={<LayoutDashboard />} title="Admin Dashboard" body="For platform owner/client/developer to manage owners, buildings, earnings, reports, and system activity." dark />
+            <BentoHeader icon={<LayoutDashboard />} title={t("product.admin.title")} body={t("dashboard.admin.desc")} dark />
           </BentoCard>
 
           {/* Owner */}
           <BentoCard className="bg-surface-2 border-border flex flex-col">
-            <BentoHeader icon={<BarChart3 />} title="Owner Dashboard" body="For building owners to manage their buildings, labour, checklist assignments, reports, and subscription." />
+            <BentoHeader icon={<BarChart3 />} title={t("product.owner.title")} body={t("dashboard.owner.desc")} />
           </BentoCard>
 
           {/* Labour */}
           <BentoCard className="bg-accent text-accent-foreground border-transparent flex flex-col">
-            <BentoHeader icon={<ClipboardCheck />} title="Labour Dashboard" body="Simple visual checklist for workers to mark daily tasks as done and submit work." dark />
+            <BentoHeader icon={<ClipboardCheck />} title={t("product.labour.title")} body={t("dashboard.labour.desc", { fallback: "Simple visual checklist for workers to mark daily tasks as done and submit work." })} dark />
           </BentoCard>
         </div>
       </section>
@@ -171,10 +171,10 @@ function Home() {
           <p className="mt-3 max-w-xl text-white/75">{t("sec.cta.body")}</p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
             <Button asChild size="lg" className="w-full sm:w-auto bg-white text-navy hover:bg-white/90">
-              <Link to="/login">Start Building Management</Link>
+              <Link to="/login">{t("home.cta.start", { fallback: "Start Building Management" })}</Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="w-full sm:w-auto border-white/25 text-black hover:bg-white/10 hover:text-white">
-              <Link to="/pricing">Subscribe to Access</Link>
+              <Link to="/pricing">{t("home.cta.subscribe", { fallback: "Subscribe to Access" })}</Link>
             </Button>
           </div>
           <div className="mt-10 grid gap-4 text-sm text-white/70 sm:grid-cols-3">
@@ -211,21 +211,22 @@ function BentoHeader({ icon, title, body, dark = false }: { icon: React.ReactNod
 }
 
 function PricingMini() {
+  const { t } = useLang();
   const plans = [
-    { name: "Starter", price: 299, scope: "1 building · For single building owners", features: ["1 Building", "Owner Dashboard", "Labour Dashboard", "Daily Reports", "Basic Support"], query: "starter" },
-    { name: "Professional", price: 899, scope: "Up to 5 buildings · Growing portfolios", features: ["Up to 5 Buildings", "Multiple Labour Accounts", "Checklist Templates", "Today's Reports", "Priority Support"], popular: true, query: "professional" },
-    { name: "Enterprise", price: 1999, scope: "Multiple · Large property groups", features: ["Multiple Buildings", "Advanced Report History", "Custom Setup", "Dedicated Support"], query: "enterprise" },
+    { name: t("pricing.plan.starter"), price: 299, scope: t("pricing.desc.starter"), features: [t("pricing.feat.1building"), t("pricing.feat.owner_access"), t("pricing.feat.labour_access"), t("pricing.feat.daily_reports"), t("pricing.feat.email_support")], query: "starter" },
+    { name: t("pricing.plan.professional"), price: 899, scope: t("pricing.desc.professional"), features: [t("pricing.feat.up_to_5"), t("pricing.feat.multiple_labour"), t("pricing.feat.templates"), t("pricing.feat.today_reports"), t("pricing.feat.priority_support")], popular: true, query: "professional" },
+    { name: t("pricing.plan.enterprise"), price: 1999, scope: t("pricing.desc.enterprise"), features: [t("pricing.feat.multiple_buildings"), t("pricing.feat.advanced_history"), t("pricing.feat.custom_setup"), t("pricing.feat.dedicated_support")], query: "enterprise" },
   ];
   return (
     <div className="grid gap-4 sm:grid-cols-3">
       {plans.map((p) => (
         <div key={p.name} className={`relative flex flex-col rounded-2xl border p-6 ${p.popular ? "border-accent bg-accent/5 shadow-elevated" : "border-border bg-background"}`}>
-          {p.popular && <span className="absolute -top-3 start-6 rounded-full bg-accent px-2.5 py-0.5 text-xs font-semibold text-accent-foreground">Most Popular</span>}
+          {p.popular && <span className="absolute -top-3 start-6 rounded-full bg-accent px-2.5 py-0.5 text-xs font-semibold text-accent-foreground">{t("pricing.popular")}</span>}
           <h3 className="font-display text-lg font-semibold">{p.name}</h3>
           <p className="mt-1 text-sm text-muted-foreground">{p.scope}</p>
           <div className="mt-4 flex items-baseline gap-1">
             <span className="font-display text-3xl font-semibold">{p.price.toLocaleString()}</span>
-            <span className="text-sm text-muted-foreground">SAR/mo</span>
+            <span className="text-sm text-muted-foreground">{t("pricing.sar_mo")}</span>
           </div>
           <ul className="mt-6 flex-1 space-y-2">
             {p.features.map(f => (
@@ -236,7 +237,7 @@ function PricingMini() {
             ))}
           </ul>
           <Link to="/checkout" search={{ plan: p.query }} className={`mt-6 flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition w-full ${p.popular ? "bg-accent text-white hover:bg-accent/90" : "border border-border hover:bg-secondary"}`}>
-            Get Owner Access <ArrowRight className="h-4 w-4" />
+            {t("pricing.btn.get_owner")} <ArrowRight className="h-4 w-4 rtl:rotate-180" />
           </Link>
         </div>
       ))}

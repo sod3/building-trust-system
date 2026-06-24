@@ -5,6 +5,7 @@ import {
   PageHeader, StatusPill, Card, Modal, Btn, EmptyState, ProgressBar,
 } from "@/components/dashboard/ui";
 import { mockReports, mockBuildings, mockOwners, type MockReport } from "@/lib/mock-data";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard/admin/reports")({
   head: () => ({ meta: [{ title: "Daily Reports — Admin Dashboard" }] }),
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/dashboard/admin/reports")({
 });
 
 function AdminReports() {
+  const { t } = useLang();
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
   const [selected, setSelected] = useState<MockReport | null>(null);
@@ -34,17 +36,17 @@ function AdminReports() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Daily Reports"
-        subtitle="All submitted daily labour reports across the platform."
+        title={t("admin.reports.title", { fallback: "Daily Reports" })}
+        subtitle={t("admin.reports.subtitle", { fallback: "All submitted daily labour reports across the platform." })}
       />
 
       {/* Summary KPIs */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[
-          { label: "Total Reports", value: mockReports.length, icon: <CheckCircle2 className="h-4 w-4" />, color: "bg-sky-50 text-sky-700" },
-          { label: "Submitted", value: mockReports.filter(r => r.status === "Submitted" || r.status === "Approved").length, icon: <CheckCircle2 className="h-4 w-4" />, color: "bg-emerald-50 text-emerald-700" },
-          { label: "Pending", value: mockReports.filter(r => r.status === "Pending").length, icon: <Clock className="h-4 w-4" />, color: "bg-amber-50 text-amber-700" },
-          { label: "Missed", value: mockReports.filter(r => r.status === "Missed").length, icon: <AlertTriangle className="h-4 w-4" />, color: "bg-rose-50 text-rose-700" },
+          { label: t("admin.reports.total", { fallback: "Total Reports" }), value: mockReports.length, icon: <CheckCircle2 className="h-4 w-4" />, color: "bg-sky-50 text-sky-700" },
+          { label: t("admin.reports.submitted", { fallback: "Submitted" }), value: mockReports.filter(r => r.status === "Submitted" || r.status === "Approved").length, icon: <CheckCircle2 className="h-4 w-4" />, color: "bg-emerald-50 text-emerald-700" },
+          { label: t("admin.reports.pending", { fallback: "Pending" }), value: mockReports.filter(r => r.status === "Pending").length, icon: <Clock className="h-4 w-4" />, color: "bg-amber-50 text-amber-700" },
+          { label: t("admin.reports.missed", { fallback: "Missed" }), value: mockReports.filter(r => r.status === "Missed").length, icon: <AlertTriangle className="h-4 w-4" />, color: "bg-rose-50 text-rose-700" },
         ].map(k => (
           <div key={k.label} className="rounded-2xl border border-border bg-card p-4">
             <div className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium ${k.color}`}>
@@ -59,12 +61,12 @@ function AdminReports() {
       <Card>
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-48">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
-              placeholder="Search by building, labour, or owner…"
+              placeholder={t("admin.reports.search", { fallback: "Search by building, labour, or owner…" })}
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="h-9 w-full rounded-xl border border-border bg-background pl-9 pr-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition"
+              className="h-9 w-full rounded-xl border border-border bg-background px-9 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -83,21 +85,21 @@ function AdminReports() {
 
       {/* Reports Table */}
       {filtered.length === 0 ? (
-        <Card><EmptyState icon={<Search className="h-5 w-5" />} title="No reports found" body="Try adjusting your search or filter." /></Card>
+        <Card><EmptyState icon={<Search className="h-5 w-5" />} title={t("admin.reports.no_records", { fallback: "No reports found" })} body={t("common.no_records_body", { fallback: "Try adjusting your search or filter." })} /></Card>
       ) : (
         <Card>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="text-left text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border">
+              <thead className="text-start text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border">
                 <tr>
-                  <th className="pb-3">Date</th>
-                  <th className="pb-3">Building</th>
-                  <th className="pb-3">Labour</th>
-                  <th className="pb-3">Owner</th>
-                  <th className="pb-3">Tasks</th>
-                  <th className="pb-3">Completion</th>
-                  <th className="pb-3">Submitted At</th>
-                  <th className="pb-3">Status</th>
+                  <th className="pb-3">{t("common.date", { fallback: "Date" })}</th>
+                  <th className="pb-3">{t("common.building", { fallback: "Building" })}</th>
+                  <th className="pb-3">{t("common.labour", { fallback: "Labour" })}</th>
+                  <th className="pb-3">{t("common.owner", { fallback: "Owner" })}</th>
+                  <th className="pb-3">{t("common.tasks", { fallback: "Tasks" })}</th>
+                  <th className="pb-3">{t("common.completion", { fallback: "Completion" })}</th>
+                  <th className="pb-3">{t("common.submitted_at", { fallback: "Submitted At" })}</th>
+                  <th className="pb-3">{t("common.status", { fallback: "Status" })}</th>
                   <th className="pb-3"></th>
                 </tr>
               </thead>
@@ -126,7 +128,7 @@ function AdminReports() {
                     <td className="py-3"><StatusPill status={r.status} /></td>
                     <td className="py-3">
                       <Btn size="sm" variant="ghost" onClick={() => setSelected(r)}>
-                        <Eye className="h-3.5 w-3.5" /> View
+                        <Eye className="h-3.5 w-3.5" /> {t("common.view", { fallback: "View" })}
                       </Btn>
                     </td>
                   </tr>
@@ -143,33 +145,33 @@ function AdminReports() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div className="rounded-xl bg-secondary px-3 py-2.5">
-                <div className="text-xs text-muted-foreground">Date</div>
+                <div className="text-xs text-muted-foreground">{t("common.date", { fallback: "Date" })}</div>
                 <div className="font-medium">{selected.date}</div>
               </div>
               <div className="rounded-xl bg-secondary px-3 py-2.5">
-                <div className="text-xs text-muted-foreground">Submitted At</div>
+                <div className="text-xs text-muted-foreground">{t("common.submitted_at", { fallback: "Submitted At" })}</div>
                 <div className="font-medium">{selected.submittedAt}</div>
               </div>
               <div className="rounded-xl bg-secondary px-3 py-2.5">
-                <div className="text-xs text-muted-foreground">Labour</div>
+                <div className="text-xs text-muted-foreground">{t("common.labour", { fallback: "Labour" })}</div>
                 <div className="font-medium">{selected.labourName}</div>
               </div>
               <div className="rounded-xl bg-secondary px-3 py-2.5">
-                <div className="text-xs text-muted-foreground">Status</div>
+                <div className="text-xs text-muted-foreground">{t("common.status", { fallback: "Status" })}</div>
                 <StatusPill status={selected.status} />
               </div>
             </div>
 
             <div className="rounded-xl border border-border p-3">
               <div className="mb-2 flex items-center justify-between text-sm">
-                <span className="font-semibold">Task Completion</span>
-                <span className="text-muted-foreground">{selected.completedTasks}/{selected.totalTasks} tasks</span>
+                <span className="font-semibold">{t("admin.reports.task_completion", { fallback: "Task Completion" })}</span>
+                <span className="text-muted-foreground">{selected.completedTasks}/{selected.totalTasks} {t("common.tasks", { fallback: "tasks" })}</span>
               </div>
               <ProgressBar value={selected.completedTasks} max={selected.totalTasks} color="emerald" />
             </div>
 
             <div>
-              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">✅ Completed Tasks</div>
+              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">✅ {t("admin.reports.completed_tasks", { fallback: "Completed Tasks" })}</div>
               <div className="space-y-1.5">
                 {completedTasks.slice(0, selected.completedTasks).map(task => (
                   <div key={task} className="flex items-center gap-2.5 rounded-xl bg-emerald-50 border border-emerald-200 px-3 py-2 text-sm text-emerald-800">
@@ -182,7 +184,7 @@ function AdminReports() {
 
             {selected.pendingTasks > 0 && (
               <div>
-                <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">⏳ Pending Tasks</div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">⏳ {t("admin.reports.pending_tasks", { fallback: "Pending Tasks" })}</div>
                 <div className="space-y-1.5">
                   {pendingTasks.slice(0, selected.pendingTasks).map(task => (
                     <div key={task} className="flex items-center gap-2.5 rounded-xl bg-amber-50 border border-amber-200 px-3 py-2 text-sm text-amber-800">
@@ -196,7 +198,7 @@ function AdminReports() {
 
             {/* Photo proof placeholders */}
             <div>
-              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">📸 Photo Proof</div>
+              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">📸 {t("admin.reports.photo_proof", { fallback: "Photo Proof" })}</div>
               <div className="grid grid-cols-3 gap-2">
                 {[1, 2, 3].map(i => (
                   <div key={i} className="aspect-square rounded-xl bg-secondary border border-border flex items-center justify-center text-xs text-muted-foreground">
@@ -207,8 +209,8 @@ function AdminReports() {
             </div>
 
             <div className="flex items-center justify-end gap-2 pt-2">
-              <Btn variant="secondary" onClick={() => setSelected(null)}>Close</Btn>
-              <Btn onClick={() => setSelected(null)}>Approve Report</Btn>
+              <Btn variant="secondary" onClick={() => setSelected(null)}>{t("common.close", { fallback: "Close" })}</Btn>
+              <Btn onClick={() => setSelected(null)}>{t("admin.reports.approve", { fallback: "Approve Report" })}</Btn>
             </div>
           </div>
         )}

@@ -4,6 +4,7 @@ import { CheckCircle2, CreditCard, Calendar, ArrowUpRight, Download, RotateCcw }
 import { PageHeader, Card, StatusPill, Btn, Toast } from "@/components/dashboard/ui";
 import { useAuth } from "@/lib/auth-context";
 import { mockOwners, pricingPlans } from "@/lib/mock-data";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard/owner/subscription")({
   head: () => ({ meta: [{ title: "Subscription — Owner Dashboard" }] }),
@@ -19,6 +20,7 @@ const mockInvoices = [
 
 function OwnerSubscription() {
   const { user } = useAuth();
+  const { t } = useLang();
   const owner = mockOwners.find(o => o.id === user?.ownerId) || mockOwners[0];
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -27,7 +29,7 @@ function OwnerSubscription() {
 
   return (
     <div className="space-y-6 max-w-3xl">
-      <PageHeader title="Subscription" subtitle="Manage your plan, billing, and payment history." />
+      <PageHeader title={t("dashboard.owner.nav.subscription", { fallback: "Subscription" })} subtitle={t("owner.subscription.subtitle", { fallback: "Manage your plan, billing, and payment history." })} />
 
       {/* Current plan card */}
       <div className="relative overflow-hidden rounded-3xl bg-navy-gradient text-white p-8">
@@ -35,32 +37,32 @@ function OwnerSubscription() {
         <div className="absolute right-10 bottom-6 h-24 w-24 rounded-full bg-gold/10 blur-xl" />
 
         <div className="relative z-10">
-          <div className="text-xs font-semibold uppercase tracking-widest text-white/50 mb-1">Current Plan</div>
+          <div className="text-xs font-semibold uppercase tracking-widest text-white/50 mb-1">{t("owner.subscription.current_plan", { fallback: "Current Plan" })}</div>
           <div className="flex items-start justify-between gap-4">
             <div>
               <h2 className="font-display text-3xl font-semibold">{owner.plan}</h2>
               <p className="text-white/70 mt-1">{currentPlan.description}</p>
             </div>
-            <div className="text-right shrink-0">
+            <div className="text-end shrink-0">
               <div className="font-display text-3xl font-semibold">SAR {owner.monthlyPayment.toLocaleString()}</div>
-              <div className="text-sm text-white/60">/month</div>
+              <div className="text-sm text-white/60">{t("common.per_month", { fallback: "/month" })}</div>
             </div>
           </div>
 
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
             <div className="rounded-xl bg-white/10 px-4 py-3">
-              <div className="text-xs text-white/60">Status</div>
+              <div className="text-xs text-white/60">{t("common.status", { fallback: "Status" })}</div>
               <div className="font-semibold mt-0.5 flex items-center gap-1.5">
                 <span className="h-2 w-2 rounded-full bg-emerald-400" />
                 {owner.status}
               </div>
             </div>
             <div className="rounded-xl bg-white/10 px-4 py-3">
-              <div className="text-xs text-white/60">Buildings</div>
+              <div className="text-xs text-white/60">{t("common.buildings", { fallback: "Buildings" })}</div>
               <div className="font-semibold mt-0.5">{owner.buildingIds.length} / {currentPlan.buildings > 0 ? currentPlan.buildings : "∞"}</div>
             </div>
             <div className="rounded-xl bg-white/10 px-4 py-3">
-              <div className="text-xs text-white/60">Next Billing</div>
+              <div className="text-xs text-white/60">{t("owner.subscription.next_billing", { fallback: "Next Billing" })}</div>
               <div className="font-semibold mt-0.5 text-sm">{owner.nextBilling}</div>
             </div>
           </div>
@@ -70,13 +72,13 @@ function OwnerSubscription() {
               onClick={() => setShowUpgrade(true)}
               className="flex items-center gap-2 rounded-xl bg-white text-navy px-4 py-2 text-sm font-semibold hover:bg-white/90 transition"
             >
-              <ArrowUpRight className="h-4 w-4" /> Upgrade Plan
+              <ArrowUpRight className="h-4 w-4" /> {t("owner.subscription.upgrade", { fallback: "Upgrade Plan" })}
             </button>
             <button
               onClick={() => setToast("Change plan request sent (demo)")}
               className="flex items-center gap-2 rounded-xl bg-white/15 border border-white/20 text-white px-4 py-2 text-sm font-medium hover:bg-white/20 transition"
             >
-              <RotateCcw className="h-4 w-4" /> Change Plan
+              <RotateCcw className="h-4 w-4" /> {t("owner.subscription.change", { fallback: "Change Plan" })}
             </button>
           </div>
         </div>
@@ -84,7 +86,7 @@ function OwnerSubscription() {
 
       {/* Plan features */}
       <Card>
-        <h3 className="font-display font-semibold mb-4">What's included in {owner.plan}</h3>
+        <h3 className="font-display font-semibold mb-4">{t("owner.subscription.included", { fallback: "What's included in" })} {owner.plan}</h3>
         <div className="grid gap-2 sm:grid-cols-2">
           {currentPlan.features.map(f => (
             <div key={f} className="flex items-center gap-2.5 text-sm">
@@ -98,14 +100,14 @@ function OwnerSubscription() {
       {/* Upgrade panel */}
       {showUpgrade && (
         <Card>
-          <h3 className="font-display font-semibold mb-4">Available Plans</h3>
+          <h3 className="font-display font-semibold mb-4">{t("owner.subscription.available", { fallback: "Available Plans" })}</h3>
           <div className="grid gap-4 sm:grid-cols-3">
             {pricingPlans.map(plan => (
               <div
                 key={plan.id}
                 className={`rounded-2xl border-2 p-5 ${plan.name === owner.plan ? "border-accent bg-accent/5" : "border-border"}`}
               >
-                {plan.popular && <div className="text-[11px] font-semibold text-accent uppercase tracking-wider mb-1">Most Popular</div>}
+                {plan.popular && <div className="text-[11px] font-semibold text-accent uppercase tracking-wider mb-1">{t("admin.earnings.popular", { fallback: "Most Popular" })}</div>}
                 <div className="font-display text-lg font-semibold">{plan.name}</div>
                 <div className="text-xs text-muted-foreground">{plan.description}</div>
                 <div className="mt-3 font-display text-2xl font-semibold">
@@ -128,7 +130,7 @@ function OwnerSubscription() {
                   }`}
                   disabled={plan.name === owner.plan}
                 >
-                  {plan.name === owner.plan ? "Current Plan" : `Switch to ${plan.name}`}
+                  {plan.name === owner.plan ? t("owner.subscription.current_plan", { fallback: "Current Plan" }) : `${t("owner.subscription.switch_to", { fallback: "Switch to" })} ${plan.name}`}
                 </button>
               </div>
             ))}
@@ -142,15 +144,15 @@ function OwnerSubscription() {
 
       {/* Invoice history */}
       <Card>
-        <h3 className="font-display font-semibold mb-4">Payment History</h3>
+        <h3 className="font-display font-semibold mb-4">{t("owner.subscription.history", { fallback: "Payment History" })}</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="text-left text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border">
+            <thead className="text-start text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border">
               <tr>
-                <th className="pb-3">Invoice</th>
-                <th className="pb-3">Date</th>
-                <th className="pb-3">Amount</th>
-                <th className="pb-3">Status</th>
+                <th className="pb-3">{t("owner.subscription.invoice", { fallback: "Invoice" })}</th>
+                <th className="pb-3">{t("common.date", { fallback: "Date" })}</th>
+                <th className="pb-3">{t("common.amount", { fallback: "Amount" })}</th>
+                <th className="pb-3">{t("common.status", { fallback: "Status" })}</th>
                 <th className="pb-3"></th>
               </tr>
             </thead>
@@ -166,7 +168,7 @@ function OwnerSubscription() {
                       onClick={() => setToast("Invoice downloaded (demo)")}
                       className="flex items-center gap-1.5 text-xs text-accent hover:underline"
                     >
-                      <Download className="h-3.5 w-3.5" /> Download
+                      <Download className="h-3.5 w-3.5" /> {t("common.download", { fallback: "Download" })}
                     </button>
                   </td>
                 </tr>

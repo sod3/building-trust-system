@@ -7,6 +7,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 import { useState, useEffect } from "react";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard/admin")({
   head: () => ({ meta: [{ title: "Admin Dashboard — FacilityOS Arabia" }] }),
@@ -14,18 +15,19 @@ export const Route = createFileRoute("/dashboard/admin")({
 });
 
 const navItems = [
-  { to: "/dashboard/admin", label: "Overview", icon: LayoutDashboard, exact: true },
-  { to: "/dashboard/admin/owners", label: "Owners", icon: Users },
-  { to: "/dashboard/admin/buildings", label: "Buildings", icon: Building2 },
-  { to: "/dashboard/admin/reports", label: "Reports", icon: FileBarChart2 },
-  { to: "/dashboard/admin/labour", label: "Labour", icon: Users },
-  { to: "/dashboard/admin/checklists", label: "Checklists", icon: ClipboardCheck },
-  { to: "/dashboard/admin/earnings", label: "Earnings", icon: Wallet },
-  { to: "/dashboard/admin/settings", label: "Settings", icon: Settings },
+  { to: "/dashboard/admin", labelKey: "dashboard.admin.nav.overview", icon: LayoutDashboard, exact: true },
+  { to: "/dashboard/admin/owners", labelKey: "dashboard.admin.nav.owners", icon: Users },
+  { to: "/dashboard/admin/buildings", labelKey: "dashboard.admin.nav.buildings", icon: Building2 },
+  { to: "/dashboard/admin/reports", labelKey: "dashboard.admin.nav.reports", icon: FileBarChart2 },
+  { to: "/dashboard/admin/labour", labelKey: "dashboard.admin.nav.labour", icon: Users },
+  { to: "/dashboard/admin/checklists", labelKey: "dashboard.admin.nav.templates", icon: ClipboardCheck },
+  { to: "/dashboard/admin/earnings", labelKey: "dashboard.admin.nav.earnings", icon: Wallet },
+  { to: "/dashboard/admin/settings", labelKey: "dashboard.admin.nav.settings", icon: Settings },
 ];
 
 function AdminLayout() {
   const { user, logout } = useAuth();
+  const { t, lang, setLang } = useLang();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: s => s.location.pathname });
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
@@ -54,7 +56,7 @@ function AdminLayout() {
           </span>
           <div className="leading-tight">
             <div className="font-display text-sm font-semibold">FacilityOS Arabia</div>
-            <div className="text-[10px] uppercase tracking-wider text-white/50">Admin Control Center</div>
+            <div className="text-[10px] uppercase tracking-wider text-white/50">{t("dashboard.admin.center")}</div>
           </div>
         </div>
 
@@ -62,9 +64,9 @@ function AdminLayout() {
         <div className="mx-3 mt-3 rounded-xl bg-white/5 border border-white/10 px-3 py-2">
           <div className="flex items-center gap-2">
             <Shield className="h-3.5 w-3.5 text-gold" />
-            <span className="text-[11px] font-semibold text-white/80 uppercase tracking-wider">Admin Access Only</span>
+            <span className="text-[11px] font-semibold text-white/80 uppercase tracking-wider">{t("role.admin")}</span>
           </div>
-          <p className="mt-0.5 text-[10px] text-white/50">Restricted to platform management</p>
+          <p className="mt-0.5 text-[10px] text-white/50">{t("login.admin_notice", { fallback: "Restricted to platform management" })}</p>
         </div>
 
         {/* Nav */}
@@ -85,7 +87,7 @@ function AdminLayout() {
                   )}
                 >
                   <Icon className={cn("h-4 w-4 shrink-0", active ? "text-gold" : "text-white/50 group-hover:text-white/80")} />
-                  <span className="truncate">{item.label}</span>
+                  <span className="truncate">{t(item.labelKey)}</span>
                 </Link>
               );
             })}
@@ -100,15 +102,15 @@ function AdminLayout() {
             </div>
             <div className="min-w-0 flex-1">
               <div className="truncate text-xs font-semibold text-white">{user?.name}</div>
-              <div className="text-[10px] text-white/50">Platform Admin</div>
+              <div className="text-[10px] text-white/50">{t("role.admin")}</div>
             </div>
           </div>
           <button
             onClick={handleLogout}
             className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-white/70 hover:bg-white/10 hover:text-white transition"
           >
-            <LogOut className="h-4 w-4" />
-            Sign Out
+            <LogOut className={`h-4 w-4 ${lang === "ar" ? "rotate-180" : ""}`} />
+            {t("common.logout")}
           </button>
         </div>
       </aside>
@@ -118,16 +120,22 @@ function AdminLayout() {
         {/* Topbar */}
         <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur-xl md:px-6">
           <div className="relative flex-1 max-w-sm">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
-              placeholder="Search..."
-              className="h-9 w-full rounded-xl border border-border bg-surface-2/40 pl-9 pr-3 text-sm outline-none placeholder:text-muted-foreground/70 focus:bg-background focus:ring-2 focus:ring-accent/20 transition"
+              placeholder={t("common.search")}
+              className="h-9 w-full rounded-xl border border-border bg-surface-2/40 px-9 text-sm outline-none placeholder:text-muted-foreground/70 focus:bg-background focus:ring-2 focus:ring-accent/20 transition"
             />
           </div>
           <div className="flex-1" />
+          <button
+            onClick={() => setLang(lang === "en" ? "ar" : "en")}
+            className="flex items-center gap-2 rounded-xl border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-secondary hover:text-foreground transition"
+          >
+            {lang === "en" ? "العربية" : "English"}
+          </button>
           <button className="relative grid h-9 w-9 place-items-center rounded-xl border border-border text-muted-foreground hover:bg-secondary hover:text-foreground transition">
             <Bell className="h-4 w-4" />
-            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-rose-500" />
+            <span className={`absolute top-1.5 h-2 w-2 rounded-full bg-rose-500 ${lang === 'ar' ? 'left-1.5' : 'right-1.5'}`} />
           </button>
           <div className="hidden md:flex items-center gap-2 rounded-full border border-border bg-surface-2/50 py-1 pl-1 pr-3">
             <div className="grid h-7 w-7 place-items-center rounded-full bg-navy text-[11px] font-semibold text-white">
@@ -158,7 +166,7 @@ function AdminLayout() {
                   )}
                 >
                   <Icon className={cn("h-5 w-5", active && "text-gold")} />
-                  <span className="text-[10px] font-medium">{item.label}</span>
+                  <span className="text-[10px] font-medium">{t(item.labelKey)}</span>
                 </Link>
               );
             })}
@@ -170,7 +178,7 @@ function AdminLayout() {
               )}
             >
               <Menu className="h-5 w-5" />
-              <span className="text-[10px] font-medium">More</span>
+              <span className="text-[10px] font-medium">{t("common.more", { fallback: "More" })}</span>
             </button>
           </div>
         </div>
@@ -181,7 +189,7 @@ function AdminLayout() {
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMobileMoreOpen(false)} />
             <div className="relative bg-background rounded-t-3xl border-t border-border p-6 pb-[calc(24px+env(safe-area-inset-bottom))] animate-in slide-in-from-bottom-full">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="font-display font-semibold text-lg">More Options</h3>
+                <h3 className="font-display font-semibold text-lg">{t("common.more", { fallback: "More Options" })}</h3>
                 <button onClick={() => setMobileMoreOpen(false)} className="p-2 rounded-full bg-secondary hover:bg-secondary/80">
                   <X className="h-5 w-5" />
                 </button>
@@ -201,7 +209,7 @@ function AdminLayout() {
                       )}
                     >
                       <Icon className={cn("h-5 w-5", active && "text-gold")} />
-                      <span className="font-medium">{item.label}</span>
+                      <span className="font-medium">{t(item.labelKey)}</span>
                     </Link>
                   );
                 })}
@@ -212,8 +220,8 @@ function AdminLayout() {
                   onClick={handleLogout}
                   className="flex w-full items-center gap-4 p-4 rounded-xl text-rose-600 hover:bg-rose-50 transition-colors"
                 >
-                  <LogOut className="h-5 w-5" />
-                  <span className="font-medium">Sign Out</span>
+                  <LogOut className={`h-5 w-5 ${lang === "ar" ? "rotate-180" : ""}`} />
+                  <span className="font-medium">{t("common.logout")}</span>
                 </button>
               </div>
             </div>

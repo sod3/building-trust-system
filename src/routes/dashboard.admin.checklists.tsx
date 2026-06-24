@@ -5,6 +5,7 @@ import {
   PageHeader, Card, Modal, FormInput, FormSelect, Btn, Toast, StatusPill,
 } from "@/components/dashboard/ui";
 import { mockChecklistTemplates, type ChecklistTemplate } from "@/lib/mock-data";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard/admin/checklists")({
   head: () => ({ meta: [{ title: "Checklist Templates — Admin Dashboard" }] }),
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/dashboard/admin/checklists")({
 });
 
 function AdminChecklists() {
+  const { t } = useLang();
   const [templates, setTemplates] = useState<ChecklistTemplate[]>(mockChecklistTemplates);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [showAdd, setShowAdd] = useState(false);
@@ -66,11 +68,11 @@ function AdminChecklists() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Checklist Templates"
-        subtitle="Create and manage daily task templates for buildings and labour."
+        title={t("admin.checklists.title", { fallback: "Checklist Templates" })}
+        subtitle={t("admin.checklists.subtitle", { fallback: "Create and manage daily task templates for buildings and labour." })}
         actions={
           <Btn onClick={() => { setShowAdd(true); setForm({ name: "", description: "" }); setTempTasks([]); }}>
-            <Plus className="h-4 w-4" /> Create Template
+            <Plus className="h-4 w-4" /> {t("admin.checklists.create", { fallback: "Create Template" })}
           </Btn>
         }
       />
@@ -87,13 +89,13 @@ function AdminChecklists() {
                   <div className="font-semibold">{t.name}</div>
                   <div className="text-xs text-muted-foreground mt-0.5">{t.description}</div>
                   <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
-                    <span>{t.tasks.length} tasks</span>
+                    <span>{t("common.tasks_count", { count: t.tasks.length, fallback: `${t.tasks.length} tasks` })}</span>
                     <span>·</span>
-                    <span>Created {t.createdAt}</span>
+                    <span>{t("common.created_at", { fallback: "Created" })} {t.createdAt}</span>
                     {t.assignedBuildings.length > 0 && (
                       <>
                         <span>·</span>
-                        <span className="flex items-center gap-1"><Building2 className="h-3 w-3" />{t.assignedBuildings.length} buildings</span>
+                        <span className="flex items-center gap-1"><Building2 className="h-3 w-3" />{t("common.buildings_count", { count: t.assignedBuildings.length, fallback: `${t.assignedBuildings.length} buildings` })}</span>
                       </>
                     )}
                   </div>
@@ -101,10 +103,10 @@ function AdminChecklists() {
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <Btn size="sm" variant="ghost" onClick={() => handleDuplicate(t)}>
-                  <Copy className="h-3.5 w-3.5" /> Duplicate
+                  <Copy className="h-3.5 w-3.5" /> {t("common.duplicate", { fallback: "Duplicate" })}
                 </Btn>
                 <Btn size="sm" variant="outline" onClick={() => showToast("Building assigned (demo)")}>
-                  <Building2 className="h-3.5 w-3.5" /> Assign
+                  <Building2 className="h-3.5 w-3.5" /> {t("common.assign", { fallback: "Assign" })}
                 </Btn>
                 <button
                   onClick={() => setExpanded(expanded === t.id ? null : t.id)}
@@ -140,19 +142,19 @@ function AdminChecklists() {
       </div>
 
       {/* Create Template Modal */}
-      <Modal open={showAdd} onClose={() => setShowAdd(false)} title="Create Checklist Template">
+      <Modal open={showAdd} onClose={() => setShowAdd(false)} title={t("admin.checklists.create", { fallback: "Create Checklist Template" })}>
         <div className="space-y-4">
-          <FormInput label="Template Name" value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Daily Cleaning Checklist" required />
-          <FormInput label="Description" value={form.description} onChange={v => setForm(f => ({ ...f, description: v }))} placeholder="Brief description..." />
+          <FormInput label={t("common.template_name", { fallback: "Template Name" })} value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Daily Cleaning Checklist" required />
+          <FormInput label={t("common.description", { fallback: "Description" })} value={form.description} onChange={v => setForm(f => ({ ...f, description: v }))} placeholder="Brief description..." />
 
           <div>
-            <div className="text-sm font-medium text-foreground mb-3">Add Tasks</div>
+            <div className="text-sm font-medium text-foreground mb-3">{t("admin.checklists.add_tasks", { fallback: "Add Tasks" })}</div>
             <div className="space-y-3 rounded-xl border border-border p-3 bg-secondary/30">
               <div className="grid grid-cols-2 gap-2">
                 <input
                   value={newTaskName}
                   onChange={e => setNewTaskName(e.target.value)}
-                  placeholder="Task name..."
+                  placeholder={t("admin.checklists.task_name", { fallback: "Task name..." })}
                   className="h-9 rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-accent transition col-span-2"
                 />
                 <select value={newTaskCat} onChange={e => setNewTaskCat(e.target.value)} className="h-9 rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-accent transition">
@@ -167,14 +169,14 @@ function AdminChecklists() {
                   <option value="Normal">Normal Priority</option>
                   <option value="Important">Important Priority</option>
                 </select>
-                <Btn size="sm" onClick={addTaskToForm} disabled={!newTaskName.trim()}>+ Add Task</Btn>
+                <Btn size="sm" onClick={addTaskToForm} disabled={!newTaskName.trim()}>+ {t("admin.checklists.add_task", { fallback: "Add Task" })}</Btn>
               </div>
             </div>
           </div>
 
           {tempTasks.length > 0 && (
             <div className="space-y-1.5">
-              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{tempTasks.length} task(s) added</div>
+              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{tempTasks.length} {t("common.tasks_added", { fallback: "task(s) added" })}</div>
               {tempTasks.map((task, i) => (
                 <div key={i} className="flex items-center gap-2 rounded-xl bg-secondary px-3 py-2 text-sm">
                   <span>{iconMap[task.category] || "📋"}</span>
@@ -189,9 +191,9 @@ function AdminChecklists() {
           )}
 
           <div className="flex items-center justify-end gap-2 pt-2">
-            <Btn variant="secondary" onClick={() => setShowAdd(false)}>Cancel</Btn>
+            <Btn variant="secondary" onClick={() => setShowAdd(false)}>{t("common.cancel", { fallback: "Cancel" })}</Btn>
             <Btn onClick={handleCreateTemplate} disabled={!form.name.trim() || tempTasks.length === 0}>
-              Create Template
+              {t("admin.checklists.create", { fallback: "Create Template" })}
             </Btn>
           </div>
         </div>

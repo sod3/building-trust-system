@@ -69,16 +69,16 @@ function ContactPage() {
 
         <aside className="space-y-4 text-sm">
           <div className="rounded-2xl border border-border bg-secondary/40 p-6">
-            <h3 className="font-display text-base font-semibold">{lang === "ar" ? "تواصل مباشر" : "Direct contact"}</h3>
+            <h3 className="font-display text-base font-semibold">{t("contact.direct", { fallback: "Direct contact" })}</h3>
             <ul className="mt-4 space-y-3 text-muted-foreground">
               <li className="flex items-center gap-2"><Mail className="h-4 w-4 text-accent" /> info@saturnlynk.sa</li>
-              <li className="flex items-center gap-2"><Phone className="h-4 w-4 text-accent" /> +966 55 125 4121</li>
-              <li className="flex items-center gap-2"><MapPin className="h-4 w-4 text-accent" /> Jeddah, Saudi Arabia</li>
+              <li className="flex items-center gap-2"><Phone className="h-4 w-4 text-accent rtl:-scale-x-100" /> +966 55 125 4121</li>
+              <li className="flex items-center gap-2"><MapPin className="h-4 w-4 text-accent" /> {t("common.city", { fallback: "Jeddah" })}, {t("contact.country", { fallback: "Saudi Arabia" })}</li>
             </ul>
           </div>
           <div className="rounded-2xl border border-border bg-background p-6">
-            <h3 className="font-display text-base font-semibold">{lang === "ar" ? "هل تبحث عن دعم؟" : "Need support?"}</h3>
-            <p className="mt-2 text-muted-foreground">{lang === "ar" ? "العملاء الحاليون: info@saturnlynk.sa" : "Existing customers: info@saturnlynk.sa"}</p>
+            <h3 className="font-display text-base font-semibold">{t("contact.support", { fallback: "Need support?" })}</h3>
+            <p className="mt-2 text-muted-foreground">{t("contact.existing", { fallback: "Existing customers: info@saturnlynk.sa" })}</p>
           </div>
         </aside>
       </section>

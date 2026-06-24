@@ -3,6 +3,7 @@ import { Building2, CheckCircle2, ArrowRight, CreditCard, Receipt, Building, Loa
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { z } from "zod";
+import { useLang } from "@/lib/i18n";
 
 const checkoutSearchSchema = z.object({
   plan: z.string().optional(),
@@ -33,6 +34,7 @@ const planDetails: Record<string, { name: string; price: number; features: strin
 };
 
 function Checkout() {
+  const { t } = useLang();
   const search = Route.useSearch();
   const planKey = search.plan || "starter";
   const plan = planDetails[planKey] || planDetails.starter;
@@ -67,10 +69,10 @@ function Checkout() {
           </Link>
 
           <div className="space-y-6">
-            <h2 className="text-sm font-semibold uppercase tracking-widest text-gold">Order Summary</h2>
+            <h2 className="text-sm font-semibold uppercase tracking-widest text-gold">{t("checkout.selected_plan", { fallback: "Order Summary" })}</h2>
             <div className="flex items-baseline gap-2 pb-6 border-b border-white/10">
               <span className="font-display text-5xl font-bold">{plan.price}</span>
-              <span className="text-white/60">SAR / month</span>
+              <span className="text-white/60">{t("pricing.sar_mo")}</span>
             </div>
 
             <div className="pt-2">
@@ -96,58 +98,58 @@ function Checkout() {
       <div className="flex-1 p-8 md:p-12 lg:p-16 flex items-center justify-center overflow-y-auto">
         <div className="w-full max-w-xl">
           <div className="mb-8">
-            <h1 className="font-display text-3xl font-semibold text-foreground">Complete your registration</h1>
-            <p className="mt-2 text-muted-foreground">Fill in your details to get owner dashboard access.</p>
+            <h1 className="font-display text-3xl font-semibold text-foreground">{t("checkout.title")}</h1>
+            <p className="mt-2 text-muted-foreground">{t("checkout.complete_access")}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold border-b pb-2">Account Details</h2>
+              <h2 className="text-lg font-semibold border-b pb-2">{t("checkout.customer_info")}</h2>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Full Name</label>
-                  <input required type="text" className="w-full h-11 rounded-xl border px-3 text-sm focus:ring-2 focus:ring-accent/20 outline-none transition" placeholder="John Doe" />
+                  <label className="text-sm font-medium">{t("checkout.full_name")}</label>
+                  <input required type="text" className="w-full h-11 rounded-xl border px-3 text-sm focus:ring-2 focus:ring-accent/20 outline-none transition" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Work Email</label>
-                  <input required type="email" className="w-full h-11 rounded-xl border px-3 text-sm focus:ring-2 focus:ring-accent/20 outline-none transition" placeholder="john@example.com" />
+                  <label className="text-sm font-medium">{t("checkout.work_email")}</label>
+                  <input required type="email" className="w-full h-11 rounded-xl border px-3 text-sm focus:ring-2 focus:ring-accent/20 outline-none transition" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Phone Number</label>
-                  <input required type="tel" className="w-full h-11 rounded-xl border px-3 text-sm focus:ring-2 focus:ring-accent/20 outline-none transition" placeholder="+966 50 000 0000" />
+                  <label className="text-sm font-medium">{t("checkout.phone")}</label>
+                  <input required type="tel" className="w-full h-11 rounded-xl border px-3 text-sm focus:ring-2 focus:ring-accent/20 outline-none transition" dir="ltr" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">City</label>
-                  <input required type="text" className="w-full h-11 rounded-xl border px-3 text-sm focus:ring-2 focus:ring-accent/20 outline-none transition" placeholder="Riyadh" />
+                  <label className="text-sm font-medium">{t("common.city")}</label>
+                  <input required type="text" className="w-full h-11 rounded-xl border px-3 text-sm focus:ring-2 focus:ring-accent/20 outline-none transition" />
                 </div>
               </div>
             </div>
 
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold border-b pb-2">Company Details</h2>
+              <h2 className="text-lg font-semibold border-b pb-2">{t("checkout.customer_info", { fallback: "Company Details" })}</h2>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Company Name</label>
-                  <input required type="text" className="w-full h-11 rounded-xl border px-3 text-sm focus:ring-2 focus:ring-accent/20 outline-none transition" placeholder="Acme Properties" />
+                  <label className="text-sm font-medium">{t("checkout.company")}</label>
+                  <input required type="text" className="w-full h-11 rounded-xl border px-3 text-sm focus:ring-2 focus:ring-accent/20 outline-none transition" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Number of Buildings</label>
+                  <label className="text-sm font-medium">{t("checkout.num_buildings")}</label>
                   <select required className="w-full h-11 rounded-xl border px-3 text-sm focus:ring-2 focus:ring-accent/20 outline-none transition bg-white">
-                    <option value="">Select...</option>
-                    <option value="1">1 Building</option>
-                    <option value="2-5">2-5 Buildings</option>
-                    <option value="6-10">6-10 Buildings</option>
-                    <option value="11+">11+ Buildings</option>
+                    <option value="">...</option>
+                    <option value="1">1</option>
+                    <option value="2-5">2-5</option>
+                    <option value="6-10">6-10</option>
+                    <option value="11+">11+</option>
                   </select>
                 </div>
               </div>
             </div>
 
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold border-b pb-2">Payment Method</h2>
+              <h2 className="text-lg font-semibold border-b pb-2">{t("checkout.payment_method")}</h2>
               <div className="p-4 rounded-xl border border-blue-200 bg-blue-50 text-blue-800 text-sm mb-4 flex items-start gap-3">
                 <span className="bg-blue-100 p-1 rounded-md shrink-0"><CheckCircle2 className="h-4 w-4" /></span>
-                <p>Payment integration coming soon. This is a frontend demo checkout. You will not be charged.</p>
+                <p>{t("checkout.demo_notice")}. {t("checkout.integration_soon")}</p>
               </div>
 
               <div className="grid gap-3 sm:grid-cols-3">
@@ -169,21 +171,20 @@ function Checkout() {
             {success ? (
               <div className="p-4 rounded-xl bg-green-50 border border-green-200 text-green-700 flex items-center gap-3">
                 <CheckCircle2 className="h-5 w-5" />
-                <span className="font-medium">Access created successfully. Redirecting to Dashboard...</span>
+                <span className="font-medium">{t("checkout.success")}. {t("checkout.redirecting")}</span>
               </div>
             ) : (
               <Button type="submit" size="lg" className="w-full h-12 text-base" disabled={isLoading}>
                 {isLoading ? (
-                  <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Processing...</>
+                  <><Loader2 className="me-2 h-5 w-5 animate-spin" /> ...</>
                 ) : (
-                  <>Continue to Owner Dashboard Demo <ArrowRight className="ml-2 h-5 w-5" /></>
+                  <>{t("checkout.continue_demo")} <ArrowRight className="ms-2 h-5 w-5 rtl:rotate-180" /></>
                 )}
               </Button>
             )}
 
             <div className="text-center">
-              <span className="text-sm text-muted-foreground">Already have access? </span>
-              <Link to="/login" className="text-sm font-semibold text-accent hover:underline">Login here</Link>
+              <Link to="/login" className="text-sm font-semibold text-accent hover:underline">{t("checkout.already_have")}</Link>
             </div>
           </form>
         </div>

@@ -5,6 +5,7 @@ import { mockSubscriptions, mockOwners, revenueChart, pricingPlans } from "@/lib
 import {
   AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid,
 } from "recharts";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard/admin/earnings")({
   head: () => ({ meta: [{ title: "Earnings — Admin Dashboard" }] }),
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/dashboard/admin/earnings")({
 });
 
 function AdminEarnings() {
+  const { t } = useLang();
   const planColors: Record<string, string> = {
     Starter: "bg-sky-100 text-sky-800",
     Professional: "bg-indigo-100 text-indigo-800",
@@ -21,23 +23,23 @@ function AdminEarnings() {
   return (
     <div className="space-y-6">
       <div>
-        <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Subscriptions & Revenue</div>
-        <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight">Earnings Dashboard</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Track subscription revenue, plan breakdown, and payment activity.</p>
+        <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t("admin.earnings.subs_rev", { fallback: "Subscriptions & Revenue" })}</div>
+        <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight">{t("admin.earnings.title", { fallback: "Earnings Dashboard" })}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{t("admin.earnings.subtitle", { fallback: "Track subscription revenue, plan breakdown, and payment activity." })}</p>
       </div>
 
       {/* KPI Row */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <Kpi accent="navy" label="Monthly Recurring Revenue" value={`SAR ${mockSubscriptions.totalMRR.toLocaleString()}`} sub="3 subscriptions" icon={<Wallet className="h-4 w-4" />} delta="+SAR 1,999 vs last month" tone="up" />
-        <Kpi accent="emerald" label="Active Owners" value={mockSubscriptions.activeOwners} sub="Paying customers" icon={<Users className="h-4 w-4" />} />
-        <Kpi label="Trial Owners" value={mockSubscriptions.trialOwners} icon={<TrendingUp className="h-4 w-4" />} sub="Converting soon" />
-        <Kpi label="Failed Payments" value={mockSubscriptions.failedAlerts.length} icon={<AlertTriangle className="h-4 w-4" />} sub="Needs follow-up" delta="Requires action" tone="down" />
+        <Kpi accent="navy" label={t("admin.earnings.mrr", { fallback: "Monthly Recurring Revenue" })} value={`SAR ${mockSubscriptions.totalMRR.toLocaleString()}`} sub={t("admin.earnings.subs", { fallback: "3 subscriptions" })} icon={<Wallet className="h-4 w-4" />} delta="+SAR 1,999 vs last month" tone="up" />
+        <Kpi accent="emerald" label={t("admin.earnings.active_owners", { fallback: "Active Owners" })} value={mockSubscriptions.activeOwners} sub={t("admin.earnings.paying", { fallback: "Paying customers" })} icon={<Users className="h-4 w-4" />} />
+        <Kpi label={t("admin.earnings.trial_owners", { fallback: "Trial Owners" })} value={mockSubscriptions.trialOwners} icon={<TrendingUp className="h-4 w-4" />} sub={t("admin.earnings.converting", { fallback: "Converting soon" })} />
+        <Kpi label={t("admin.earnings.failed", { fallback: "Failed Payments" })} value={mockSubscriptions.failedAlerts.length} icon={<AlertTriangle className="h-4 w-4" />} sub={t("admin.earnings.follow_up", { fallback: "Needs follow-up" })} delta={t("admin.earnings.action", { fallback: "Requires action" })} tone="down" />
       </div>
 
       {/* Charts + Plans */}
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
-          <SectionTitle title="Revenue Trend (Last 6 Months)" />
+          <SectionTitle title={t("admin.earnings.trend", { fallback: "Revenue Trend (Last 6 Months)" })} />
           <div className="h-64">
             <ResponsiveContainer>
               <AreaChart data={revenueChart} margin={{ left: -10, right: 4, top: 8, bottom: 0 }}>
@@ -61,7 +63,7 @@ function AdminEarnings() {
         </Card>
 
         <Card>
-          <SectionTitle title="Plan Breakdown" />
+          <SectionTitle title={t("admin.earnings.breakdown", { fallback: "Plan Breakdown" })} />
           <div className="space-y-3">
             {pricingPlans.map(plan => {
               const count = plan.id === "starter" ? mockSubscriptions.plans.starter :
@@ -76,7 +78,7 @@ function AdminEarnings() {
                       <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${planColors[plan.name]}`}>
                         {plan.name}
                       </span>
-                      <span className="text-muted-foreground text-xs">{count} owner{count !== 1 ? "s" : ""}</span>
+                      <span className="text-muted-foreground text-xs">{count} {t("common.owner", { fallback: "owner" })}{count !== 1 ? "s" : ""}</span>
                     </div>
                     <span className="font-semibold">SAR {revenue.toLocaleString()}</span>
                   </div>
@@ -86,7 +88,7 @@ function AdminEarnings() {
                       style={{ width: `${pct}%` }}
                     />
                   </div>
-                  <div className="text-right text-xs text-muted-foreground">{pct}% of MRR</div>
+                  <div className="text-end text-xs text-muted-foreground">{pct}% of MRR</div>
                 </div>
               );
             })}
@@ -107,17 +109,17 @@ function AdminEarnings() {
 
       {/* Recent Payments */}
       <Card>
-        <SectionTitle title="Recent Payments" />
+        <SectionTitle title={t("admin.earnings.recent", { fallback: "Recent Payments" })} />
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="text-left text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border">
+            <thead className="text-start text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border">
               <tr>
-                <th className="pb-3">Transaction ID</th>
-                <th className="pb-3">Owner</th>
-                <th className="pb-3">Plan</th>
-                <th className="pb-3">Amount</th>
-                <th className="pb-3">Date</th>
-                <th className="pb-3">Status</th>
+                <th className="pb-3">{t("admin.earnings.tx", { fallback: "Transaction ID" })}</th>
+                <th className="pb-3">{t("common.owner", { fallback: "Owner" })}</th>
+                <th className="pb-3">{t("common.plan", { fallback: "Plan" })}</th>
+                <th className="pb-3">{t("common.amount", { fallback: "Amount" })}</th>
+                <th className="pb-3">{t("common.date", { fallback: "Date" })}</th>
+                <th className="pb-3">{t("common.status", { fallback: "Status" })}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -141,7 +143,7 @@ function AdminEarnings() {
       {/* Failed Payment Alerts */}
       {mockSubscriptions.failedAlerts.length > 0 && (
         <Card>
-          <SectionTitle title="Failed Payment Alerts" action={<span className="text-xs text-rose-600 font-medium">Requires action</span>} />
+          <SectionTitle title={t("admin.earnings.alerts", { fallback: "Failed Payment Alerts" })} action={<span className="text-xs text-rose-600 font-medium">{t("admin.earnings.action", { fallback: "Requires action" })}</span>} />
           <div className="space-y-3">
             {mockSubscriptions.failedAlerts.map((alert, i) => (
               <div key={i} className="flex items-center gap-4 rounded-xl bg-rose-50 border border-rose-200 p-4">
@@ -151,7 +153,7 @@ function AdminEarnings() {
                   <div className="text-xs text-rose-700">{alert.plan} — SAR {alert.amount} · {alert.date} · {alert.reason}</div>
                 </div>
                 <button className="rounded-xl bg-rose-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-rose-700 transition">
-                  Follow Up
+                  {t("admin.earnings.follow_up_btn", { fallback: "Follow Up" })}
                 </button>
               </div>
             ))}
@@ -161,11 +163,11 @@ function AdminEarnings() {
 
       {/* Pricing reference */}
       <Card>
-        <SectionTitle title="Plan Pricing Reference" />
+        <SectionTitle title={t("admin.earnings.pricing", { fallback: "Plan Pricing Reference" })} />
         <div className="grid gap-4 sm:grid-cols-3">
           {pricingPlans.map(plan => (
             <div key={plan.id} className={`rounded-2xl border-2 p-5 ${plan.popular ? "border-accent bg-accent/5" : "border-border"}`}>
-              {plan.popular && <span className="text-[11px] font-semibold text-accent uppercase tracking-wider">Most Popular</span>}
+              {plan.popular && <span className="text-[11px] font-semibold text-accent uppercase tracking-wider">{t("admin.earnings.popular", { fallback: "Most Popular" })}</span>}
               <div className="mt-1 font-display text-lg font-semibold">{plan.name}</div>
               <div className="text-xs text-muted-foreground">{plan.description}</div>
               <div className="mt-3 font-display text-2xl font-semibold">

@@ -3,6 +3,7 @@ import { ArrowRight, LayoutDashboard, BarChart3, ClipboardCheck, Building2, User
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { Button } from "@/components/ui/button";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/product")({
   head: () => ({ meta: [{ title: "Product — FacilityOS Arabia" }] }),
@@ -10,6 +11,8 @@ export const Route = createFileRoute("/product")({
 });
 
 function Product() {
+  const { t } = useLang();
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -18,12 +21,12 @@ function Product() {
       <section className="relative overflow-hidden bg-navy-gradient py-24 sm:py-32">
         <div className="absolute inset-0 bg-mesh opacity-40 mix-blend-overlay" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center text-primary-foreground">
-          <p className="text-sm font-semibold uppercase tracking-widest text-gold mb-6">Platform Overview</p>
+          <p className="text-sm font-semibold uppercase tracking-widest text-gold mb-6">{t("product.hero.overview", { fallback: "Platform Overview" })}</p>
           <h1 className="mx-auto max-w-4xl text-balance font-display text-4xl font-semibold tracking-tight sm:text-6xl drop-shadow-lg">
-            One Simple Platform.<br />Three Powerful Dashboards.
+            {t("product.hero.title")}
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-white/80">
-            A complete ecosystem designed to connect the platform admin, the building owner, and the labour team with zero friction.
+            {t("product.hero.subtitle")}
           </p>
         </div>
       </section>
@@ -38,9 +41,9 @@ function Product() {
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-navy text-white mb-6">
                 <LayoutDashboard className="h-6 w-6" />
               </div>
-              <h2 className="text-3xl font-display font-semibold tracking-tight sm:text-4xl">Admin Dashboard</h2>
+              <h2 className="text-3xl font-display font-semibold tracking-tight sm:text-4xl">{t("product.admin.title")}</h2>
               <p className="mt-4 text-lg text-muted-foreground">
-                Manage the entire platform from one place. View all owners, buildings, labour accounts, subscriptions, revenue, checklist templates, and daily reports.
+                {t("dashboard.admin.desc")}
               </p>
               <ul className="mt-8 grid gap-4 sm:grid-cols-2">
                 {[
@@ -138,9 +141,9 @@ function Product() {
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-navy text-white mb-6">
                 <BarChart3 className="h-6 w-6" />
               </div>
-              <h2 className="text-3xl font-display font-semibold tracking-tight sm:text-4xl">Owner Dashboard</h2>
+              <h2 className="text-3xl font-display font-semibold tracking-tight sm:text-4xl">{t("product.owner.title")}</h2>
               <p className="mt-4 text-lg text-muted-foreground">
-                Building owners get a private dashboard to manage their own buildings, assign labour, create daily checklists, and view submitted reports.
+                {t("dashboard.owner.desc")}
               </p>
               <ul className="mt-8 grid gap-4 sm:grid-cols-2">
                 {[
@@ -164,9 +167,9 @@ function Product() {
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent text-white mb-6">
                 <ClipboardCheck className="h-6 w-6" />
               </div>
-              <h2 className="text-3xl font-display font-semibold tracking-tight sm:text-4xl">Labour Dashboard</h2>
+              <h2 className="text-3xl font-display font-semibold tracking-tight sm:text-4xl">{t("product.labour.title")}</h2>
               <p className="mt-4 text-lg text-muted-foreground">
-                Labour users get a very simple visual dashboard with large task cards, icons, check buttons, and one submit button. No complex menus or technical knowledge required.
+                {t("dashboard.labour.desc", { fallback: "Labour users get a very simple visual dashboard with large task cards, icons, check buttons, and one submit button. No complex menus or technical knowledge required." })}
               </p>
               <ul className="mt-8 grid gap-4 sm:grid-cols-2">
                 {[
@@ -218,14 +221,19 @@ function Product() {
       {/* BUILT FOR DAILY PROOF */}
       <section className="bg-secondary/50 border-y border-border py-24">
         <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-          <h2 className="font-display text-3xl font-semibold sm:text-4xl">Built for daily proof of work</h2>
+          <h2 className="font-display text-3xl font-semibold sm:text-4xl">{t("product.built_for_proof")}</h2>
           <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
-            Building owners no longer need to call repeatedly or guess if work was completed. The platform is designed for one simple loop: Labour submits the daily checklist, and the owner instantly receives a verifiable daily report.
+            {t("product.built_for_proof_desc", { fallback: "Building owners no longer need to call repeatedly or guess if work was completed. The platform is designed for one simple loop: Labour submits the daily checklist, and the owner instantly receives a verifiable daily report." })}
           </p>
-          <div className="mt-10">
+          <div className="mt-10 flex flex-wrap justify-center gap-4">
             <Button asChild size="lg" className="h-14 px-8 text-base">
               <Link to="/pricing">
-                Get Owner Dashboard Access <ArrowRight className="ml-2 h-5 w-5" />
+                {t("product.btn.get_access")} <ArrowRight className="ms-2 h-5 w-5 rtl:rotate-180" />
+              </Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="h-14 px-8 text-base">
+              <Link to="/demo">
+                {t("product.btn.demo")}
               </Link>
             </Button>
           </div>

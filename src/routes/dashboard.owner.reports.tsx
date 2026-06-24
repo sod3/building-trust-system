@@ -4,6 +4,7 @@ import { Eye, Clock, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { PageHeader, Card, StatusPill, ProgressBar, Modal, Btn } from "@/components/dashboard/ui";
 import { useAuth } from "@/lib/auth-context";
 import { mockOwners, mockReports, type MockReport } from "@/lib/mock-data";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard/owner/reports")({
   head: () => ({ meta: [{ title: "Today's Reports — Owner Dashboard" }] }),
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/dashboard/owner/reports")({
 
 function OwnerReports() {
   const { user } = useAuth();
+  const { t } = useLang();
   const owner = mockOwners.find(o => o.id === user?.ownerId) || mockOwners[0];
   const todayReports = mockReports.filter(r => r.ownerId === owner.id && r.date === "Jun 24, 2026");
   const [selected, setSelected] = useState<MockReport | null>(null);
@@ -36,17 +38,17 @@ function OwnerReports() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Today's Reports"
-        subtitle={`Daily report status for all your buildings — ${new Date().toLocaleDateString("en-GB", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}`}
+        title={t("dashboard.owner.nav.reports", { fallback: "Today's Reports" })}
+        subtitle={`${t("owner.reports.subtitle", { fallback: "Daily report status for all your buildings —" })} ${new Date().toLocaleDateString(t("common.locale", { fallback: "en-GB" }), { weekday: "long", year: "numeric", month: "long", day: "numeric" })}`}
       />
 
       {/* Quick status row */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[
-          { label: "Submitted", value: statusCounts.submitted, icon: <CheckCircle2 className="h-4 w-4" />, cls: "text-sky-700 bg-sky-50 border-sky-200" },
-          { label: "Approved", value: statusCounts.approved, icon: <CheckCircle2 className="h-4 w-4" />, cls: "text-emerald-700 bg-emerald-50 border-emerald-200" },
-          { label: "Pending", value: statusCounts.pending, icon: <Clock className="h-4 w-4" />, cls: "text-amber-700 bg-amber-50 border-amber-200" },
-          { label: "Missed", value: statusCounts.missed, icon: <AlertTriangle className="h-4 w-4" />, cls: "text-rose-700 bg-rose-50 border-rose-200" },
+          { label: t("owner.reports.submitted", { fallback: "Submitted" }), value: statusCounts.submitted, icon: <CheckCircle2 className="h-4 w-4" />, cls: "text-sky-700 bg-sky-50 border-sky-200" },
+          { label: t("owner.reports.approved", { fallback: "Approved" }), value: statusCounts.approved, icon: <CheckCircle2 className="h-4 w-4" />, cls: "text-emerald-700 bg-emerald-50 border-emerald-200" },
+          { label: t("common.pending", { fallback: "Pending" }), value: statusCounts.pending, icon: <Clock className="h-4 w-4" />, cls: "text-amber-700 bg-amber-50 border-amber-200" },
+          { label: t("owner.reports.missed", { fallback: "Missed" }), value: statusCounts.missed, icon: <AlertTriangle className="h-4 w-4" />, cls: "text-rose-700 bg-rose-50 border-rose-200" },
         ].map(s => (
           <div key={s.label} className={`flex items-center gap-3 rounded-2xl border px-4 py-3 ${s.cls}`}>
             {s.icon}
@@ -63,8 +65,7 @@ function OwnerReports() {
         <Card>
           <div className="py-16 text-center">
             <Clock className="h-12 w-12 mx-auto text-muted-foreground/40 mb-4" />
-            <h3 className="font-display text-lg font-semibold">No reports submitted yet today.</h3>
-            <p className="mt-2 text-sm text-muted-foreground">Reports will appear here when your labour submits their daily work.</p>
+            <h3 className="font-display text-lg font-semibold">{t("owner.overview.no_reports", { fallback: "No reports submitted yet today." })}</h3>
           </div>
         </Card>
       ) : (
@@ -86,7 +87,7 @@ function OwnerReports() {
               {/* Progress */}
               <div className="mb-3">
                 <div className="flex items-center justify-between text-xs mb-1.5">
-                  <span className="text-muted-foreground">Task completion</span>
+                  <span className="text-muted-foreground">{t("owner.reports.task_completion", { fallback: "Task completion" })}</span>
                   <span className="font-bold">{Math.round((r.completedTasks / r.totalTasks) * 100)}%</span>
                 </div>
                 <ProgressBar
@@ -113,7 +114,7 @@ function OwnerReports() {
               </div>
 
               <Btn size="sm" variant="outline" className="w-full" onClick={() => setSelected(r)}>
-                <Eye className="h-3.5 w-3.5" /> View Full Report
+                <Eye className="h-3.5 w-3.5" /> {t("owner.reports.view_full", { fallback: "View Full Report" })}
               </Btn>
             </div>
           ))}
@@ -137,11 +138,11 @@ function OwnerReports() {
 
             <div className="rounded-xl border border-border p-3">
               <div className="mb-2 flex items-center justify-between text-sm">
-                <span className="font-semibold">Task Completion</span>
+                <span className="font-semibold">{t("owner.reports.task_completion", { fallback: "Task completion" })}</span>
                 <StatusPill status={selected.status} />
               </div>
               <ProgressBar value={selected.completedTasks} max={selected.totalTasks} color="emerald" />
-              <div className="mt-1 text-xs text-muted-foreground text-right">{selected.completedTasks}/{selected.totalTasks} tasks</div>
+              <div className="mt-1 text-xs text-muted-foreground text-end">{selected.completedTasks}/{selected.totalTasks} tasks</div>
             </div>
 
             <div>
@@ -169,8 +170,7 @@ function OwnerReports() {
             )}
 
             <div className="flex justify-end gap-2">
-              <Btn variant="secondary" onClick={() => setSelected(null)}>Close</Btn>
-              <Btn onClick={() => setSelected(null)}>Approve Report</Btn>
+              <Btn variant="secondary" onClick={() => setSelected(null)}>{t("common.close", { fallback: "Close" })}</Btn>
             </div>
           </div>
         )}

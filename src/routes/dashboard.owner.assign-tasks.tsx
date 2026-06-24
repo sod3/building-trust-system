@@ -7,6 +7,7 @@ import {
 import { Card, Btn, Toast, StatusPill } from "@/components/dashboard/ui";
 import { useAuth } from "@/lib/auth-context";
 import { mockOwners, mockBuildings, mockLabour, mockChecklistTemplates } from "@/lib/mock-data";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard/owner/assign-tasks")({
   head: () => ({ meta: [{ title: "Assign Tasks — Owner Dashboard" }] }),
@@ -43,6 +44,7 @@ const categories = ["Cleaning", "Elevator", "Waste", "Water", "Lighting", "Parki
 
 function OwnerAssignTasks() {
   const { user } = useAuth();
+  const { t } = useLang();
   const owner = mockOwners.find(o => o.id === user?.ownerId) || mockOwners[0];
   const myBuildings = mockBuildings.filter(b => owner.buildingIds.includes(b.id));
   const myLabour = mockLabour.filter(l => l.ownerId === owner.id);
@@ -86,16 +88,15 @@ function OwnerAssignTasks() {
         <div className="grid h-20 w-20 place-items-center rounded-3xl bg-emerald-100 mb-4">
           <CheckCircle2 className="h-10 w-10 text-emerald-600" />
         </div>
-        <h2 className="font-display text-2xl font-semibold">Tasks Assigned!</h2>
+        <h2 className="font-display text-2xl font-semibold">{t("owner.assign.success", { fallback: "Tasks Assigned!" })}</h2>
         <p className="mt-2 text-muted-foreground max-w-sm">
-          Daily checklist has been assigned to <strong>{labour?.name}</strong> for <strong>{building?.name}</strong>.
-          Labour will see the tasks in their dashboard.
+          {t("owner.assign.success_desc", { fallback: "Daily checklist has been assigned to labour. They will see the tasks in their dashboard." })}
         </p>
         <div className="mt-6 flex gap-3">
           <Btn onClick={() => { setSubmitted(false); setStep(1); setSelectedBuilding(""); setSelectedLabour(""); setSelectedTemplate(""); setCustomTasks([]); }}>
-            Assign More Tasks
+            {t("owner.assign.assign_more", { fallback: "Assign More Tasks" })}
           </Btn>
-          <Btn variant="secondary" onClick={() => window.history.back()}>Back to Dashboard</Btn>
+          <Btn variant="secondary" onClick={() => window.history.back()}>{t("owner.assign.back_home", { fallback: "Back to Dashboard" })}</Btn>
         </div>
       </div>
     );
@@ -104,17 +105,17 @@ function OwnerAssignTasks() {
   return (
     <div className="space-y-6 max-w-3xl">
       <div>
-        <h1 className="font-display text-2xl font-semibold">Assign Daily Tasks</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Select a building, assign labour, and choose or create a checklist.</p>
+        <h1 className="font-display text-2xl font-semibold">{t("owner.assign.title", { fallback: "Assign Daily Tasks" })}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{t("owner.assign.subtitle", { fallback: "Select a building, assign labour, and choose or create a checklist." })}</p>
       </div>
 
       {/* Step indicator */}
       <div className="flex items-center gap-2">
         {[
-          { n: 1, label: "Building" },
-          { n: 2, label: "Labour" },
-          { n: 3, label: "Checklist" },
-          { n: 4, label: "Review" },
+          { n: 1, label: t("common.building", { fallback: "Building" }) },
+          { n: 2, label: t("dashboard.owner.nav.labour", { fallback: "Labour" }) },
+          { n: 3, label: t("owner.assign.checklist", { fallback: "Checklist" }) },
+          { n: 4, label: t("owner.assign.review", { fallback: "Review" }) },
         ].map((s, i) => (
           <div key={s.n} className="flex items-center gap-2">
             <button
@@ -138,14 +139,14 @@ function OwnerAssignTasks() {
         <Card>
           <div className="flex items-center gap-2 mb-4">
             <Building2 className="h-5 w-5 text-navy" />
-            <h3 className="font-display font-semibold">Select Building</h3>
+            <h3 className="font-display font-semibold">{t("owner.assign.select_building", { fallback: "Select Building" })}</h3>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             {myBuildings.map(b => (
               <button
                 key={b.id}
                 onClick={() => { setSelectedBuilding(b.id); setStep(2); }}
-                className={`rounded-xl border-2 p-4 text-left transition-all hover:shadow-md active:scale-[0.99] ${
+                className={`rounded-xl border-2 p-4 text-start transition-all hover:shadow-md active:scale-[0.99] ${
                   selectedBuilding === b.id ? "border-accent bg-accent/5" : "border-border hover:border-accent/30"
                 }`}
               >
@@ -164,14 +165,14 @@ function OwnerAssignTasks() {
         <Card>
           <div className="flex items-center gap-2 mb-4">
             <User className="h-5 w-5 text-navy" />
-            <h3 className="font-display font-semibold">Select Labour for {building?.name}</h3>
+            <h3 className="font-display font-semibold">{t("owner.assign.select_labour", { fallback: "Select Labour for" })} {building?.name}</h3>
           </div>
           <div className="space-y-3">
             {myLabour.filter(l => l.buildingId === selectedBuilding || !l.buildingId).map(l => (
               <button
                 key={l.id}
                 onClick={() => { setSelectedLabour(l.id); setStep(3); }}
-                className={`w-full flex items-center gap-3 rounded-xl border-2 p-4 text-left transition-all hover:shadow-md ${
+                className={`w-full flex items-center gap-3 rounded-xl border-2 p-4 text-start transition-all hover:shadow-md ${
                   selectedLabour === l.id ? "border-accent bg-accent/5" : "border-border hover:border-accent/30"
                 }`}
               >
@@ -190,11 +191,11 @@ function OwnerAssignTasks() {
               </button>
             ))}
             {myLabour.filter(l => l.buildingId === selectedBuilding).length === 0 && (
-              <div className="text-center py-6 text-sm text-muted-foreground">No labour directly assigned to this building. Showing all your workers.</div>
+              <div className="text-center py-6 text-sm text-muted-foreground">{t("owner.assign.no_labour", { fallback: "No labour directly assigned to this building. Showing all your workers." })}</div>
             )}
           </div>
           <div className="mt-4">
-            <Btn variant="secondary" onClick={() => setStep(1)}>← Back</Btn>
+            <Btn variant="secondary" onClick={() => setStep(1)}>{t("common.back", { fallback: "← Back" })}</Btn>
           </div>
         </Card>
       )}
@@ -205,14 +206,14 @@ function OwnerAssignTasks() {
           <Card>
             <div className="flex items-center gap-2 mb-4">
               <ClipboardList className="h-5 w-5 text-navy" />
-              <h3 className="font-display font-semibold">Choose Checklist Template</h3>
+              <h3 className="font-display font-semibold">{t("owner.assign.choose_template", { fallback: "Choose Checklist Template" })}</h3>
             </div>
             <div className="space-y-2">
               {mockChecklistTemplates.map(t => (
                 <button
                   key={t.id}
                   onClick={() => { setSelectedTemplate(t.id); setCustomTasks([]); }}
-                  className={`w-full text-left rounded-xl border-2 p-4 transition-all ${
+                  className={`w-full text-start rounded-xl border-2 p-4 transition-all ${
                     selectedTemplate === t.id ? "border-accent bg-accent/5" : "border-border hover:border-accent/30"
                   }`}
                 >
@@ -230,7 +231,7 @@ function OwnerAssignTasks() {
           <Card>
             <div className="flex items-center gap-2 mb-4">
               <Plus className="h-5 w-5 text-navy" />
-              <h3 className="font-display font-semibold">Or Create Custom Tasks</h3>
+              <h3 className="font-display font-semibold">{t("owner.assign.custom_tasks", { fallback: "Or Create Custom Tasks" })}</h3>
             </div>
             <div className="space-y-3">
               <div className="flex gap-2 flex-wrap">
@@ -272,9 +273,9 @@ function OwnerAssignTasks() {
           </Card>
 
           <div className="flex gap-2">
-            <Btn variant="secondary" onClick={() => setStep(2)}>← Back</Btn>
+            <Btn variant="secondary" onClick={() => setStep(2)}>{t("common.back", { fallback: "← Back" })}</Btn>
             <Btn onClick={() => { if (selectedTemplate || customTasks.length > 0) setStep(4); else showToast("Select a template or add tasks", "error"); }}>
-              Review Assignment →
+              {t("owner.assign.review_btn", { fallback: "Review Assignment →" })}
             </Btn>
           </div>
         </div>
@@ -283,7 +284,7 @@ function OwnerAssignTasks() {
       {/* Step 4: Review */}
       {step === 4 && (
         <Card>
-          <h3 className="font-display font-semibold mb-4">Review & Save Assignment</h3>
+          <h3 className="font-display font-semibold mb-4">{t("owner.assign.review_save", { fallback: "Review & Save Assignment" })}</h3>
 
           <div className="space-y-3 mb-6">
             <div className="flex items-center gap-3 rounded-xl bg-secondary p-3">
@@ -327,9 +328,9 @@ function OwnerAssignTasks() {
           </div>
 
           <div className="flex gap-2">
-            <Btn variant="secondary" onClick={() => setStep(3)}>← Back</Btn>
+            <Btn variant="secondary" onClick={() => setStep(3)}>{t("common.back", { fallback: "← Back" })}</Btn>
             <Btn onClick={handleSaveAssignment}>
-              <CheckCircle2 className="h-4 w-4" /> Save Assignment
+              <CheckCircle2 className="h-4 w-4" /> {t("owner.assign.save_btn", { fallback: "Save Assignment" })}
             </Btn>
           </div>
         </Card>

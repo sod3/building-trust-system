@@ -4,6 +4,7 @@ import { Users, Clock, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Card, StatusPill, ProgressBar, SectionTitle } from "@/components/dashboard/ui";
 import { useAuth } from "@/lib/auth-context";
 import { mockOwners, mockBuildings, mockLabour, mockReports } from "@/lib/mock-data";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard/owner/buildings")({
   head: () => ({ meta: [{ title: "My Buildings — Owner Dashboard" }] }),
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/dashboard/owner/buildings")({
 
 function OwnerBuildings() {
   const { user } = useAuth();
+  const { t } = useLang();
   const owner = mockOwners.find(o => o.id === user?.ownerId) || mockOwners[0];
   const myBuildings = mockBuildings.filter(b => owner.buildingIds.includes(b.id));
   const [selected, setSelected] = useState<string | null>(null);
@@ -27,9 +29,9 @@ function OwnerBuildings() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-semibold">My Buildings</h1>
+        <h1 className="font-display text-2xl font-semibold">{t("dashboard.owner.nav.buildings", { fallback: "My Buildings" })}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {myBuildings.length} buildings under your management.
+          {t("owner.buildings.subtitle", { count: myBuildings.length, fallback: `${myBuildings.length} buildings under your management.` })}
         </p>
       </div>
 
@@ -57,7 +59,7 @@ function OwnerBuildings() {
               </div>
               <div className="p-4">
                 <div className="flex items-center justify-between text-xs mb-1.5">
-                  <span className="text-muted-foreground font-medium">Today's completion</span>
+                  <span className="text-muted-foreground font-medium">{t("owner.buildings.today_completion", { fallback: "Today's completion" })}</span>
                   <span className="font-bold text-sm">{b.completionToday}%</span>
                 </div>
                 <ProgressBar
@@ -69,7 +71,7 @@ function OwnerBuildings() {
                 <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
                   <div className="flex items-center gap-1.5 text-muted-foreground">
                     <Users className="h-3.5 w-3.5" />
-                    {labour.length > 0 ? labour.map(l => l.name.split(" ")[0]).join(", ") : "No labour"}
+                    {labour.length > 0 ? labour.map(l => l.name.split(" ")[0]).join(", ") : t("owner.buildings.no_labour", { fallback: "No labour" })}
                   </div>
                   <div className="flex items-center gap-1.5 text-muted-foreground justify-end">
                     <Clock className="h-3.5 w-3.5" />
@@ -78,7 +80,7 @@ function OwnerBuildings() {
                 </div>
 
                 <div className="mt-2 text-xs text-center text-accent font-medium">
-                  {isSelected ? "▲ Hide details" : "▼ View details"}
+                  {isSelected ? t("owner.buildings.hide_details", { fallback: "▲ Hide details" }) : t("owner.buildings.view_details", { fallback: "▼ View details" })}
                 </div>
               </div>
             </div>
@@ -90,9 +92,9 @@ function OwnerBuildings() {
       {selectedBuilding && (
         <div className="grid gap-4 lg:grid-cols-2 animate-in slide-in-from-bottom-2 duration-300">
           <Card>
-            <SectionTitle title={`Labour — ${selectedBuilding.name}`} />
+            <SectionTitle title={`${t("dashboard.owner.nav.labour", { fallback: "Labour" })} — ${selectedBuilding.name}`} />
             {buildingLabour.length === 0 ? (
-              <div className="py-6 text-center text-sm text-muted-foreground">No labour assigned to this building.</div>
+              <div className="py-6 text-center text-sm text-muted-foreground">{t("owner.buildings.no_labour_assigned", { fallback: "No labour assigned to this building." })}</div>
             ) : (
               <div className="space-y-3">
                 {buildingLabour.map(l => (
@@ -104,9 +106,9 @@ function OwnerBuildings() {
                       <div className="font-medium text-sm">{l.name}</div>
                       <div className="text-xs text-muted-foreground">{l.phone}</div>
                     </div>
-                    <div className="text-right">
+                    <div className="text-end">
                       <StatusPill status={l.todayStatus} />
-                      <div className="text-xs text-muted-foreground mt-1">{l.completedTasksToday}/{l.totalTasksToday} tasks</div>
+                      <div className="text-xs text-muted-foreground mt-1">{l.completedTasksToday}/{l.totalTasksToday} {t("common.tasks", { fallback: "tasks" })}</div>
                     </div>
                   </div>
                 ))}
@@ -115,9 +117,9 @@ function OwnerBuildings() {
           </Card>
 
           <Card>
-            <SectionTitle title={`Recent Reports — ${selectedBuilding.name}`} />
+            <SectionTitle title={`${t("owner.buildings.recent_reports", { fallback: "Recent Reports" })} — ${selectedBuilding.name}`} />
             {buildingReports.length === 0 ? (
-              <div className="py-6 text-center text-sm text-muted-foreground">No reports for this building yet.</div>
+              <div className="py-6 text-center text-sm text-muted-foreground">{t("owner.buildings.no_reports", { fallback: "No reports for this building yet." })}</div>
             ) : (
               <div className="space-y-3">
                 {buildingReports.map(r => (
@@ -133,7 +135,7 @@ function OwnerBuildings() {
                     </div>
                     {r.pendingTasks > 0 && (
                       <div className="mt-1 flex items-center gap-1 text-xs text-amber-600">
-                        <AlertTriangle className="h-3 w-3" /> {r.pendingTasks} tasks pending
+                        <AlertTriangle className="h-3 w-3" /> {r.pendingTasks} {t("owner.buildings.tasks_pending", { fallback: "tasks pending" })}
                       </div>
                     )}
                   </div>

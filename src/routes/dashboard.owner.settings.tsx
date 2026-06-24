@@ -4,6 +4,7 @@ import { Save, User, Bell, Globe } from "lucide-react";
 import { PageHeader, Card } from "@/components/dashboard/ui";
 import { useAuth } from "@/lib/auth-context";
 import { mockOwners } from "@/lib/mock-data";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard/owner/settings")({
   head: () => ({ meta: [{ title: "Settings — Owner Dashboard" }] }),
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/dashboard/owner/settings")({
 
 function OwnerSettings() {
   const { user } = useAuth();
+  const { t } = useLang();
   const owner = mockOwners.find(o => o.id === user?.ownerId) || mockOwners[0];
   const [name, setName] = useState(owner.name);
   const [company, setCompany] = useState(owner.company);
@@ -23,7 +25,7 @@ function OwnerSettings() {
 
   return (
     <div className="space-y-6 max-w-2xl">
-      <PageHeader title="Settings" subtitle="Manage your profile and preferences." />
+      <PageHeader title={t("dashboard.owner.nav.settings", { fallback: "Settings" })} subtitle={t("owner.settings.subtitle", { fallback: "Manage your profile and preferences." })} />
 
       {/* Profile */}
       <Card>
@@ -33,28 +35,28 @@ function OwnerSettings() {
           </div>
           <div>
             <div className="font-semibold">{name}</div>
-            <div className="text-xs text-muted-foreground">{owner.plan} Owner</div>
+            <div className="text-xs text-muted-foreground">{owner.plan} {t("common.owner", { fallback: "Owner" })}</div>
           </div>
         </div>
         <div className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Full Name</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{t("common.full_name", { fallback: "Full Name" })}</label>
               <input value={name} onChange={e => setName(e.target.value)}
                 className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Company Name</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{t("common.company_name", { fallback: "Company Name" })}</label>
               <input value={company} onChange={e => setCompany(e.target.value)}
                 className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Phone</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{t("common.phone", { fallback: "Phone" })}</label>
               <input value={phone} onChange={e => setPhone(e.target.value)}
                 className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Email</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">{t("common.email", { fallback: "Email" })}</label>
               <input value={email} onChange={e => setEmail(e.target.value)} type="email"
                 className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition" />
             </div>
@@ -66,13 +68,13 @@ function OwnerSettings() {
       <Card>
         <div className="flex items-center gap-3 mb-4">
           <div className="grid h-9 w-9 place-items-center rounded-xl bg-navy/10"><Bell className="h-4 w-4 text-navy" /></div>
-          <h3 className="font-display font-semibold">Notifications</h3>
+          <h3 className="font-display font-semibold">{t("admin.settings.notifications", { fallback: "Notifications" })}</h3>
         </div>
         <div className="space-y-3">
           {[
-            { key: "email", label: "Email Notifications", desc: "Receive daily summary emails" },
-            { key: "reports", label: "Report Alerts", desc: "Get notified when labour submits reports" },
-            { key: "overdue", label: "Overdue Task Alerts", desc: "Alert if tasks are not completed by EOD" },
+            { key: "email", label: t("admin.settings.email_notif", { fallback: "Email Notifications" }), desc: t("owner.settings.email_desc", { fallback: "Receive daily summary emails" }) },
+            { key: "reports", label: t("owner.settings.report_alerts", { fallback: "Report Alerts" }), desc: t("owner.settings.report_desc", { fallback: "Get notified when labour submits reports" }) },
+            { key: "overdue", label: t("owner.settings.overdue_alerts", { fallback: "Overdue Task Alerts" }), desc: t("owner.settings.overdue_desc", { fallback: "Alert if tasks are not completed by EOD" }) },
           ].map(item => (
             <div key={item.key} className="flex items-center justify-between py-2 border-b border-border last:border-0">
               <div>
@@ -94,7 +96,7 @@ function OwnerSettings() {
       <Card>
         <div className="flex items-center gap-3 mb-4">
           <div className="grid h-9 w-9 place-items-center rounded-xl bg-navy/10"><Globe className="h-4 w-4 text-navy" /></div>
-          <h3 className="font-display font-semibold">Language</h3>
+          <h3 className="font-display font-semibold">{t("admin.settings.language", { fallback: "Language" })}</h3>
         </div>
         <select value={language} onChange={e => setLanguage(e.target.value)}
           className="h-10 w-full max-w-xs rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition">
@@ -108,7 +110,7 @@ function OwnerSettings() {
           onClick={() => { setToast(true); setTimeout(() => setToast(false), 3000); }}
           className="flex items-center gap-2 rounded-xl bg-navy px-5 py-2.5 text-sm font-medium text-white hover:bg-navy/90 transition"
         >
-          <Save className="h-4 w-4" /> Save Changes
+          <Save className="h-4 w-4" /> {t("common.save", { fallback: "Save Changes" })}
         </button>
         <span className="text-xs text-muted-foreground">Frontend demo — not persisted across sessions.</span>
       </div>

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { PageHeader, Card, StatusPill, ProgressBar } from "@/components/dashboard/ui";
 import { useAuth } from "@/lib/auth-context";
 import { mockOwners, mockReports, mockBuildings, mockLabour } from "@/lib/mock-data";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard/owner/history")({
   head: () => ({ meta: [{ title: "Report History — Owner Dashboard" }] }),
@@ -11,6 +12,7 @@ export const Route = createFileRoute("/dashboard/owner/history")({
 
 function OwnerHistory() {
   const { user } = useAuth();
+  const { t } = useLang();
   const owner = mockOwners.find(o => o.id === user?.ownerId) || mockOwners[0];
   const myBuildings = mockBuildings.filter(b => owner.buildingIds.includes(b.id));
   const allReports = mockReports.filter(r => r.ownerId === owner.id);
@@ -27,26 +29,26 @@ function OwnerHistory() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Report History"
-        subtitle="All past daily reports from your buildings and labour."
+        title={t("dashboard.owner.nav.history", { fallback: "Report History" })}
+        subtitle={t("owner.history.subtitle", { fallback: "All past daily reports from your buildings and labour." })}
       />
 
       {/* Filters */}
       <Card>
         <div className="flex flex-wrap items-center gap-3">
           <div>
-            <label className="block text-xs text-muted-foreground mb-1">Building</label>
+            <label className="block text-xs text-muted-foreground mb-1">{t("common.building", { fallback: "Building" })}</label>
             <select
               value={filterBuilding}
               onChange={e => setFilterBuilding(e.target.value)}
               className="h-9 rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-accent transition"
             >
-              <option value="All">All Buildings</option>
+              <option value="All">{t("owner.history.all_buildings", { fallback: "All Buildings" })}</option>
               {myBuildings.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-xs text-muted-foreground mb-1">Status</label>
+            <label className="block text-xs text-muted-foreground mb-1">{t("common.status", { fallback: "Status" })}</label>
             <div className="flex items-center gap-2">
               {["All", "Submitted", "Approved", "Pending", "Missed"].map(s => (
                 <button
@@ -54,12 +56,12 @@ function OwnerHistory() {
                   onClick={() => setFilterStatus(s)}
                   className={`rounded-xl px-3 py-1.5 text-xs font-medium transition ${filterStatus === s ? "bg-navy text-white" : "border border-border text-muted-foreground hover:bg-secondary"}`}
                 >
-                  {s}
+                  {s === "All" ? t("common.all", { fallback: "All" }) : t(`owner.reports.${s.toLowerCase()}`, { fallback: s })}
                 </button>
               ))}
             </div>
           </div>
-          <div className="ml-auto text-xs text-muted-foreground self-end pb-0.5">{filtered.length} records</div>
+          <div className="ml-auto text-xs text-muted-foreground self-end pb-0.5">{filtered.length} {t("common.records", { fallback: "records" })}</div>
         </div>
       </Card>
 
@@ -67,22 +69,22 @@ function OwnerHistory() {
       {filtered.length === 0 ? (
         <Card>
           <div className="py-12 text-center text-sm text-muted-foreground">
-            No reports match your filters.
+            {t("owner.history.no_match", { fallback: "No reports match your filters." })}
           </div>
         </Card>
       ) : (
         <Card>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="text-left text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border">
+              <thead className="text-start text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border">
                 <tr>
-                  <th className="pb-3">Date</th>
-                  <th className="pb-3">Building</th>
-                  <th className="pb-3">Labour</th>
-                  <th className="pb-3">Tasks</th>
-                  <th className="pb-3">Completion</th>
-                  <th className="pb-3">Submitted At</th>
-                  <th className="pb-3">Status</th>
+                  <th className="pb-3">{t("common.date", { fallback: "Date" })}</th>
+                  <th className="pb-3">{t("common.building", { fallback: "Building" })}</th>
+                  <th className="pb-3">{t("dashboard.owner.nav.labour", { fallback: "Labour" })}</th>
+                  <th className="pb-3">{t("common.tasks", { fallback: "Tasks" })}</th>
+                  <th className="pb-3">{t("owner.reports.task_completion", { fallback: "Completion" })}</th>
+                  <th className="pb-3">{t("owner.reports.submitted_at", { fallback: "Submitted At" })}</th>
+                  <th className="pb-3">{t("common.status", { fallback: "Status" })}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">

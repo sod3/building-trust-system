@@ -8,28 +8,32 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 import { mockOwners } from "@/lib/mock-data";
 import { useState, useEffect } from "react";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard/owner")({
   head: () => ({ meta: [{ title: "Owner Dashboard — FacilityOS Arabia" }] }),
   component: OwnerLayout,
 });
 
-const navItems = [
-  { to: "/dashboard/owner", label: "Overview", icon: LayoutDashboard, exact: true },
-  { to: "/dashboard/owner/buildings", label: "My Buildings", icon: Building2, shortLabel: "Buildings" },
-  { to: "/dashboard/owner/labour", label: "Labour", icon: Users },
-  { to: "/dashboard/owner/assign-tasks", label: "Assign Tasks", icon: ClipboardList, shortLabel: "Tasks" },
-  { to: "/dashboard/owner/reports", label: "Today's Reports", icon: FileBarChart2, shortLabel: "Reports" },
-  { to: "/dashboard/owner/history", label: "Report History", icon: History },
-  { to: "/dashboard/owner/subscription", label: "Subscription", icon: CreditCard },
-  { to: "/dashboard/owner/settings", label: "Settings", icon: Settings },
+const getNavItems = (t: any) => [
+  { to: "/dashboard/owner", label: t("dashboard.owner.nav.overview", { fallback: "Overview" }), icon: LayoutDashboard, exact: true },
+  { to: "/dashboard/owner/buildings", label: t("dashboard.owner.nav.buildings", { fallback: "My Buildings" }), icon: Building2, shortLabel: t("dashboard.owner.nav.buildings_short", { fallback: "Buildings" }) },
+  { to: "/dashboard/owner/labour", label: t("dashboard.owner.nav.labour", { fallback: "Labour" }), icon: Users },
+  { to: "/dashboard/owner/assign-tasks", label: t("dashboard.owner.nav.assign", { fallback: "Assign Tasks" }), icon: ClipboardList, shortLabel: t("dashboard.owner.nav.tasks_short", { fallback: "Tasks" }) },
+  { to: "/dashboard/owner/reports", label: t("dashboard.owner.nav.reports", { fallback: "Today's Reports" }), icon: FileBarChart2, shortLabel: t("dashboard.owner.nav.reports_short", { fallback: "Reports" }) },
+  { to: "/dashboard/owner/history", label: t("dashboard.owner.nav.history", { fallback: "Report History" }), icon: History },
+  { to: "/dashboard/owner/subscription", label: t("dashboard.owner.nav.subscription", { fallback: "Subscription" }), icon: CreditCard },
+  { to: "/dashboard/owner/settings", label: t("dashboard.owner.nav.settings", { fallback: "Settings" }), icon: Settings },
 ];
 
 function OwnerLayout() {
   const { user, logout } = useAuth();
+  const { t, lang, setLang } = useLang();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: s => s.location.pathname });
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
+  
+  const navItems = getNavItems(t);
 
   // Close more menu on route change
   useEffect(() => {
@@ -69,15 +73,15 @@ function OwnerLayout() {
           </span>
           <div className="leading-tight">
             <div className="font-display text-sm font-semibold">FacilityOS Arabia</div>
-            <div className="text-[10px] uppercase tracking-wider text-white/50">Owner Dashboard</div>
+            <div className="text-[10px] uppercase tracking-wider text-white/50">{t("dashboard.owner.subtitle", { fallback: "Owner Dashboard" })}</div>
           </div>
         </div>
 
         {/* Owner info */}
         <div className="mx-3 mt-3 rounded-xl bg-white/5 border border-white/10 px-3 py-2.5">
-          <div className="text-[11px] text-white/50 uppercase tracking-wider mb-1">Your Building Operations Hub</div>
+          <div className="text-[11px] text-white/50 uppercase tracking-wider mb-1">{t("dashboard.owner.hub", { fallback: "Your Building Operations Hub" })}</div>
           <div className="font-semibold text-sm text-white">{ownerData.company}</div>
-          <div className="text-xs text-white/60 mt-0.5">{ownerData.plan} Plan · {ownerData.buildingIds.length} Buildings</div>
+          <div className="text-xs text-white/60 mt-0.5">{t(`pricing.plan.${ownerData.plan.toLowerCase()}`, { fallback: ownerData.plan })} {t("common.plan", { fallback: "Plan" })} · {ownerData.buildingIds.length} {t("common.buildings", { fallback: "Buildings" })}</div>
         </div>
 
         {/* Nav */}
@@ -113,7 +117,7 @@ function OwnerLayout() {
             </div>
             <div className="min-w-0 flex-1">
               <div className="truncate text-xs font-semibold text-white">{ownerData.name}</div>
-              <div className="text-[10px] text-white/50">{ownerData.plan} Owner</div>
+              <div className="text-[10px] text-white/50">{t(`pricing.plan.${ownerData.plan.toLowerCase()}`, { fallback: ownerData.plan })} {t("common.owner", { fallback: "Owner" })}</div>
             </div>
           </div>
           <button
@@ -121,7 +125,7 @@ function OwnerLayout() {
             className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-white/70 hover:bg-white/10 hover:text-white transition"
           >
             <LogOut className="h-4 w-4" />
-            Sign Out
+            {t("common.sign_out", { fallback: "Sign Out" })}
           </button>
         </div>
       </aside>
@@ -130,13 +134,19 @@ function OwnerLayout() {
       <div className="flex min-w-0 flex-1 flex-col relative">
         <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur-xl md:px-6">
           <div className="relative flex-1 max-w-sm">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
-              placeholder="Search..."
-              className="h-9 w-full rounded-xl border border-border bg-surface-2/40 pl-9 pr-3 text-sm outline-none placeholder:text-muted-foreground/70 focus:bg-background focus:ring-2 focus:ring-accent/20 transition"
+              placeholder={t("common.search", { fallback: "Search..." })}
+              className="h-9 w-full rounded-xl border border-border bg-surface-2/40 px-9 text-sm outline-none placeholder:text-muted-foreground/70 focus:bg-background focus:ring-2 focus:ring-accent/20 transition"
             />
           </div>
           <div className="flex-1" />
+          <button
+            onClick={() => setLang(lang === "en" ? "ar" : "en")}
+            className="flex items-center gap-2 rounded-xl border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-secondary hover:text-foreground transition"
+          >
+            {lang === "en" ? "العربية" : "English"}
+          </button>
           <button className="relative grid h-9 w-9 place-items-center rounded-xl border border-border text-muted-foreground hover:bg-secondary hover:text-foreground transition">
             <Bell className="h-4 w-4" />
             <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-rose-500" />
@@ -182,7 +192,7 @@ function OwnerLayout() {
               )}
             >
               <Menu className="h-5 w-5" />
-              <span className="text-[10px] font-medium">More</span>
+              <span className="text-[10px] font-medium">{t("common.more", { fallback: "More" })}</span>
             </button>
           </div>
         </div>
@@ -193,7 +203,7 @@ function OwnerLayout() {
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMobileMoreOpen(false)} />
             <div className="relative bg-background rounded-t-3xl border-t border-border p-6 pb-[calc(24px+env(safe-area-inset-bottom))] animate-in slide-in-from-bottom-full">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="font-display font-semibold text-lg">More Options</h3>
+                <h3 className="font-display font-semibold text-lg">{t("dashboard.owner.more_options", { fallback: "More Options" })}</h3>
                 <button onClick={() => setMobileMoreOpen(false)} className="p-2 rounded-full bg-secondary hover:bg-secondary/80">
                   <X className="h-5 w-5" />
                 </button>
@@ -225,7 +235,7 @@ function OwnerLayout() {
                   className="flex w-full items-center gap-4 p-4 rounded-xl text-rose-600 hover:bg-rose-50 transition-colors"
                 >
                   <LogOut className="h-5 w-5" />
-                  <span className="font-medium">Sign Out</span>
+                  <span className="font-medium">{t("common.sign_out", { fallback: "Sign Out" })}</span>
                 </button>
               </div>
             </div>

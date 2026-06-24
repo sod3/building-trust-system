@@ -2,6 +2,7 @@
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 import { ArrowDownRight, ArrowUpRight, X, AlertTriangle } from "lucide-react";
+import { useLang } from "@/lib/i18n";
 
 // ─── KPI CARD ─────────────────────────────────────────────────
 export function Kpi({
@@ -26,7 +27,7 @@ export function Kpi({
   if (accent) {
     return (
       <div className={cn("relative overflow-hidden rounded-2xl bg-gradient-to-br p-5 shadow-elevated", accentMap[accent])}>
-        <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-white/10 blur-2xl" />
+        <div className="absolute -end-6 -top-6 h-24 w-24 rounded-full bg-white/10 blur-2xl" />
         <div className="flex items-start justify-between">
           <div className="text-xs font-medium uppercase tracking-wider text-white/70">{label}</div>
           {icon && <div className="grid h-8 w-8 place-items-center rounded-lg bg-white/15 text-white">{icon}</div>}
@@ -114,9 +115,11 @@ export function StatusPill({ status }: { status: string }) {
     Important: "bg-amber-50 text-amber-700 ring-amber-200",
   };
   const cls = map[status] || "bg-secondary text-foreground ring-border";
+  const { t } = useLang();
+  const displayStatus = t(`status.${status.toLowerCase().replace(/ /g, '_')}`, { fallback: status });
   return (
     <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium ring-1 ring-inset", cls)}>
-      {status}
+      {displayStatus}
     </span>
   );
 }
@@ -138,12 +141,13 @@ export function SectionTitle({ title, action }: { title: string; action?: ReactN
 
 // ─── SEARCH INPUT ─────────────────────────────────────────────
 export function SearchInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder?: string }) {
+  const { t } = useLang();
   return (
     <input
       type="text"
       value={value}
       onChange={e => onChange(e.target.value)}
-      placeholder={placeholder || "Search..."}
+      placeholder={placeholder || t("common.search")}
       className="h-9 w-full max-w-xs rounded-xl border border-border bg-background px-3 text-sm outline-none placeholder:text-muted-foreground/60 focus:border-accent focus:ring-2 focus:ring-accent/20 transition"
     />
   );
@@ -211,7 +215,7 @@ export function FormInput({ label, value, onChange, placeholder, type = "text", 
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-foreground mb-1.5">{label}{required && <span className="text-rose-500 ml-1">*</span>}</label>
+      <label className="block text-sm font-medium text-foreground mb-1.5">{label}{required && <span className="text-rose-500 ms-1">*</span>}</label>
       <input
         type={type}
         value={value}
@@ -230,7 +234,7 @@ export function FormSelect({ label, value, onChange, options, required }: {
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-foreground mb-1.5">{label}{required && <span className="text-rose-500 ml-1">*</span>}</label>
+      <label className="block text-sm font-medium text-foreground mb-1.5">{label}{required && <span className="text-rose-500 ms-1">*</span>}</label>
       <select
         value={value}
         onChange={e => onChange(e.target.value)}
@@ -251,7 +255,7 @@ export function Toast({ message, type = "success", onClose }: { message: string;
     warning: "bg-amber-500 text-white",
   };
   return (
-    <div className={cn("fixed bottom-4 right-4 z-50 flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium shadow-elevated", styles[type])}>
+    <div className={cn("fixed bottom-4 end-4 z-50 flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium shadow-elevated", styles[type])}>
       {message}
       <button onClick={onClose} className="text-white/70 hover:text-white"><X className="h-4 w-4" /></button>
     </div>

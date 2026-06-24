@@ -5,6 +5,7 @@ import {
   PageHeader, StatusPill, Card, Modal, FormInput, FormSelect, Btn, Toast, EmptyState, ProgressBar,
 } from "@/components/dashboard/ui";
 import { mockBuildings, mockOwners, mockLabour, type MockBuilding } from "@/lib/mock-data";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard/admin/buildings")({
   head: () => ({ meta: [{ title: "Buildings — Admin Dashboard" }] }),
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/dashboard/admin/buildings")({
 });
 
 function AdminBuildings() {
+  const { t } = useLang();
   const [buildings, setBuildings] = useState<MockBuilding[]>(mockBuildings);
   const [search, setSearch] = useState("");
   const [showAdd, setShowAdd] = useState(false);
@@ -74,11 +76,11 @@ function AdminBuildings() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Buildings"
-        subtitle="All buildings across the platform."
+        title={t("admin.buildings.title", { fallback: "Buildings" })}
+        subtitle={t("admin.buildings.subtitle", { fallback: "All buildings across the platform." })}
         actions={
           <Btn onClick={() => { setShowAdd(true); setForm({ name: "", city: "", address: "", ownerId: "", status: "Healthy" }); }}>
-            <Plus className="h-4 w-4" /> Add Building
+            <Plus className="h-4 w-4" /> {t("admin.buildings.add", { fallback: "Add Building" })}
           </Btn>
         }
       />
@@ -87,21 +89,21 @@ function AdminBuildings() {
       <Card>
         <div className="flex items-center gap-3">
           <div className="relative flex-1">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
-              placeholder="Search by building name, city, or owner…"
+              placeholder={t("admin.buildings.search", { fallback: "Search by building name, city, or owner…" })}
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="h-9 w-full rounded-xl border border-border bg-background pl-9 pr-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition"
+              className="h-9 w-full rounded-xl border border-border bg-background px-9 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition"
             />
           </div>
-          <div className="text-xs text-muted-foreground">{filtered.length} buildings</div>
+          <div className="text-xs text-muted-foreground">{filtered.length} {t("common.buildings", { fallback: "buildings" })}</div>
         </div>
       </Card>
 
       {/* Buildings grid */}
       {filtered.length === 0 ? (
-        <Card><EmptyState icon={<Search className="h-5 w-5" />} title="No buildings found" body="Try adjusting your search." /></Card>
+        <Card><EmptyState icon={<Search className="h-5 w-5" />} title={t("admin.buildings.no_records", { fallback: "No buildings found" })} body={t("common.no_records_body", { fallback: "Try adjusting your search." })} /></Card>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map(b => {
@@ -120,7 +122,7 @@ function AdminBuildings() {
 
                   <div className="mt-3">
                     <div className="flex items-center justify-between text-xs mb-1.5">
-                      <span className="text-muted-foreground">Today's completion</span>
+                      <span className="text-muted-foreground">{t("admin.buildings.today_completion", { fallback: "Today's completion" })}</span>
                       <span className="font-semibold">{b.completionToday}%</span>
                     </div>
                     <ProgressBar value={b.completionToday} color={b.completionToday >= 80 ? "emerald" : b.completionToday >= 50 ? "amber" : "rose"} />
@@ -128,17 +130,17 @@ function AdminBuildings() {
 
                   <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
                     <div className="rounded-lg bg-secondary px-2.5 py-2">
-                      <div className="text-muted-foreground">Owner</div>
+                      <div className="text-muted-foreground">{t("common.owner", { fallback: "Owner" })}</div>
                       <div className="font-medium truncate">{b.ownerName}</div>
                     </div>
                     <div className="rounded-lg bg-secondary px-2.5 py-2">
-                      <div className="text-muted-foreground">Labour</div>
-                      <div className="font-medium">{labour.length > 0 ? labour.map(l => l.name.split(" ")[0]).join(", ") : "Unassigned"}</div>
+                      <div className="text-muted-foreground">{t("common.labour", { fallback: "Labour" })}</div>
+                      <div className="font-medium">{labour.length > 0 ? labour.map(l => l.name.split(" ")[0]).join(", ") : t("common.unassigned", { fallback: "Unassigned" })}</div>
                     </div>
                   </div>
 
                   <div className="mt-3 text-xs text-muted-foreground">
-                    Last report: <span className="text-foreground font-medium">{b.lastReportTime}</span>
+                    {t("admin.buildings.last_report", { fallback: "Last report:" })} <span className="text-foreground font-medium">{b.lastReportTime}</span>
                   </div>
 
                   <div className="mt-3 flex gap-2">
@@ -146,10 +148,10 @@ function AdminBuildings() {
                       setEditBuilding(b);
                       setForm({ name: b.name, city: b.city, address: b.address, ownerId: b.ownerId, status: b.status });
                     }}>
-                      <Edit className="h-3.5 w-3.5" /> Edit
+                      <Edit className="h-3.5 w-3.5" /> {t("common.edit", { fallback: "Edit" })}
                     </Btn>
                     <Btn size="sm" variant="ghost" onClick={() => showToast(`Labour assigned to ${b.name} (demo)`)}>
-                      <Users className="h-3.5 w-3.5" /> Assign Labour
+                      <Users className="h-3.5 w-3.5" /> {t("admin.buildings.assign_labour", { fallback: "Assign Labour" })}
                     </Btn>
                   </div>
                 </div>
@@ -160,36 +162,40 @@ function AdminBuildings() {
       )}
 
       {/* Add Building Modal */}
-      <Modal open={showAdd} onClose={() => setShowAdd(false)} title="Add New Building">
+      <Modal open={showAdd} onClose={() => setShowAdd(false)} title={t("admin.buildings.add", { fallback: "Add New Building" })}>
         <div className="space-y-4">
-          <FormInput label="Building Name" value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Riyadh Tower A" required />
-          <FormInput label="City" value={form.city} onChange={v => setForm(f => ({ ...f, city: v }))} placeholder="Riyadh" required />
-          <FormInput label="Address" value={form.address} onChange={v => setForm(f => ({ ...f, address: v }))} placeholder="King Fahad Road, Riyadh" />
-          <FormSelect label="Assign to Owner" value={form.ownerId} onChange={v => setForm(f => ({ ...f, ownerId: v }))}
-            options={[{ value: "", label: "— Select Owner —" }, ...mockOwners.map(o => ({ value: o.id, label: o.name }))]}
+          <FormInput label={t("common.building_name", { fallback: "Building Name" })} value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Riyadh Tower A" required />
+          <FormInput label={t("common.city", { fallback: "City" })} value={form.city} onChange={v => setForm(f => ({ ...f, city: v }))} placeholder="Riyadh" required />
+          <FormInput label={t("common.address", { fallback: "Address" })} value={form.address} onChange={v => setForm(f => ({ ...f, address: v }))} placeholder="King Fahad Road, Riyadh" />
+          <FormSelect label={t("admin.buildings.assign_owner", { fallback: "Assign to Owner" })} value={form.ownerId} onChange={v => setForm(f => ({ ...f, ownerId: v }))}
+            options={[{ value: "", label: t("admin.buildings.select_owner", { fallback: "— Select Owner —" }) }, ...mockOwners.map(o => ({ value: o.id, label: o.name }))]}
           />
           <div className="flex items-center justify-end gap-2 pt-2">
-            <Btn variant="secondary" onClick={() => setShowAdd(false)}>Cancel</Btn>
-            <Btn onClick={handleAdd} disabled={!form.name || !form.city}>Add Building</Btn>
+            <Btn variant="secondary" onClick={() => setShowAdd(false)}>{t("common.cancel", { fallback: "Cancel" })}</Btn>
+            <Btn onClick={handleAdd} disabled={!form.name || !form.city}>{t("admin.buildings.add", { fallback: "Add Building" })}</Btn>
           </div>
         </div>
       </Modal>
 
       {/* Edit Building Modal */}
-      <Modal open={!!editBuilding} onClose={() => setEditBuilding(null)} title="Edit Building">
+      <Modal open={!!editBuilding} onClose={() => setEditBuilding(null)} title={t("admin.buildings.edit", { fallback: "Edit Building" })}>
         <div className="space-y-4">
-          <FormInput label="Building Name" value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} required />
-          <FormInput label="City" value={form.city} onChange={v => setForm(f => ({ ...f, city: v }))} required />
-          <FormInput label="Address" value={form.address} onChange={v => setForm(f => ({ ...f, address: v }))} />
-          <FormSelect label="Owner" value={form.ownerId} onChange={v => setForm(f => ({ ...f, ownerId: v }))}
-            options={[{ value: "", label: "— Select Owner —" }, ...mockOwners.map(o => ({ value: o.id, label: o.name }))]}
+          <FormInput label={t("common.building_name", { fallback: "Building Name" })} value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} required />
+          <FormInput label={t("common.city", { fallback: "City" })} value={form.city} onChange={v => setForm(f => ({ ...f, city: v }))} required />
+          <FormInput label={t("common.address", { fallback: "Address" })} value={form.address} onChange={v => setForm(f => ({ ...f, address: v }))} />
+          <FormSelect label={t("common.owner", { fallback: "Owner" })} value={form.ownerId} onChange={v => setForm(f => ({ ...f, ownerId: v }))}
+            options={[{ value: "", label: t("admin.buildings.select_owner", { fallback: "— Select Owner —" }) }, ...mockOwners.map(o => ({ value: o.id, label: o.name }))]}
           />
-          <FormSelect label="Status" value={form.status} onChange={v => setForm(f => ({ ...f, status: v as MockBuilding["status"] }))}
-            options={[{ value: "Healthy", label: "Healthy" }, { value: "Pending", label: "Pending" }, { value: "Attention Needed", label: "Attention Needed" }]}
+          <FormSelect label={t("common.status", { fallback: "Status" })} value={form.status} onChange={v => setForm(f => ({ ...f, status: v as MockBuilding["status"] }))}
+            options={[
+              { value: "Healthy", label: t("status.healthy", { fallback: "Healthy" }) },
+              { value: "Pending", label: t("status.pending", { fallback: "Pending" }) },
+              { value: "Attention Needed", label: t("status.attention", { fallback: "Attention Needed" }) }
+            ]}
           />
           <div className="flex items-center justify-end gap-2 pt-2">
-            <Btn variant="secondary" onClick={() => setEditBuilding(null)}>Cancel</Btn>
-            <Btn onClick={handleSaveEdit}>Save Changes</Btn>
+            <Btn variant="secondary" onClick={() => setEditBuilding(null)}>{t("common.cancel", { fallback: "Cancel" })}</Btn>
+            <Btn onClick={handleSaveEdit}>{t("common.save", { fallback: "Save Changes" })}</Btn>
           </div>
         </div>
       </Modal>

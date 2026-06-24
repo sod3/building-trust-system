@@ -52,10 +52,10 @@ export function Header() {
             {lang === "en" ? "العربية" : "English"}
           </button>
           <Button asChild size="sm" variant="outline" className="hidden border-border md:inline-flex">
-            <Link to="/dashboard">Launch Dashboard</Link>
+            <Link to="/login">Sign In</Link>
           </Button>
           <Button asChild size="sm" className="hidden bg-navy text-primary-foreground hover:bg-navy/90 md:inline-flex">
-            <Link to="/contact">{t("nav.demo")}</Link>
+            <Link to="/login">Owner Access</Link>
           </Button>
           <button
             className="grid h-9 w-9 place-items-center rounded-md border border-border md:hidden"
@@ -88,10 +88,10 @@ export function Header() {
               {lang === "en" ? "العربية" : "English"}
             </button>
             <Button asChild variant="outline" className="mt-2 border-border">
-              <Link to="/dashboard" onClick={()=>setOpen(false)}>Launch Dashboard</Link>
+              <Link to="/login" onClick={() => setOpen(false)}>Sign In</Link>
             </Button>
             <Button asChild className="mt-2 bg-navy text-primary-foreground hover:bg-navy/90">
-              <Link to="/contact" onClick={()=>setOpen(false)}>{t("nav.demo")}</Link>
+              <Link to="/login" onClick={() => setOpen(false)}>Owner Access</Link>
             </Button>
           </div>
         </div>

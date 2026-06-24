@@ -67,8 +67,8 @@ function Home() {
                 size="lg" 
                 className="bg-white text-navy hover:bg-white/95 active:scale-[0.985] transition-all duration-200 shadow-xl shadow-black/30 font-semibold"
               >
-                <Link to="/contact">
-                  {t("cta.demo")}
+                <Link to="/login">
+                  Get Owner Dashboard Access
                   <ArrowRight className="ms-2 h-4 w-4 rtl:rotate-180" />
                 </Link>
               </Button>
@@ -79,7 +79,7 @@ function Home() {
                 variant="outline" 
                 className="border-white/30 bg-white/10 text-white hover:bg-white/15 hover:border-white/50 backdrop-blur-md transition-all duration-200"
               >
-                <Link to="/product">{t("cta.view")}</Link>
+                <Link to="/login">View Dashboard Demo</Link>
               </Button>
             </div>
 
@@ -290,10 +290,10 @@ function Home() {
           <p className="mt-3 max-w-xl text-white/75">{t("sec.cta.body")}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild size="lg" className="bg-white text-navy hover:bg-white/90">
-              <Link to="/contact">{t("cta.demo")}</Link>
+              <Link to="/login">Start Building Management</Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="border-white/25 text-white hover:bg-white/10 hover:text-white">
-              <Link to="/pricing">{lang === "ar" ? "شاهد الأسعار" : "See pricing"}</Link>
+              <Link to="/pricing">Subscribe to Access</Link>
             </Button>
           </div>
           <div className="mt-10 grid gap-4 text-sm text-white/70 sm:grid-cols-3">
@@ -330,24 +330,32 @@ function BentoHeader({ icon, title, body, dark = false }: { icon: React.ReactNod
 }
 
 function PricingMini() {
-  const { t, lang } = useLang();
   const plans = [
-    { name: "Pilot", price: 499, scope: lang === "ar" ? "مبنى واحد" : "1 building" },
-    { name: "Starter", price: 999, scope: lang === "ar" ? "حتى 3 مبانٍ" : "Up to 3 buildings", popular: true },
-    { name: "Growth", price: 2499, scope: lang === "ar" ? "حتى 10 مبانٍ" : "Up to 10 buildings" },
-    { name: "Business", price: 5999, scope: lang === "ar" ? "حتى 25 مبنى" : "Up to 25 buildings" },
+    { name: "Starter", price: 299, scope: "1 building · For single building owners", features: ["1 Building", "Up to 5 Labour", "Daily Reports"] },
+    { name: "Professional", price: 899, scope: "Up to 5 buildings · Growing portfolios", features: ["Up to 5 Buildings", "Up to 20 Labour", "Custom Templates", "Priority Support"], popular: true },
+    { name: "Enterprise", price: 1999, scope: "Unlimited · Large property groups", features: ["Unlimited Buildings", "Unlimited Labour", "API Access", "Dedicated Support"] },
   ];
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 sm:grid-cols-3">
       {plans.map((p) => (
-        <div key={p.name} className={`relative rounded-2xl border p-6 ${p.popular ? "border-accent bg-accent/5" : "border-border bg-background"}`}>
-          {p.popular && <span className="absolute -top-3 start-6 rounded-full bg-accent px-2.5 py-0.5 text-xs font-medium text-accent-foreground">Popular</span>}
+        <div key={p.name} className={`relative rounded-2xl border p-6 ${p.popular ? "border-accent bg-accent/5 shadow-elevated" : "border-border bg-background"}`}>
+          {p.popular && <span className="absolute -top-3 start-6 rounded-full bg-accent px-2.5 py-0.5 text-xs font-semibold text-accent-foreground">Most Popular</span>}
           <h3 className="font-display text-lg font-semibold">{p.name}</h3>
           <p className="mt-1 text-sm text-muted-foreground">{p.scope}</p>
-          <div className="mt-5 flex items-baseline gap-1">
+          <div className="mt-4 flex items-baseline gap-1">
             <span className="font-display text-3xl font-semibold">{p.price.toLocaleString()}</span>
-            <span className="text-sm text-muted-foreground">SAR{t("pricing.month")}</span>
+            <span className="text-sm text-muted-foreground">SAR/mo</span>
           </div>
+          <ul className="mt-4 space-y-1.5">
+            {p.features.map(f => (
+              <li key={f} className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span className="h-1.5 w-1.5 rounded-full bg-accent shrink-0" />{f}
+              </li>
+            ))}
+          </ul>
+          <Link to="/login" className={`mt-5 flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition ${p.popular ? "bg-accent text-white hover:bg-accent/90" : "border border-border hover:bg-secondary"}`}>
+            Get Owner Access <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       ))}
     </div>

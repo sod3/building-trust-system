@@ -14,6 +14,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SecurityRouteImport } from './routes/security'
 import { Route as ProductRouteImport } from './routes/product'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -21,25 +22,25 @@ import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
-import { Route as DashboardUnitsRouteImport } from './routes/dashboard.units'
-import { Route as DashboardTenantsRouteImport } from './routes/dashboard.tenants'
-import { Route as DashboardTenantPortalRouteImport } from './routes/dashboard.tenant-portal'
-import { Route as DashboardTasksRouteImport } from './routes/dashboard.tasks'
-import { Route as DashboardSupervisorViewRouteImport } from './routes/dashboard.supervisor-view'
-import { Route as DashboardSubmissionsRouteImport } from './routes/dashboard.submissions'
-import { Route as DashboardStaffRouteImport } from './routes/dashboard.staff'
-import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
-import { Route as DashboardReportsRouteImport } from './routes/dashboard.reports'
-import { Route as DashboardOwnersRouteImport } from './routes/dashboard.owners'
-import { Route as DashboardOwnerViewRouteImport } from './routes/dashboard.owner-view'
-import { Route as DashboardNotificationsRouteImport } from './routes/dashboard.notifications'
-import { Route as DashboardMobileLaborRouteImport } from './routes/dashboard.mobile-labor'
-import { Route as DashboardMaintenanceRouteImport } from './routes/dashboard.maintenance'
-import { Route as DashboardComplaintsRouteImport } from './routes/dashboard.complaints'
-import { Route as DashboardCalendarRouteImport } from './routes/dashboard.calendar'
-import { Route as DashboardBuildingsRouteImport } from './routes/dashboard.buildings'
-import { Route as DashboardBillingRouteImport } from './routes/dashboard.billing'
-import { Route as DashboardApprovalsRouteImport } from './routes/dashboard.approvals'
+import { Route as DashboardOwnerRouteImport } from './routes/dashboard.owner'
+import { Route as DashboardLabourRouteImport } from './routes/dashboard.labour'
+import { Route as DashboardAdminRouteImport } from './routes/dashboard.admin'
+import { Route as DashboardOwnerIndexRouteImport } from './routes/dashboard.owner.index'
+import { Route as DashboardAdminIndexRouteImport } from './routes/dashboard.admin.index'
+import { Route as DashboardOwnerSubscriptionRouteImport } from './routes/dashboard.owner.subscription'
+import { Route as DashboardOwnerSettingsRouteImport } from './routes/dashboard.owner.settings'
+import { Route as DashboardOwnerReportsRouteImport } from './routes/dashboard.owner.reports'
+import { Route as DashboardOwnerLabourRouteImport } from './routes/dashboard.owner.labour'
+import { Route as DashboardOwnerHistoryRouteImport } from './routes/dashboard.owner.history'
+import { Route as DashboardOwnerBuildingsRouteImport } from './routes/dashboard.owner.buildings'
+import { Route as DashboardOwnerAssignTasksRouteImport } from './routes/dashboard.owner.assign-tasks'
+import { Route as DashboardAdminSettingsRouteImport } from './routes/dashboard.admin.settings'
+import { Route as DashboardAdminReportsRouteImport } from './routes/dashboard.admin.reports'
+import { Route as DashboardAdminOwnersRouteImport } from './routes/dashboard.admin.owners'
+import { Route as DashboardAdminLabourRouteImport } from './routes/dashboard.admin.labour'
+import { Route as DashboardAdminEarningsRouteImport } from './routes/dashboard.admin.earnings'
+import { Route as DashboardAdminChecklistsRouteImport } from './routes/dashboard.admin.checklists'
+import { Route as DashboardAdminBuildingsRouteImport } from './routes/dashboard.admin.buildings'
 
 const SolutionsRoute = SolutionsRouteImport.update({
   id: '/solutions',
@@ -64,6 +65,11 @@ const ProductRoute = ProductRouteImport.update({
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoRoute = DemoRouteImport.update({
@@ -101,100 +107,103 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardRoute,
 } as any)
-const DashboardUnitsRoute = DashboardUnitsRouteImport.update({
-  id: '/units',
-  path: '/units',
+const DashboardOwnerRoute = DashboardOwnerRouteImport.update({
+  id: '/owner',
+  path: '/owner',
   getParentRoute: () => DashboardRoute,
 } as any)
-const DashboardTenantsRoute = DashboardTenantsRouteImport.update({
-  id: '/tenants',
-  path: '/tenants',
+const DashboardLabourRoute = DashboardLabourRouteImport.update({
+  id: '/labour',
+  path: '/labour',
   getParentRoute: () => DashboardRoute,
 } as any)
-const DashboardTenantPortalRoute = DashboardTenantPortalRouteImport.update({
-  id: '/tenant-portal',
-  path: '/tenant-portal',
+const DashboardAdminRoute = DashboardAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => DashboardRoute,
 } as any)
-const DashboardTasksRoute = DashboardTasksRouteImport.update({
-  id: '/tasks',
-  path: '/tasks',
-  getParentRoute: () => DashboardRoute,
+const DashboardOwnerIndexRoute = DashboardOwnerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardOwnerRoute,
 } as any)
-const DashboardSupervisorViewRoute = DashboardSupervisorViewRouteImport.update({
-  id: '/supervisor-view',
-  path: '/supervisor-view',
-  getParentRoute: () => DashboardRoute,
+const DashboardAdminIndexRoute = DashboardAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardAdminRoute,
 } as any)
-const DashboardSubmissionsRoute = DashboardSubmissionsRouteImport.update({
-  id: '/submissions',
-  path: '/submissions',
-  getParentRoute: () => DashboardRoute,
-} as any)
-const DashboardStaffRoute = DashboardStaffRouteImport.update({
-  id: '/staff',
-  path: '/staff',
-  getParentRoute: () => DashboardRoute,
-} as any)
-const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
+const DashboardOwnerSubscriptionRoute =
+  DashboardOwnerSubscriptionRouteImport.update({
+    id: '/subscription',
+    path: '/subscription',
+    getParentRoute: () => DashboardOwnerRoute,
+  } as any)
+const DashboardOwnerSettingsRoute = DashboardOwnerSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => DashboardRoute,
+  getParentRoute: () => DashboardOwnerRoute,
 } as any)
-const DashboardReportsRoute = DashboardReportsRouteImport.update({
+const DashboardOwnerReportsRoute = DashboardOwnerReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
-  getParentRoute: () => DashboardRoute,
+  getParentRoute: () => DashboardOwnerRoute,
 } as any)
-const DashboardOwnersRoute = DashboardOwnersRouteImport.update({
-  id: '/owners',
-  path: '/owners',
-  getParentRoute: () => DashboardRoute,
+const DashboardOwnerLabourRoute = DashboardOwnerLabourRouteImport.update({
+  id: '/labour',
+  path: '/labour',
+  getParentRoute: () => DashboardOwnerRoute,
 } as any)
-const DashboardOwnerViewRoute = DashboardOwnerViewRouteImport.update({
-  id: '/owner-view',
-  path: '/owner-view',
-  getParentRoute: () => DashboardRoute,
+const DashboardOwnerHistoryRoute = DashboardOwnerHistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => DashboardOwnerRoute,
 } as any)
-const DashboardNotificationsRoute = DashboardNotificationsRouteImport.update({
-  id: '/notifications',
-  path: '/notifications',
-  getParentRoute: () => DashboardRoute,
-} as any)
-const DashboardMobileLaborRoute = DashboardMobileLaborRouteImport.update({
-  id: '/mobile-labor',
-  path: '/mobile-labor',
-  getParentRoute: () => DashboardRoute,
-} as any)
-const DashboardMaintenanceRoute = DashboardMaintenanceRouteImport.update({
-  id: '/maintenance',
-  path: '/maintenance',
-  getParentRoute: () => DashboardRoute,
-} as any)
-const DashboardComplaintsRoute = DashboardComplaintsRouteImport.update({
-  id: '/complaints',
-  path: '/complaints',
-  getParentRoute: () => DashboardRoute,
-} as any)
-const DashboardCalendarRoute = DashboardCalendarRouteImport.update({
-  id: '/calendar',
-  path: '/calendar',
-  getParentRoute: () => DashboardRoute,
-} as any)
-const DashboardBuildingsRoute = DashboardBuildingsRouteImport.update({
+const DashboardOwnerBuildingsRoute = DashboardOwnerBuildingsRouteImport.update({
   id: '/buildings',
   path: '/buildings',
-  getParentRoute: () => DashboardRoute,
+  getParentRoute: () => DashboardOwnerRoute,
 } as any)
-const DashboardBillingRoute = DashboardBillingRouteImport.update({
-  id: '/billing',
-  path: '/billing',
-  getParentRoute: () => DashboardRoute,
+const DashboardOwnerAssignTasksRoute =
+  DashboardOwnerAssignTasksRouteImport.update({
+    id: '/assign-tasks',
+    path: '/assign-tasks',
+    getParentRoute: () => DashboardOwnerRoute,
+  } as any)
+const DashboardAdminSettingsRoute = DashboardAdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => DashboardAdminRoute,
 } as any)
-const DashboardApprovalsRoute = DashboardApprovalsRouteImport.update({
-  id: '/approvals',
-  path: '/approvals',
-  getParentRoute: () => DashboardRoute,
+const DashboardAdminReportsRoute = DashboardAdminReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => DashboardAdminRoute,
+} as any)
+const DashboardAdminOwnersRoute = DashboardAdminOwnersRouteImport.update({
+  id: '/owners',
+  path: '/owners',
+  getParentRoute: () => DashboardAdminRoute,
+} as any)
+const DashboardAdminLabourRoute = DashboardAdminLabourRouteImport.update({
+  id: '/labour',
+  path: '/labour',
+  getParentRoute: () => DashboardAdminRoute,
+} as any)
+const DashboardAdminEarningsRoute = DashboardAdminEarningsRouteImport.update({
+  id: '/earnings',
+  path: '/earnings',
+  getParentRoute: () => DashboardAdminRoute,
+} as any)
+const DashboardAdminChecklistsRoute =
+  DashboardAdminChecklistsRouteImport.update({
+    id: '/checklists',
+    path: '/checklists',
+    getParentRoute: () => DashboardAdminRoute,
+  } as any)
+const DashboardAdminBuildingsRoute = DashboardAdminBuildingsRouteImport.update({
+  id: '/buildings',
+  path: '/buildings',
+  getParentRoute: () => DashboardAdminRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -204,31 +213,32 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/demo': typeof DemoRoute
+  '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/product': typeof ProductRoute
   '/security': typeof SecurityRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
-  '/dashboard/approvals': typeof DashboardApprovalsRoute
-  '/dashboard/billing': typeof DashboardBillingRoute
-  '/dashboard/buildings': typeof DashboardBuildingsRoute
-  '/dashboard/calendar': typeof DashboardCalendarRoute
-  '/dashboard/complaints': typeof DashboardComplaintsRoute
-  '/dashboard/maintenance': typeof DashboardMaintenanceRoute
-  '/dashboard/mobile-labor': typeof DashboardMobileLaborRoute
-  '/dashboard/notifications': typeof DashboardNotificationsRoute
-  '/dashboard/owner-view': typeof DashboardOwnerViewRoute
-  '/dashboard/owners': typeof DashboardOwnersRoute
-  '/dashboard/reports': typeof DashboardReportsRoute
-  '/dashboard/settings': typeof DashboardSettingsRoute
-  '/dashboard/staff': typeof DashboardStaffRoute
-  '/dashboard/submissions': typeof DashboardSubmissionsRoute
-  '/dashboard/supervisor-view': typeof DashboardSupervisorViewRoute
-  '/dashboard/tasks': typeof DashboardTasksRoute
-  '/dashboard/tenant-portal': typeof DashboardTenantPortalRoute
-  '/dashboard/tenants': typeof DashboardTenantsRoute
-  '/dashboard/units': typeof DashboardUnitsRoute
+  '/dashboard/admin': typeof DashboardAdminRouteWithChildren
+  '/dashboard/labour': typeof DashboardLabourRoute
+  '/dashboard/owner': typeof DashboardOwnerRouteWithChildren
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/admin/buildings': typeof DashboardAdminBuildingsRoute
+  '/dashboard/admin/checklists': typeof DashboardAdminChecklistsRoute
+  '/dashboard/admin/earnings': typeof DashboardAdminEarningsRoute
+  '/dashboard/admin/labour': typeof DashboardAdminLabourRoute
+  '/dashboard/admin/owners': typeof DashboardAdminOwnersRoute
+  '/dashboard/admin/reports': typeof DashboardAdminReportsRoute
+  '/dashboard/admin/settings': typeof DashboardAdminSettingsRoute
+  '/dashboard/owner/assign-tasks': typeof DashboardOwnerAssignTasksRoute
+  '/dashboard/owner/buildings': typeof DashboardOwnerBuildingsRoute
+  '/dashboard/owner/history': typeof DashboardOwnerHistoryRoute
+  '/dashboard/owner/labour': typeof DashboardOwnerLabourRoute
+  '/dashboard/owner/reports': typeof DashboardOwnerReportsRoute
+  '/dashboard/owner/settings': typeof DashboardOwnerSettingsRoute
+  '/dashboard/owner/subscription': typeof DashboardOwnerSubscriptionRoute
+  '/dashboard/admin/': typeof DashboardAdminIndexRoute
+  '/dashboard/owner/': typeof DashboardOwnerIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -236,31 +246,30 @@ export interface FileRoutesByTo {
   '/blog': typeof BlogRoute
   '/contact': typeof ContactRoute
   '/demo': typeof DemoRoute
+  '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/product': typeof ProductRoute
   '/security': typeof SecurityRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
-  '/dashboard/approvals': typeof DashboardApprovalsRoute
-  '/dashboard/billing': typeof DashboardBillingRoute
-  '/dashboard/buildings': typeof DashboardBuildingsRoute
-  '/dashboard/calendar': typeof DashboardCalendarRoute
-  '/dashboard/complaints': typeof DashboardComplaintsRoute
-  '/dashboard/maintenance': typeof DashboardMaintenanceRoute
-  '/dashboard/mobile-labor': typeof DashboardMobileLaborRoute
-  '/dashboard/notifications': typeof DashboardNotificationsRoute
-  '/dashboard/owner-view': typeof DashboardOwnerViewRoute
-  '/dashboard/owners': typeof DashboardOwnersRoute
-  '/dashboard/reports': typeof DashboardReportsRoute
-  '/dashboard/settings': typeof DashboardSettingsRoute
-  '/dashboard/staff': typeof DashboardStaffRoute
-  '/dashboard/submissions': typeof DashboardSubmissionsRoute
-  '/dashboard/supervisor-view': typeof DashboardSupervisorViewRoute
-  '/dashboard/tasks': typeof DashboardTasksRoute
-  '/dashboard/tenant-portal': typeof DashboardTenantPortalRoute
-  '/dashboard/tenants': typeof DashboardTenantsRoute
-  '/dashboard/units': typeof DashboardUnitsRoute
+  '/dashboard/labour': typeof DashboardLabourRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/admin/buildings': typeof DashboardAdminBuildingsRoute
+  '/dashboard/admin/checklists': typeof DashboardAdminChecklistsRoute
+  '/dashboard/admin/earnings': typeof DashboardAdminEarningsRoute
+  '/dashboard/admin/labour': typeof DashboardAdminLabourRoute
+  '/dashboard/admin/owners': typeof DashboardAdminOwnersRoute
+  '/dashboard/admin/reports': typeof DashboardAdminReportsRoute
+  '/dashboard/admin/settings': typeof DashboardAdminSettingsRoute
+  '/dashboard/owner/assign-tasks': typeof DashboardOwnerAssignTasksRoute
+  '/dashboard/owner/buildings': typeof DashboardOwnerBuildingsRoute
+  '/dashboard/owner/history': typeof DashboardOwnerHistoryRoute
+  '/dashboard/owner/labour': typeof DashboardOwnerLabourRoute
+  '/dashboard/owner/reports': typeof DashboardOwnerReportsRoute
+  '/dashboard/owner/settings': typeof DashboardOwnerSettingsRoute
+  '/dashboard/owner/subscription': typeof DashboardOwnerSubscriptionRoute
+  '/dashboard/admin': typeof DashboardAdminIndexRoute
+  '/dashboard/owner': typeof DashboardOwnerIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -270,31 +279,32 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/demo': typeof DemoRoute
+  '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/product': typeof ProductRoute
   '/security': typeof SecurityRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/solutions': typeof SolutionsRoute
-  '/dashboard/approvals': typeof DashboardApprovalsRoute
-  '/dashboard/billing': typeof DashboardBillingRoute
-  '/dashboard/buildings': typeof DashboardBuildingsRoute
-  '/dashboard/calendar': typeof DashboardCalendarRoute
-  '/dashboard/complaints': typeof DashboardComplaintsRoute
-  '/dashboard/maintenance': typeof DashboardMaintenanceRoute
-  '/dashboard/mobile-labor': typeof DashboardMobileLaborRoute
-  '/dashboard/notifications': typeof DashboardNotificationsRoute
-  '/dashboard/owner-view': typeof DashboardOwnerViewRoute
-  '/dashboard/owners': typeof DashboardOwnersRoute
-  '/dashboard/reports': typeof DashboardReportsRoute
-  '/dashboard/settings': typeof DashboardSettingsRoute
-  '/dashboard/staff': typeof DashboardStaffRoute
-  '/dashboard/submissions': typeof DashboardSubmissionsRoute
-  '/dashboard/supervisor-view': typeof DashboardSupervisorViewRoute
-  '/dashboard/tasks': typeof DashboardTasksRoute
-  '/dashboard/tenant-portal': typeof DashboardTenantPortalRoute
-  '/dashboard/tenants': typeof DashboardTenantsRoute
-  '/dashboard/units': typeof DashboardUnitsRoute
+  '/dashboard/admin': typeof DashboardAdminRouteWithChildren
+  '/dashboard/labour': typeof DashboardLabourRoute
+  '/dashboard/owner': typeof DashboardOwnerRouteWithChildren
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/admin/buildings': typeof DashboardAdminBuildingsRoute
+  '/dashboard/admin/checklists': typeof DashboardAdminChecklistsRoute
+  '/dashboard/admin/earnings': typeof DashboardAdminEarningsRoute
+  '/dashboard/admin/labour': typeof DashboardAdminLabourRoute
+  '/dashboard/admin/owners': typeof DashboardAdminOwnersRoute
+  '/dashboard/admin/reports': typeof DashboardAdminReportsRoute
+  '/dashboard/admin/settings': typeof DashboardAdminSettingsRoute
+  '/dashboard/owner/assign-tasks': typeof DashboardOwnerAssignTasksRoute
+  '/dashboard/owner/buildings': typeof DashboardOwnerBuildingsRoute
+  '/dashboard/owner/history': typeof DashboardOwnerHistoryRoute
+  '/dashboard/owner/labour': typeof DashboardOwnerLabourRoute
+  '/dashboard/owner/reports': typeof DashboardOwnerReportsRoute
+  '/dashboard/owner/settings': typeof DashboardOwnerSettingsRoute
+  '/dashboard/owner/subscription': typeof DashboardOwnerSubscriptionRoute
+  '/dashboard/admin/': typeof DashboardAdminIndexRoute
+  '/dashboard/owner/': typeof DashboardOwnerIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -305,31 +315,32 @@ export interface FileRouteTypes {
     | '/contact'
     | '/dashboard'
     | '/demo'
+    | '/login'
     | '/pricing'
     | '/product'
     | '/security'
     | '/sitemap.xml'
     | '/solutions'
-    | '/dashboard/approvals'
-    | '/dashboard/billing'
-    | '/dashboard/buildings'
-    | '/dashboard/calendar'
-    | '/dashboard/complaints'
-    | '/dashboard/maintenance'
-    | '/dashboard/mobile-labor'
-    | '/dashboard/notifications'
-    | '/dashboard/owner-view'
-    | '/dashboard/owners'
-    | '/dashboard/reports'
-    | '/dashboard/settings'
-    | '/dashboard/staff'
-    | '/dashboard/submissions'
-    | '/dashboard/supervisor-view'
-    | '/dashboard/tasks'
-    | '/dashboard/tenant-portal'
-    | '/dashboard/tenants'
-    | '/dashboard/units'
+    | '/dashboard/admin'
+    | '/dashboard/labour'
+    | '/dashboard/owner'
     | '/dashboard/'
+    | '/dashboard/admin/buildings'
+    | '/dashboard/admin/checklists'
+    | '/dashboard/admin/earnings'
+    | '/dashboard/admin/labour'
+    | '/dashboard/admin/owners'
+    | '/dashboard/admin/reports'
+    | '/dashboard/admin/settings'
+    | '/dashboard/owner/assign-tasks'
+    | '/dashboard/owner/buildings'
+    | '/dashboard/owner/history'
+    | '/dashboard/owner/labour'
+    | '/dashboard/owner/reports'
+    | '/dashboard/owner/settings'
+    | '/dashboard/owner/subscription'
+    | '/dashboard/admin/'
+    | '/dashboard/owner/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -337,31 +348,30 @@ export interface FileRouteTypes {
     | '/blog'
     | '/contact'
     | '/demo'
+    | '/login'
     | '/pricing'
     | '/product'
     | '/security'
     | '/sitemap.xml'
     | '/solutions'
-    | '/dashboard/approvals'
-    | '/dashboard/billing'
-    | '/dashboard/buildings'
-    | '/dashboard/calendar'
-    | '/dashboard/complaints'
-    | '/dashboard/maintenance'
-    | '/dashboard/mobile-labor'
-    | '/dashboard/notifications'
-    | '/dashboard/owner-view'
-    | '/dashboard/owners'
-    | '/dashboard/reports'
-    | '/dashboard/settings'
-    | '/dashboard/staff'
-    | '/dashboard/submissions'
-    | '/dashboard/supervisor-view'
-    | '/dashboard/tasks'
-    | '/dashboard/tenant-portal'
-    | '/dashboard/tenants'
-    | '/dashboard/units'
+    | '/dashboard/labour'
     | '/dashboard'
+    | '/dashboard/admin/buildings'
+    | '/dashboard/admin/checklists'
+    | '/dashboard/admin/earnings'
+    | '/dashboard/admin/labour'
+    | '/dashboard/admin/owners'
+    | '/dashboard/admin/reports'
+    | '/dashboard/admin/settings'
+    | '/dashboard/owner/assign-tasks'
+    | '/dashboard/owner/buildings'
+    | '/dashboard/owner/history'
+    | '/dashboard/owner/labour'
+    | '/dashboard/owner/reports'
+    | '/dashboard/owner/settings'
+    | '/dashboard/owner/subscription'
+    | '/dashboard/admin'
+    | '/dashboard/owner'
   id:
     | '__root__'
     | '/'
@@ -370,31 +380,32 @@ export interface FileRouteTypes {
     | '/contact'
     | '/dashboard'
     | '/demo'
+    | '/login'
     | '/pricing'
     | '/product'
     | '/security'
     | '/sitemap.xml'
     | '/solutions'
-    | '/dashboard/approvals'
-    | '/dashboard/billing'
-    | '/dashboard/buildings'
-    | '/dashboard/calendar'
-    | '/dashboard/complaints'
-    | '/dashboard/maintenance'
-    | '/dashboard/mobile-labor'
-    | '/dashboard/notifications'
-    | '/dashboard/owner-view'
-    | '/dashboard/owners'
-    | '/dashboard/reports'
-    | '/dashboard/settings'
-    | '/dashboard/staff'
-    | '/dashboard/submissions'
-    | '/dashboard/supervisor-view'
-    | '/dashboard/tasks'
-    | '/dashboard/tenant-portal'
-    | '/dashboard/tenants'
-    | '/dashboard/units'
+    | '/dashboard/admin'
+    | '/dashboard/labour'
+    | '/dashboard/owner'
     | '/dashboard/'
+    | '/dashboard/admin/buildings'
+    | '/dashboard/admin/checklists'
+    | '/dashboard/admin/earnings'
+    | '/dashboard/admin/labour'
+    | '/dashboard/admin/owners'
+    | '/dashboard/admin/reports'
+    | '/dashboard/admin/settings'
+    | '/dashboard/owner/assign-tasks'
+    | '/dashboard/owner/buildings'
+    | '/dashboard/owner/history'
+    | '/dashboard/owner/labour'
+    | '/dashboard/owner/reports'
+    | '/dashboard/owner/settings'
+    | '/dashboard/owner/subscription'
+    | '/dashboard/admin/'
+    | '/dashboard/owner/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -404,6 +415,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRouteWithChildren
   DemoRoute: typeof DemoRoute
+  LoginRoute: typeof LoginRoute
   PricingRoute: typeof PricingRoute
   ProductRoute: typeof ProductRoute
   SecurityRoute: typeof SecurityRoute
@@ -446,6 +458,13 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo': {
@@ -497,185 +516,205 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
-    '/dashboard/units': {
-      id: '/dashboard/units'
-      path: '/units'
-      fullPath: '/dashboard/units'
-      preLoaderRoute: typeof DashboardUnitsRouteImport
+    '/dashboard/owner': {
+      id: '/dashboard/owner'
+      path: '/owner'
+      fullPath: '/dashboard/owner'
+      preLoaderRoute: typeof DashboardOwnerRouteImport
       parentRoute: typeof DashboardRoute
     }
-    '/dashboard/tenants': {
-      id: '/dashboard/tenants'
-      path: '/tenants'
-      fullPath: '/dashboard/tenants'
-      preLoaderRoute: typeof DashboardTenantsRouteImport
+    '/dashboard/labour': {
+      id: '/dashboard/labour'
+      path: '/labour'
+      fullPath: '/dashboard/labour'
+      preLoaderRoute: typeof DashboardLabourRouteImport
       parentRoute: typeof DashboardRoute
     }
-    '/dashboard/tenant-portal': {
-      id: '/dashboard/tenant-portal'
-      path: '/tenant-portal'
-      fullPath: '/dashboard/tenant-portal'
-      preLoaderRoute: typeof DashboardTenantPortalRouteImport
+    '/dashboard/admin': {
+      id: '/dashboard/admin'
+      path: '/admin'
+      fullPath: '/dashboard/admin'
+      preLoaderRoute: typeof DashboardAdminRouteImport
       parentRoute: typeof DashboardRoute
     }
-    '/dashboard/tasks': {
-      id: '/dashboard/tasks'
-      path: '/tasks'
-      fullPath: '/dashboard/tasks'
-      preLoaderRoute: typeof DashboardTasksRouteImport
-      parentRoute: typeof DashboardRoute
+    '/dashboard/owner/': {
+      id: '/dashboard/owner/'
+      path: '/'
+      fullPath: '/dashboard/owner/'
+      preLoaderRoute: typeof DashboardOwnerIndexRouteImport
+      parentRoute: typeof DashboardOwnerRoute
     }
-    '/dashboard/supervisor-view': {
-      id: '/dashboard/supervisor-view'
-      path: '/supervisor-view'
-      fullPath: '/dashboard/supervisor-view'
-      preLoaderRoute: typeof DashboardSupervisorViewRouteImport
-      parentRoute: typeof DashboardRoute
+    '/dashboard/admin/': {
+      id: '/dashboard/admin/'
+      path: '/'
+      fullPath: '/dashboard/admin/'
+      preLoaderRoute: typeof DashboardAdminIndexRouteImport
+      parentRoute: typeof DashboardAdminRoute
     }
-    '/dashboard/submissions': {
-      id: '/dashboard/submissions'
-      path: '/submissions'
-      fullPath: '/dashboard/submissions'
-      preLoaderRoute: typeof DashboardSubmissionsRouteImport
-      parentRoute: typeof DashboardRoute
+    '/dashboard/owner/subscription': {
+      id: '/dashboard/owner/subscription'
+      path: '/subscription'
+      fullPath: '/dashboard/owner/subscription'
+      preLoaderRoute: typeof DashboardOwnerSubscriptionRouteImport
+      parentRoute: typeof DashboardOwnerRoute
     }
-    '/dashboard/staff': {
-      id: '/dashboard/staff'
-      path: '/staff'
-      fullPath: '/dashboard/staff'
-      preLoaderRoute: typeof DashboardStaffRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/dashboard/settings': {
-      id: '/dashboard/settings'
+    '/dashboard/owner/settings': {
+      id: '/dashboard/owner/settings'
       path: '/settings'
-      fullPath: '/dashboard/settings'
-      preLoaderRoute: typeof DashboardSettingsRouteImport
-      parentRoute: typeof DashboardRoute
+      fullPath: '/dashboard/owner/settings'
+      preLoaderRoute: typeof DashboardOwnerSettingsRouteImport
+      parentRoute: typeof DashboardOwnerRoute
     }
-    '/dashboard/reports': {
-      id: '/dashboard/reports'
+    '/dashboard/owner/reports': {
+      id: '/dashboard/owner/reports'
       path: '/reports'
-      fullPath: '/dashboard/reports'
-      preLoaderRoute: typeof DashboardReportsRouteImport
-      parentRoute: typeof DashboardRoute
+      fullPath: '/dashboard/owner/reports'
+      preLoaderRoute: typeof DashboardOwnerReportsRouteImport
+      parentRoute: typeof DashboardOwnerRoute
     }
-    '/dashboard/owners': {
-      id: '/dashboard/owners'
-      path: '/owners'
-      fullPath: '/dashboard/owners'
-      preLoaderRoute: typeof DashboardOwnersRouteImport
-      parentRoute: typeof DashboardRoute
+    '/dashboard/owner/labour': {
+      id: '/dashboard/owner/labour'
+      path: '/labour'
+      fullPath: '/dashboard/owner/labour'
+      preLoaderRoute: typeof DashboardOwnerLabourRouteImport
+      parentRoute: typeof DashboardOwnerRoute
     }
-    '/dashboard/owner-view': {
-      id: '/dashboard/owner-view'
-      path: '/owner-view'
-      fullPath: '/dashboard/owner-view'
-      preLoaderRoute: typeof DashboardOwnerViewRouteImport
-      parentRoute: typeof DashboardRoute
+    '/dashboard/owner/history': {
+      id: '/dashboard/owner/history'
+      path: '/history'
+      fullPath: '/dashboard/owner/history'
+      preLoaderRoute: typeof DashboardOwnerHistoryRouteImport
+      parentRoute: typeof DashboardOwnerRoute
     }
-    '/dashboard/notifications': {
-      id: '/dashboard/notifications'
-      path: '/notifications'
-      fullPath: '/dashboard/notifications'
-      preLoaderRoute: typeof DashboardNotificationsRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/dashboard/mobile-labor': {
-      id: '/dashboard/mobile-labor'
-      path: '/mobile-labor'
-      fullPath: '/dashboard/mobile-labor'
-      preLoaderRoute: typeof DashboardMobileLaborRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/dashboard/maintenance': {
-      id: '/dashboard/maintenance'
-      path: '/maintenance'
-      fullPath: '/dashboard/maintenance'
-      preLoaderRoute: typeof DashboardMaintenanceRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/dashboard/complaints': {
-      id: '/dashboard/complaints'
-      path: '/complaints'
-      fullPath: '/dashboard/complaints'
-      preLoaderRoute: typeof DashboardComplaintsRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/dashboard/calendar': {
-      id: '/dashboard/calendar'
-      path: '/calendar'
-      fullPath: '/dashboard/calendar'
-      preLoaderRoute: typeof DashboardCalendarRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/dashboard/buildings': {
-      id: '/dashboard/buildings'
+    '/dashboard/owner/buildings': {
+      id: '/dashboard/owner/buildings'
       path: '/buildings'
-      fullPath: '/dashboard/buildings'
-      preLoaderRoute: typeof DashboardBuildingsRouteImport
-      parentRoute: typeof DashboardRoute
+      fullPath: '/dashboard/owner/buildings'
+      preLoaderRoute: typeof DashboardOwnerBuildingsRouteImport
+      parentRoute: typeof DashboardOwnerRoute
     }
-    '/dashboard/billing': {
-      id: '/dashboard/billing'
-      path: '/billing'
-      fullPath: '/dashboard/billing'
-      preLoaderRoute: typeof DashboardBillingRouteImport
-      parentRoute: typeof DashboardRoute
+    '/dashboard/owner/assign-tasks': {
+      id: '/dashboard/owner/assign-tasks'
+      path: '/assign-tasks'
+      fullPath: '/dashboard/owner/assign-tasks'
+      preLoaderRoute: typeof DashboardOwnerAssignTasksRouteImport
+      parentRoute: typeof DashboardOwnerRoute
     }
-    '/dashboard/approvals': {
-      id: '/dashboard/approvals'
-      path: '/approvals'
-      fullPath: '/dashboard/approvals'
-      preLoaderRoute: typeof DashboardApprovalsRouteImport
-      parentRoute: typeof DashboardRoute
+    '/dashboard/admin/settings': {
+      id: '/dashboard/admin/settings'
+      path: '/settings'
+      fullPath: '/dashboard/admin/settings'
+      preLoaderRoute: typeof DashboardAdminSettingsRouteImport
+      parentRoute: typeof DashboardAdminRoute
+    }
+    '/dashboard/admin/reports': {
+      id: '/dashboard/admin/reports'
+      path: '/reports'
+      fullPath: '/dashboard/admin/reports'
+      preLoaderRoute: typeof DashboardAdminReportsRouteImport
+      parentRoute: typeof DashboardAdminRoute
+    }
+    '/dashboard/admin/owners': {
+      id: '/dashboard/admin/owners'
+      path: '/owners'
+      fullPath: '/dashboard/admin/owners'
+      preLoaderRoute: typeof DashboardAdminOwnersRouteImport
+      parentRoute: typeof DashboardAdminRoute
+    }
+    '/dashboard/admin/labour': {
+      id: '/dashboard/admin/labour'
+      path: '/labour'
+      fullPath: '/dashboard/admin/labour'
+      preLoaderRoute: typeof DashboardAdminLabourRouteImport
+      parentRoute: typeof DashboardAdminRoute
+    }
+    '/dashboard/admin/earnings': {
+      id: '/dashboard/admin/earnings'
+      path: '/earnings'
+      fullPath: '/dashboard/admin/earnings'
+      preLoaderRoute: typeof DashboardAdminEarningsRouteImport
+      parentRoute: typeof DashboardAdminRoute
+    }
+    '/dashboard/admin/checklists': {
+      id: '/dashboard/admin/checklists'
+      path: '/checklists'
+      fullPath: '/dashboard/admin/checklists'
+      preLoaderRoute: typeof DashboardAdminChecklistsRouteImport
+      parentRoute: typeof DashboardAdminRoute
+    }
+    '/dashboard/admin/buildings': {
+      id: '/dashboard/admin/buildings'
+      path: '/buildings'
+      fullPath: '/dashboard/admin/buildings'
+      preLoaderRoute: typeof DashboardAdminBuildingsRouteImport
+      parentRoute: typeof DashboardAdminRoute
     }
   }
 }
 
+interface DashboardAdminRouteChildren {
+  DashboardAdminBuildingsRoute: typeof DashboardAdminBuildingsRoute
+  DashboardAdminChecklistsRoute: typeof DashboardAdminChecklistsRoute
+  DashboardAdminEarningsRoute: typeof DashboardAdminEarningsRoute
+  DashboardAdminLabourRoute: typeof DashboardAdminLabourRoute
+  DashboardAdminOwnersRoute: typeof DashboardAdminOwnersRoute
+  DashboardAdminReportsRoute: typeof DashboardAdminReportsRoute
+  DashboardAdminSettingsRoute: typeof DashboardAdminSettingsRoute
+  DashboardAdminIndexRoute: typeof DashboardAdminIndexRoute
+}
+
+const DashboardAdminRouteChildren: DashboardAdminRouteChildren = {
+  DashboardAdminBuildingsRoute: DashboardAdminBuildingsRoute,
+  DashboardAdminChecklistsRoute: DashboardAdminChecklistsRoute,
+  DashboardAdminEarningsRoute: DashboardAdminEarningsRoute,
+  DashboardAdminLabourRoute: DashboardAdminLabourRoute,
+  DashboardAdminOwnersRoute: DashboardAdminOwnersRoute,
+  DashboardAdminReportsRoute: DashboardAdminReportsRoute,
+  DashboardAdminSettingsRoute: DashboardAdminSettingsRoute,
+  DashboardAdminIndexRoute: DashboardAdminIndexRoute,
+}
+
+const DashboardAdminRouteWithChildren = DashboardAdminRoute._addFileChildren(
+  DashboardAdminRouteChildren,
+)
+
+interface DashboardOwnerRouteChildren {
+  DashboardOwnerAssignTasksRoute: typeof DashboardOwnerAssignTasksRoute
+  DashboardOwnerBuildingsRoute: typeof DashboardOwnerBuildingsRoute
+  DashboardOwnerHistoryRoute: typeof DashboardOwnerHistoryRoute
+  DashboardOwnerLabourRoute: typeof DashboardOwnerLabourRoute
+  DashboardOwnerReportsRoute: typeof DashboardOwnerReportsRoute
+  DashboardOwnerSettingsRoute: typeof DashboardOwnerSettingsRoute
+  DashboardOwnerSubscriptionRoute: typeof DashboardOwnerSubscriptionRoute
+  DashboardOwnerIndexRoute: typeof DashboardOwnerIndexRoute
+}
+
+const DashboardOwnerRouteChildren: DashboardOwnerRouteChildren = {
+  DashboardOwnerAssignTasksRoute: DashboardOwnerAssignTasksRoute,
+  DashboardOwnerBuildingsRoute: DashboardOwnerBuildingsRoute,
+  DashboardOwnerHistoryRoute: DashboardOwnerHistoryRoute,
+  DashboardOwnerLabourRoute: DashboardOwnerLabourRoute,
+  DashboardOwnerReportsRoute: DashboardOwnerReportsRoute,
+  DashboardOwnerSettingsRoute: DashboardOwnerSettingsRoute,
+  DashboardOwnerSubscriptionRoute: DashboardOwnerSubscriptionRoute,
+  DashboardOwnerIndexRoute: DashboardOwnerIndexRoute,
+}
+
+const DashboardOwnerRouteWithChildren = DashboardOwnerRoute._addFileChildren(
+  DashboardOwnerRouteChildren,
+)
+
 interface DashboardRouteChildren {
-  DashboardApprovalsRoute: typeof DashboardApprovalsRoute
-  DashboardBillingRoute: typeof DashboardBillingRoute
-  DashboardBuildingsRoute: typeof DashboardBuildingsRoute
-  DashboardCalendarRoute: typeof DashboardCalendarRoute
-  DashboardComplaintsRoute: typeof DashboardComplaintsRoute
-  DashboardMaintenanceRoute: typeof DashboardMaintenanceRoute
-  DashboardMobileLaborRoute: typeof DashboardMobileLaborRoute
-  DashboardNotificationsRoute: typeof DashboardNotificationsRoute
-  DashboardOwnerViewRoute: typeof DashboardOwnerViewRoute
-  DashboardOwnersRoute: typeof DashboardOwnersRoute
-  DashboardReportsRoute: typeof DashboardReportsRoute
-  DashboardSettingsRoute: typeof DashboardSettingsRoute
-  DashboardStaffRoute: typeof DashboardStaffRoute
-  DashboardSubmissionsRoute: typeof DashboardSubmissionsRoute
-  DashboardSupervisorViewRoute: typeof DashboardSupervisorViewRoute
-  DashboardTasksRoute: typeof DashboardTasksRoute
-  DashboardTenantPortalRoute: typeof DashboardTenantPortalRoute
-  DashboardTenantsRoute: typeof DashboardTenantsRoute
-  DashboardUnitsRoute: typeof DashboardUnitsRoute
+  DashboardAdminRoute: typeof DashboardAdminRouteWithChildren
+  DashboardLabourRoute: typeof DashboardLabourRoute
+  DashboardOwnerRoute: typeof DashboardOwnerRouteWithChildren
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
-  DashboardApprovalsRoute: DashboardApprovalsRoute,
-  DashboardBillingRoute: DashboardBillingRoute,
-  DashboardBuildingsRoute: DashboardBuildingsRoute,
-  DashboardCalendarRoute: DashboardCalendarRoute,
-  DashboardComplaintsRoute: DashboardComplaintsRoute,
-  DashboardMaintenanceRoute: DashboardMaintenanceRoute,
-  DashboardMobileLaborRoute: DashboardMobileLaborRoute,
-  DashboardNotificationsRoute: DashboardNotificationsRoute,
-  DashboardOwnerViewRoute: DashboardOwnerViewRoute,
-  DashboardOwnersRoute: DashboardOwnersRoute,
-  DashboardReportsRoute: DashboardReportsRoute,
-  DashboardSettingsRoute: DashboardSettingsRoute,
-  DashboardStaffRoute: DashboardStaffRoute,
-  DashboardSubmissionsRoute: DashboardSubmissionsRoute,
-  DashboardSupervisorViewRoute: DashboardSupervisorViewRoute,
-  DashboardTasksRoute: DashboardTasksRoute,
-  DashboardTenantPortalRoute: DashboardTenantPortalRoute,
-  DashboardTenantsRoute: DashboardTenantsRoute,
-  DashboardUnitsRoute: DashboardUnitsRoute,
+  DashboardAdminRoute: DashboardAdminRouteWithChildren,
+  DashboardLabourRoute: DashboardLabourRoute,
+  DashboardOwnerRoute: DashboardOwnerRouteWithChildren,
   DashboardIndexRoute: DashboardIndexRoute,
 }
 
@@ -690,6 +729,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRouteWithChildren,
   DemoRoute: DemoRoute,
+  LoginRoute: LoginRoute,
   PricingRoute: PricingRoute,
   ProductRoute: ProductRoute,
   SecurityRoute: SecurityRoute,

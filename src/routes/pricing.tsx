@@ -81,7 +81,7 @@ function PricingPage() {
                 ))}
               </ul>
               <Button asChild className={`mt-6 ${p.popular ? "bg-navy text-primary-foreground hover:bg-navy/90" : ""}`} variant={p.popular ? "default" : "outline"}>
-                <Link to="/contact">{t("pricing.choose")}</Link>
+                <Link to="/login">Get Owner Access</Link>
               </Button>
             </div>
           ))}

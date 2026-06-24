@@ -1,315 +1,535 @@
-// Centralized dummy data for the Riyadh OS / FacilityOS Arabia frontend demo.
-// Everything here is fake - no backend calls. Names, IDs, timestamps are realistic.
+// ============================================================
+// FacilityOS Arabia — Centralized Mock Data (3-Role MVP)
+// All data is fake. No backend. No database.
+// Roles: admin | owner | labour
+// ============================================================
 
-export type Status = "excellent" | "good" | "attention" | "critical";
+// ─── AUTH USERS ──────────────────────────────────────────────
+export type AppRole = "admin" | "owner" | "labour";
 
-export interface Building {
+export interface MockAuthUser {
   id: string;
   name: string;
-  nameAr: string;
-  city: string;
-  floors: number;
-  units: number;
-  supervisor: string;
-  owner: string;
-  laborCount: number;
-  health: number;
-  tasksToday: { done: number; total: number };
-  openComplaints: number;
-  status: Status;
-  cover: string;
-}
-
-export const buildings: Building[] = [
-  { id: "BLD-001", name: "Riyadh Tower A", nameAr: "برج الرياض أ", city: "Riyadh", floors: 24, units: 96, supervisor: "Khalid Al-Otaibi", owner: "Abdulrahman Al-Saud", laborCount: 12, health: 94, tasksToday: { done: 28, total: 30 }, openComplaints: 2, status: "excellent", cover: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=70" },
-  { id: "BLD-002", name: "Olaya Residence", nameAr: "العليا ريزيدنس", city: "Riyadh", floors: 18, units: 72, supervisor: "Mohammed Al-Zahrani", owner: "Faisal Al-Harbi", laborCount: 9, health: 88, tasksToday: { done: 22, total: 26 }, openComplaints: 4, status: "good", cover: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&q=70" },
-  { id: "BLD-003", name: "Jeddah Corniche Plaza", nameAr: "كورنيش بلازا جدة", city: "Jeddah", floors: 30, units: 120, supervisor: "Youssef Ahmed", owner: "Nora Al-Rashid", laborCount: 15, health: 91, tasksToday: { done: 34, total: 38 }, openComplaints: 3, status: "excellent", cover: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=70" },
-  { id: "BLD-004", name: "Dammam Business Center", nameAr: "مركز الدمام التجاري", city: "Dammam", floors: 22, units: 88, supervisor: "Khalid Al-Otaibi", owner: "Abdulrahman Al-Saud", laborCount: 11, health: 76, tasksToday: { done: 19, total: 28 }, openComplaints: 6, status: "attention", cover: "https://images.unsplash.com/photo-1493946740644-2d8a1f1a6aff?w=600&q=70" },
-  { id: "BLD-005", name: "Khobar Heights", nameAr: "خبر هايتس", city: "Khobar", floors: 16, units: 64, supervisor: "Mohammed Al-Zahrani", owner: "Faisal Al-Harbi", laborCount: 8, health: 82, tasksToday: { done: 17, total: 22 }, openComplaints: 3, status: "good", cover: "https://images.unsplash.com/photo-1577495508048-b635879837f1?w=600&q=70" },
-  { id: "BLD-006", name: "Makkah Residence Complex", nameAr: "مجمع مكة السكني", city: "Makkah", floors: 12, units: 144, supervisor: "Youssef Ahmed", owner: "Nora Al-Rashid", laborCount: 14, health: 89, tasksToday: { done: 25, total: 28 }, openComplaints: 2, status: "good", cover: "https://images.unsplash.com/photo-1448630360428-65456885c650?w=600&q=70" },
-  { id: "BLD-007", name: "Madinah Commercial Tower", nameAr: "برج المدينة التجاري", city: "Madinah", floors: 20, units: 80, supervisor: "Khalid Al-Otaibi", owner: "Abdulrahman Al-Saud", laborCount: 10, health: 65, tasksToday: { done: 12, total: 24 }, openComplaints: 9, status: "critical", cover: "https://images.unsplash.com/photo-1554435493-93422e8220c8?w=600&q=70" },
-  { id: "BLD-008", name: "Al Nakheel Compound", nameAr: "مجمع النخيل", city: "Riyadh", floors: 3, units: 210, supervisor: "Mohammed Al-Zahrani", owner: "Faisal Al-Harbi", laborCount: 22, health: 93, tasksToday: { done: 41, total: 44 }, openComplaints: 5, status: "excellent", cover: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=70" },
-];
-
-export type Role = "super-admin" | "property-admin" | "owner" | "supervisor" | "labor" | "tenant";
-
-export interface User {
-  id: string;
-  name: string;
-  role: Role;
   email: string;
-  phone: string;
-  buildings: string[];
-  status: "active" | "inactive";
-  lastActive: string;
-  performance: number;
-  tasksDone?: number;
-  approvalRate?: number;
+  password: string;
+  role: AppRole;
+  ownerId?: string;   // for owner role
+  labourId?: string;  // for labour role
   avatar?: string;
 }
 
-export const users: User[] = [
-  { id: "U-001", name: "Omar Al-Fahad", role: "super-admin", email: "omar@riyadhos.sa", phone: "+966 55 123 4567", buildings: buildings.map(b=>b.id), status: "active", lastActive: "Just now", performance: 99 },
-  { id: "U-010", name: "Sarah Al-Qahtani", role: "property-admin", email: "sarah@riyadhos.sa", phone: "+966 55 234 5678", buildings: ["BLD-001","BLD-002","BLD-008"], status: "active", lastActive: "3 min ago", performance: 96 },
-  { id: "U-021", name: "Abdulrahman Al-Saud", role: "owner", email: "a.alsaud@portfolio.sa", phone: "+966 50 111 2233", buildings: ["BLD-001","BLD-004","BLD-007"], status: "active", lastActive: "Today, 09:14", performance: 0 },
-  { id: "U-022", name: "Faisal Al-Harbi", role: "owner", email: "faisal@harbi.sa", phone: "+966 50 222 3344", buildings: ["BLD-002","BLD-005","BLD-008"], status: "active", lastActive: "Yesterday", performance: 0 },
-  { id: "U-023", name: "Nora Al-Rashid", role: "owner", email: "nora@rashid.sa", phone: "+966 50 333 4455", buildings: ["BLD-003","BLD-006"], status: "active", lastActive: "Today, 07:42", performance: 0 },
-  { id: "U-031", name: "Khalid Al-Otaibi", role: "supervisor", email: "k.otaibi@riyadhos.sa", phone: "+966 55 345 6789", buildings: ["BLD-001","BLD-004","BLD-007"], status: "active", lastActive: "1 min ago", performance: 92, tasksDone: 412, approvalRate: 88 },
-  { id: "U-032", name: "Mohammed Al-Zahrani", role: "supervisor", email: "m.zahrani@riyadhos.sa", phone: "+966 55 456 7890", buildings: ["BLD-002","BLD-005","BLD-008"], status: "active", lastActive: "12 min ago", performance: 89, tasksDone: 387, approvalRate: 91 },
-  { id: "U-033", name: "Youssef Ahmed", role: "supervisor", email: "y.ahmed@riyadhos.sa", phone: "+966 55 567 8901", buildings: ["BLD-003","BLD-006"], status: "active", lastActive: "2 min ago", performance: 94, tasksDone: 421, approvalRate: 93 },
-  { id: "U-041", name: "Ahmed Khan", role: "labor", email: "ahmed.k@riyadhos.sa", phone: "+966 53 111 0001", buildings: ["BLD-001"], status: "active", lastActive: "Just now", performance: 95, tasksDone: 218, approvalRate: 96 },
-  { id: "U-042", name: "Bilal Hussain", role: "labor", email: "bilal.h@riyadhos.sa", phone: "+966 53 111 0002", buildings: ["BLD-001","BLD-004"], status: "active", lastActive: "5 min ago", performance: 91, tasksDone: 198, approvalRate: 92 },
-  { id: "U-043", name: "Rahim Ali", role: "labor", email: "rahim.a@riyadhos.sa", phone: "+966 53 111 0003", buildings: ["BLD-002"], status: "active", lastActive: "Just now", performance: 88, tasksDone: 174, approvalRate: 89 },
-  { id: "U-044", name: "Farhan Malik", role: "labor", email: "farhan.m@riyadhos.sa", phone: "+966 53 111 0004", buildings: ["BLD-003"], status: "active", lastActive: "8 min ago", performance: 93, tasksDone: 202, approvalRate: 94 },
-  { id: "U-045", name: "Imran Shah", role: "labor", email: "imran.s@riyadhos.sa", phone: "+966 53 111 0005", buildings: ["BLD-005","BLD-008"], status: "active", lastActive: "20 min ago", performance: 78, tasksDone: 156, approvalRate: 82 },
-  { id: "U-046", name: "Saeed Noor", role: "labor", email: "saeed.n@riyadhos.sa", phone: "+966 53 111 0006", buildings: ["BLD-006","BLD-007"], status: "inactive", lastActive: "Yesterday", performance: 71, tasksDone: 129, approvalRate: 76 },
-  { id: "U-051", name: "Ali Hassan", role: "tenant", email: "ali.hassan@mail.com", phone: "+966 56 999 0001", buildings: ["BLD-001"], status: "active", lastActive: "1 hour ago", performance: 0 },
-  { id: "U-052", name: "Mariam Saleh", role: "tenant", email: "mariam.s@mail.com", phone: "+966 56 999 0002", buildings: ["BLD-002"], status: "active", lastActive: "Today", performance: 0 },
-  { id: "U-053", name: "Abdullah Nasser", role: "tenant", email: "a.nasser@mail.com", phone: "+966 56 999 0003", buildings: ["BLD-008"], status: "active", lastActive: "2 days ago", performance: 0 },
+export const mockAuthUsers: MockAuthUser[] = [
+  {
+    id: "AUTH-001",
+    name: "Platform Admin",
+    email: "admin@facilityos.com",
+    password: "admin123",
+    role: "admin",
+  },
+  {
+    id: "AUTH-002",
+    name: "Ahmed Al-Farsi",
+    email: "owner@building.com",
+    password: "owner123",
+    role: "owner",
+    ownerId: "OWN-001",
+  },
+  {
+    id: "AUTH-003",
+    name: "Ali Hassan",
+    email: "labour@building.com",
+    password: "labour123",
+    role: "labour",
+    labourId: "LAB-001",
+  },
 ];
 
-export type TaskStatus = "pending" | "submitted" | "approved" | "rejected" | "overdue";
-export type TaskCategory = "Cleaning" | "Elevator" | "Lighting" | "Water" | "Parking" | "Security" | "Plumbing" | "Electrical" | "Waste" | "Landscaping" | "Inspection";
+// ─── OWNERS ──────────────────────────────────────────────────
+export type PlanType = "Starter" | "Professional" | "Enterprise";
+export type OwnerStatus = "Active" | "Trial" | "Suspended";
 
-export interface Task {
+export interface MockOwner {
   id: string;
   name: string;
-  category: TaskCategory;
-  building: string;
-  area: string;
-  labor: string;
-  supervisor: string;
-  frequency: "daily" | "weekly" | "monthly" | "one-time";
-  due: string;
+  email: string;
+  phone: string;
+  company: string;
+  plan: PlanType;
+  status: OwnerStatus;
+  buildingIds: string[];
+  monthlyPayment: number;
+  joinedDate: string;
+  nextBilling: string;
+  avatar?: string;
+}
+
+export const mockOwners: MockOwner[] = [
+  {
+    id: "OWN-001",
+    name: "Ahmed Al-Farsi",
+    email: "ahmed@riyadhtower.com",
+    phone: "+966 55 123 4567",
+    company: "Riyadh Tower Group",
+    plan: "Professional",
+    status: "Active",
+    buildingIds: ["BLD-001", "BLD-002", "BLD-003"],
+    monthlyPayment: 899,
+    joinedDate: "Jan 2026",
+    nextBilling: "Jul 22, 2026",
+  },
+  {
+    id: "OWN-002",
+    name: "Khalid Mansour",
+    email: "khalid@jeddahplaza.com",
+    phone: "+966 55 987 6543",
+    company: "Jeddah Plaza Real Estate",
+    plan: "Starter",
+    status: "Active",
+    buildingIds: ["BLD-004"],
+    monthlyPayment: 299,
+    joinedDate: "Feb 2026",
+    nextBilling: "Jul 15, 2026",
+  },
+  {
+    id: "OWN-003",
+    name: "Sara Al-Harbi",
+    email: "sara@dammamcomplex.com",
+    phone: "+966 56 444 8822",
+    company: "Dammam & Khobar Properties",
+    plan: "Enterprise",
+    status: "Trial",
+    buildingIds: ["BLD-005", "BLD-006"],
+    monthlyPayment: 1999,
+    joinedDate: "Jun 2026",
+    nextBilling: "Jul 10, 2026",
+  },
+];
+
+// ─── BUILDINGS ───────────────────────────────────────────────
+export type BuildingStatus = "Healthy" | "Pending" | "Attention Needed";
+
+export interface MockBuilding {
+  id: string;
+  name: string;
+  city: string;
+  address: string;
+  ownerId: string;
+  ownerName: string;
+  assignedLabourIds: string[];
+  completionToday: number; // percentage
+  totalTasksToday: number;
+  doneTasksToday: number;
+  lastReportTime: string;
+  status: BuildingStatus;
+  cover: string;
+}
+
+export const mockBuildings: MockBuilding[] = [
+  {
+    id: "BLD-001",
+    name: "Riyadh Tower A",
+    city: "Riyadh",
+    address: "King Fahad Road, Riyadh",
+    ownerId: "OWN-001",
+    ownerName: "Ahmed Al-Farsi",
+    assignedLabourIds: ["LAB-001"],
+    completionToday: 87,
+    totalTasksToday: 8,
+    doneTasksToday: 7,
+    lastReportTime: "Today, 09:15",
+    status: "Healthy",
+    cover: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=70",
+  },
+  {
+    id: "BLD-002",
+    name: "Riyadh Tower B",
+    city: "Riyadh",
+    address: "Olaya Street, Riyadh",
+    ownerId: "OWN-001",
+    ownerName: "Ahmed Al-Farsi",
+    assignedLabourIds: ["LAB-002"],
+    completionToday: 100,
+    totalTasksToday: 8,
+    doneTasksToday: 8,
+    lastReportTime: "Today, 08:52",
+    status: "Healthy",
+    cover: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&q=70",
+  },
+  {
+    id: "BLD-003",
+    name: "Riyadh Tower C",
+    city: "Riyadh",
+    address: "Prince Mohammed Bin Abdulaziz Road",
+    ownerId: "OWN-001",
+    ownerName: "Ahmed Al-Farsi",
+    assignedLabourIds: ["LAB-003"],
+    completionToday: 62,
+    totalTasksToday: 8,
+    doneTasksToday: 5,
+    lastReportTime: "Today, 10:30",
+    status: "Pending",
+    cover: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=70",
+  },
+  {
+    id: "BLD-004",
+    name: "Jeddah Plaza",
+    city: "Jeddah",
+    address: "Tahlia Street, Jeddah",
+    ownerId: "OWN-002",
+    ownerName: "Khalid Mansour",
+    assignedLabourIds: ["LAB-004"],
+    completionToday: 50,
+    totalTasksToday: 8,
+    doneTasksToday: 4,
+    lastReportTime: "Today, 11:05",
+    status: "Attention Needed",
+    cover: "https://images.unsplash.com/photo-1493946740644-2d8a1f1a6aff?w=600&q=70",
+  },
+  {
+    id: "BLD-005",
+    name: "Dammam Business Complex",
+    city: "Dammam",
+    address: "King Abdullah Road, Dammam",
+    ownerId: "OWN-003",
+    ownerName: "Sara Al-Harbi",
+    assignedLabourIds: ["LAB-005"],
+    completionToday: 75,
+    totalTasksToday: 8,
+    doneTasksToday: 6,
+    lastReportTime: "Today, 09:44",
+    status: "Healthy",
+    cover: "https://images.unsplash.com/photo-1577495508048-b635879837f1?w=600&q=70",
+  },
+  {
+    id: "BLD-006",
+    name: "Khobar Heights",
+    city: "Khobar",
+    address: "Prince Turki Street, Khobar",
+    ownerId: "OWN-003",
+    ownerName: "Sara Al-Harbi",
+    assignedLabourIds: [],
+    completionToday: 0,
+    totalTasksToday: 8,
+    doneTasksToday: 0,
+    lastReportTime: "No report yet",
+    status: "Attention Needed",
+    cover: "https://images.unsplash.com/photo-1448630360428-65456885c650?w=600&q=70",
+  },
+];
+
+// ─── LABOUR ──────────────────────────────────────────────────
+export type LabourStatus = "Submitted" | "In Progress" | "Not Started" | "Missed";
+
+export interface MockLabour {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  buildingId: string;
+  buildingName: string;
+  ownerId: string;
+  todayStatus: LabourStatus;
+  completedTasksToday: number;
+  totalTasksToday: number;
+  lastSubmission: string;
+  performanceWeek: number; // percentage
+  joinedDate: string;
+}
+
+export const mockLabour: MockLabour[] = [
+  {
+    id: "LAB-001",
+    name: "Ali Hassan",
+    phone: "+966 53 111 0001",
+    email: "ali.hassan@facilityos.com",
+    buildingId: "BLD-001",
+    buildingName: "Riyadh Tower A",
+    ownerId: "OWN-001",
+    todayStatus: "Submitted",
+    completedTasksToday: 7,
+    totalTasksToday: 8,
+    lastSubmission: "Today, 09:15",
+    performanceWeek: 92,
+    joinedDate: "Mar 2026",
+  },
+  {
+    id: "LAB-002",
+    name: "Muhammad Imran",
+    phone: "+966 53 111 0002",
+    email: "imran@facilityos.com",
+    buildingId: "BLD-002",
+    buildingName: "Riyadh Tower B",
+    ownerId: "OWN-001",
+    todayStatus: "Submitted",
+    completedTasksToday: 8,
+    totalTasksToday: 8,
+    lastSubmission: "Today, 08:52",
+    performanceWeek: 98,
+    joinedDate: "Mar 2026",
+  },
+  {
+    id: "LAB-003",
+    name: "Bilal Khan",
+    phone: "+966 53 111 0003",
+    email: "bilal@facilityos.com",
+    buildingId: "BLD-003",
+    buildingName: "Riyadh Tower C",
+    ownerId: "OWN-001",
+    todayStatus: "In Progress",
+    completedTasksToday: 5,
+    totalTasksToday: 8,
+    lastSubmission: "Today, 10:30",
+    performanceWeek: 78,
+    joinedDate: "Apr 2026",
+  },
+  {
+    id: "LAB-004",
+    name: "Omar Saeed",
+    phone: "+966 53 111 0004",
+    email: "omar@facilityos.com",
+    buildingId: "BLD-004",
+    buildingName: "Jeddah Plaza",
+    ownerId: "OWN-002",
+    todayStatus: "In Progress",
+    completedTasksToday: 4,
+    totalTasksToday: 8,
+    lastSubmission: "Today, 11:05",
+    performanceWeek: 71,
+    joinedDate: "Apr 2026",
+  },
+  {
+    id: "LAB-005",
+    name: "Yousuf Ahmed",
+    phone: "+966 53 111 0005",
+    email: "yousuf@facilityos.com",
+    buildingId: "BLD-005",
+    buildingName: "Dammam Business Complex",
+    ownerId: "OWN-003",
+    todayStatus: "Submitted",
+    completedTasksToday: 6,
+    totalTasksToday: 8,
+    lastSubmission: "Today, 09:44",
+    performanceWeek: 85,
+    joinedDate: "May 2026",
+  },
+];
+
+// ─── CHECKLIST TASKS (Labour daily) ──────────────────────────
+export interface ChecklistTask {
+  id: string;
+  title: string;
+  instruction: string;
+  icon: string; // lucide icon name
+  category: string;
+  priority: "Normal" | "Important";
   photoRequired: boolean;
-  priority: "low" | "medium" | "high";
-  status: TaskStatus;
-  proof?: string;
-  submittedAt?: string;
-  comment?: string;
 }
 
-const proofPhotos = [
-  "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&q=60",
-  "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=60",
-  "https://images.unsplash.com/photo-1604014237800-1c9102c219da?w=400&q=60",
-  "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&q=60",
-  "https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=400&q=60",
-  "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400&q=60",
+export const defaultChecklist: ChecklistTask[] = [
+  { id: "T-001", title: "Clean Entrance", instruction: "Sweep and mop entrance area thoroughly", icon: "Brush", category: "Cleaning", priority: "Important", photoRequired: false },
+  { id: "T-002", title: "Check Elevator", instruction: "Make sure elevator is working properly", icon: "Square", category: "Elevator", priority: "Important", photoRequired: false },
+  { id: "T-003", title: "Remove Garbage", instruction: "Empty all garbage bins and take to disposal area", icon: "Trash2", category: "Waste", priority: "Normal", photoRequired: false },
+  { id: "T-004", title: "Check Water Tank", instruction: "Check water tank level and pump operation", icon: "Droplets", category: "Water", priority: "Important", photoRequired: false },
+  { id: "T-005", title: "Check Lights", instruction: "Check lobby and corridor lights, replace any burnt bulbs", icon: "Lightbulb", category: "Lighting", priority: "Normal", photoRequired: false },
+  { id: "T-006", title: "Clean Stairs", instruction: "Sweep and clean all staircase areas", icon: "ArrowUp", category: "Cleaning", priority: "Normal", photoRequired: false },
+  { id: "T-007", title: "Check Parking", instruction: "Check parking area cleanliness and organization", icon: "Car", category: "Parking", priority: "Normal", photoRequired: false },
+  { id: "T-008", title: "Security Gate Check", instruction: "Check security gate and camera systems", icon: "Shield", category: "Security", priority: "Important", photoRequired: false },
 ];
 
-const taskNames: { name: string; cat: TaskCategory }[] = [
-  { name: "Clean main entrance", cat: "Cleaning" },
-  { name: "Check elevator operation", cat: "Elevator" },
-  { name: "Inspect parking area", cat: "Parking" },
-  { name: "Check water tank level", cat: "Water" },
-  { name: "Clean staircase", cat: "Cleaning" },
-  { name: "Inspect corridor lighting", cat: "Lighting" },
-  { name: "Remove waste from basement", cat: "Waste" },
-  { name: "Check rooftop access door", cat: "Security" },
-  { name: "Inspect fire extinguisher cabinet", cat: "Inspection" },
-  { name: "Clean lobby glass doors", cat: "Cleaning" },
-  { name: "Check generator fuel level", cat: "Electrical" },
-  { name: "Inspect plumbing in mechanical room", cat: "Plumbing" },
-  { name: "Landscape watering - front lawn", cat: "Landscaping" },
-];
-
-const statusPool: TaskStatus[] = ["pending","submitted","approved","rejected","overdue","submitted","approved","approved","pending"];
-
-export const tasks: Task[] = Array.from({ length: 48 }).map((_, i) => {
-  const t = taskNames[i % taskNames.length];
-  const b = buildings[i % buildings.length];
-  const labor = users.filter(u => u.role === "labor")[i % 6];
-  const sup = users.find(u => u.id === b.supervisor) || users.find(u => u.role === "supervisor")!;
-  const st = statusPool[i % statusPool.length];
-  return {
-    id: `TSK-${(2600 + i).toString()}`,
-    name: t.name,
-    category: t.cat,
-    building: b.name,
-    area: ["Floor 1","Floor 2","Basement","Rooftop","Lobby","Parking B1"][i % 6],
-    labor: labor.name,
-    supervisor: sup.name,
-    frequency: (["daily","weekly","monthly","daily"] as const)[i % 4],
-    due: ["07:00","09:00","11:00","13:00","16:00","18:00"][i % 6],
-    photoRequired: true,
-    priority: (["low","medium","high","medium"] as const)[i % 4],
-    status: st,
-    proof: (st === "submitted" || st === "approved" || st === "rejected") ? proofPhotos[i % proofPhotos.length] : undefined,
-    submittedAt: (st !== "pending" && st !== "overdue") ? `Today, ${(8 + (i % 9)).toString().padStart(2,"0")}:${(10 + i * 3 % 50).toString().padStart(2,"0")}` : undefined,
-    comment: (st === "rejected") ? "Photo blurry - please retake." : undefined,
-  };
-});
-
-export type ComplaintStatus = "open" | "in-progress" | "resolved" | "closed";
-
-export interface Complaint {
+// ─── CHECKLIST TEMPLATES ─────────────────────────────────────
+export interface ChecklistTemplate {
   id: string;
-  category: string;
-  building: string;
-  unit: string;
-  tenant: string;
+  name: string;
   description: string;
-  photo?: string;
-  priority: "low" | "medium" | "high";
-  status: ComplaintStatus;
-  assigned: string;
-  created: string;
-  updated: string;
-  sla: "on-track" | "at-risk" | "breached";
+  tasks: { name: string; category: string; frequency: string; priority: "Normal" | "Important"; photoRequired: boolean }[];
+  assignedBuildings: string[];
+  createdAt: string;
 }
 
-const complaintSeed = [
-  { cat: "Elevator", desc: "Elevator not working on floor 8" },
-  { cat: "Plumbing", desc: "Water leakage near parking B2" },
-  { cat: "Lighting", desc: "Corridor light broken near unit 304" },
-  { cat: "Cleaning", desc: "Cleaning required near entrance" },
-  { cat: "Security", desc: "Security gate delay at main entry" },
-  { cat: "Waste", desc: "Bad smell near garbage room" },
-  { cat: "Parking", desc: "Parking slot blocked by another car" },
-  { cat: "Water", desc: "Water pressure very low in unit" },
-  { cat: "Electrical", desc: "AC tripping circuit breaker repeatedly" },
+export const mockChecklistTemplates: ChecklistTemplate[] = [
+  {
+    id: "TPL-001",
+    name: "Daily Cleaning Checklist",
+    description: "Standard daily cleaning tasks for all buildings",
+    tasks: [
+      { name: "Clean entrance", category: "Cleaning", frequency: "Daily", priority: "Important", photoRequired: false },
+      { name: "Clean lobby", category: "Cleaning", frequency: "Daily", priority: "Important", photoRequired: false },
+      { name: "Remove garbage", category: "Waste", frequency: "Daily", priority: "Normal", photoRequired: false },
+      { name: "Clean stairs", category: "Cleaning", frequency: "Daily", priority: "Normal", photoRequired: false },
+      { name: "Check washrooms", category: "Cleaning", frequency: "Daily", priority: "Important", photoRequired: false },
+    ],
+    assignedBuildings: ["BLD-001", "BLD-002", "BLD-003"],
+    createdAt: "Jan 15, 2026",
+  },
+  {
+    id: "TPL-002",
+    name: "Daily Building Safety Checklist",
+    description: "Daily safety and equipment checks",
+    tasks: [
+      { name: "Check elevator", category: "Elevator", frequency: "Daily", priority: "Important", photoRequired: false },
+      { name: "Check lights", category: "Lighting", frequency: "Daily", priority: "Normal", photoRequired: false },
+      { name: "Check water pump", category: "Water", frequency: "Daily", priority: "Important", photoRequired: false },
+      { name: "Check security gate", category: "Security", frequency: "Daily", priority: "Important", photoRequired: false },
+      { name: "Check fire extinguisher area", category: "Safety", frequency: "Weekly", priority: "Important", photoRequired: false },
+    ],
+    assignedBuildings: ["BLD-001", "BLD-004", "BLD-005"],
+    createdAt: "Jan 20, 2026",
+  },
 ];
 
-export const complaints: Complaint[] = Array.from({ length: 22 }).map((_, i) => {
-  const s = complaintSeed[i % complaintSeed.length];
-  const b = buildings[i % buildings.length];
-  const tenant = users.filter(u => u.role === "tenant")[i % 3];
-  const sup = users.filter(u => u.role === "supervisor")[i % 3];
-  const stArr: ComplaintStatus[] = ["open","in-progress","resolved","resolved","closed","in-progress","open"];
-  return {
-    id: `CMP-2026-${(40 + i).toString().padStart(4,"0")}`,
-    category: s.cat,
-    building: b.name,
-    unit: `Unit ${100 + (i*7) % 400}`,
-    tenant: tenant.name,
-    description: s.desc,
-    photo: i % 2 === 0 ? proofPhotos[i % proofPhotos.length] : undefined,
-    priority: (["high","medium","low","medium","high"] as const)[i % 5],
-    status: stArr[i % stArr.length],
-    assigned: sup.name,
-    created: `${(i % 9) + 1} Jun 2026`,
-    updated: `${(i % 9) + 2} Jun 2026`,
-    sla: (["on-track","on-track","at-risk","breached","on-track"] as const)[i % 5],
-  };
-});
+// ─── DAILY REPORTS ───────────────────────────────────────────
+export type ReportStatus = "Submitted" | "Pending" | "Missed" | "Approved";
 
-export interface MaintenanceIssue {
+export interface MockReport {
   id: string;
-  building: string;
-  area: string;
-  category: string;
-  description: string;
-  priority: "low"|"medium"|"high";
-  reportedBy: string;
-  assigned: string;
-  status: "open"|"in-progress"|"completed";
-  estCost: number;
-  completion: string;
-  photo?: string;
+  date: string;
+  buildingId: string;
+  buildingName: string;
+  labourId: string;
+  labourName: string;
+  ownerId: string;
+  ownerName: string;
+  completedTasks: number;
+  totalTasks: number;
+  pendingTasks: number;
+  submittedAt: string;
+  status: ReportStatus;
+  notes?: string;
 }
 
-export const maintenance: MaintenanceIssue[] = [
-  { id: "MNT-3001", building: "Riyadh Tower A", area: "Elevator 2", category: "Elevator", description: "Annual elevator inspection needed", priority: "high", reportedBy: "Khalid Al-Otaibi", assigned: "OTIS Service", status: "in-progress", estCost: 4200, completion: "2026-06-24", photo: proofPhotos[0] },
-  { id: "MNT-3002", building: "Olaya Residence", area: "Basement", category: "Plumbing", description: "Plumbing leak in basement utility room", priority: "high", reportedBy: "Rahim Ali", assigned: "FixIt Co.", status: "open", estCost: 1800, completion: "2026-06-22" },
-  { id: "MNT-3003", building: "Dammam Business Center", area: "Electrical Room", category: "Electrical", description: "Electrical panel check & thermal scan", priority: "medium", reportedBy: "Mohammed Al-Zahrani", assigned: "Saudi Power Services", status: "in-progress", estCost: 2600, completion: "2026-06-23" },
-  { id: "MNT-3004", building: "Khobar Heights", area: "Parking Gate", category: "Parking gate", description: "Parking gate sensor intermittently failing", priority: "medium", reportedBy: "Imran Shah", assigned: "Gulf Gates", status: "open", estCost: 900, completion: "2026-06-25" },
-  { id: "MNT-3005", building: "Jeddah Corniche Plaza", area: "Roof", category: "Water tank", description: "Water pump noise & vibration", priority: "low", reportedBy: "Youssef Ahmed", assigned: "AquaTech", status: "completed", estCost: 1200, completion: "2026-06-18" },
-  { id: "MNT-3006", building: "Madinah Commercial Tower", area: "Fire System", category: "Fire safety", description: "Fire alarm battery replacement (annual)", priority: "high", reportedBy: "Khalid Al-Otaibi", assigned: "SafeGuard FM", status: "in-progress", estCost: 3400, completion: "2026-06-21" },
+export const mockReports: MockReport[] = [
+  { id: "RPT-001", date: "Jun 24, 2026", buildingId: "BLD-001", buildingName: "Riyadh Tower A", labourId: "LAB-001", labourName: "Ali Hassan", ownerId: "OWN-001", ownerName: "Ahmed Al-Farsi", completedTasks: 7, totalTasks: 8, pendingTasks: 1, submittedAt: "Today, 09:15", status: "Submitted" },
+  { id: "RPT-002", date: "Jun 24, 2026", buildingId: "BLD-002", buildingName: "Riyadh Tower B", labourId: "LAB-002", labourName: "Muhammad Imran", ownerId: "OWN-001", ownerName: "Ahmed Al-Farsi", completedTasks: 8, totalTasks: 8, pendingTasks: 0, submittedAt: "Today, 08:52", status: "Approved" },
+  { id: "RPT-003", date: "Jun 24, 2026", buildingId: "BLD-003", buildingName: "Riyadh Tower C", labourId: "LAB-003", labourName: "Bilal Khan", ownerId: "OWN-001", ownerName: "Ahmed Al-Farsi", completedTasks: 5, totalTasks: 8, pendingTasks: 3, submittedAt: "Today, 10:30", status: "Submitted" },
+  { id: "RPT-004", date: "Jun 24, 2026", buildingId: "BLD-004", buildingName: "Jeddah Plaza", labourId: "LAB-004", labourName: "Omar Saeed", ownerId: "OWN-002", ownerName: "Khalid Mansour", completedTasks: 4, totalTasks: 8, pendingTasks: 4, submittedAt: "—", status: "Pending" },
+  { id: "RPT-005", date: "Jun 24, 2026", buildingId: "BLD-005", buildingName: "Dammam Business Complex", labourId: "LAB-005", labourName: "Yousuf Ahmed", ownerId: "OWN-003", ownerName: "Sara Al-Harbi", completedTasks: 6, totalTasks: 8, pendingTasks: 2, submittedAt: "Today, 09:44", status: "Submitted" },
+  { id: "RPT-006", date: "Jun 24, 2026", buildingId: "BLD-006", buildingName: "Khobar Heights", labourId: "", labourName: "No Labour Assigned", ownerId: "OWN-003", ownerName: "Sara Al-Harbi", completedTasks: 0, totalTasks: 8, pendingTasks: 8, submittedAt: "—", status: "Missed" },
+  // Past reports
+  { id: "RPT-007", date: "Jun 23, 2026", buildingId: "BLD-001", buildingName: "Riyadh Tower A", labourId: "LAB-001", labourName: "Ali Hassan", ownerId: "OWN-001", ownerName: "Ahmed Al-Farsi", completedTasks: 8, totalTasks: 8, pendingTasks: 0, submittedAt: "Jun 23, 09:10", status: "Approved" },
+  { id: "RPT-008", date: "Jun 23, 2026", buildingId: "BLD-002", buildingName: "Riyadh Tower B", labourId: "LAB-002", labourName: "Muhammad Imran", ownerId: "OWN-001", ownerName: "Ahmed Al-Farsi", completedTasks: 8, totalTasks: 8, pendingTasks: 0, submittedAt: "Jun 23, 08:45", status: "Approved" },
+  { id: "RPT-009", date: "Jun 23, 2026", buildingId: "BLD-003", buildingName: "Riyadh Tower C", labourId: "LAB-003", labourName: "Bilal Khan", ownerId: "OWN-001", ownerName: "Ahmed Al-Farsi", completedTasks: 6, totalTasks: 8, pendingTasks: 2, submittedAt: "Jun 23, 11:20", status: "Submitted" },
+  { id: "RPT-010", date: "Jun 22, 2026", buildingId: "BLD-001", buildingName: "Riyadh Tower A", labourId: "LAB-001", labourName: "Ali Hassan", ownerId: "OWN-001", ownerName: "Ahmed Al-Farsi", completedTasks: 7, totalTasks: 8, pendingTasks: 1, submittedAt: "Jun 22, 09:30", status: "Approved" },
 ];
 
-// Charts data
-export const taskTrend = [
-  { day: "Mon", done: 132, missed: 14 },
-  { day: "Tue", done: 145, missed: 11 },
-  { day: "Wed", done: 138, missed: 18 },
-  { day: "Thu", done: 156, missed: 9 },
-  { day: "Fri", done: 121, missed: 12 },
-  { day: "Sat", done: 162, missed: 8 },
-  { day: "Sun", done: 148, missed: 14 },
-];
-
-export const complaintCategories = [
-  { name: "Cleaning", value: 28, color: "#3b6fa0" },
-  { name: "Electrical", value: 14, color: "#0e7c66" },
-  { name: "Plumbing", value: 19, color: "#c9a84c" },
-  { name: "Elevator", value: 11, color: "#e85d3a" },
-  { name: "Parking", value: 9, color: "#7c5cff" },
-  { name: "Security", value: 6, color: "#475569" },
-];
-
-export const buildingHealthCompare = buildings.map(b => ({ name: b.name.replace(/ /g, "\n"), score: b.health }));
-
-export const complaintResolutionTrend = [
-  { week: "W1", hours: 22 },
-  { week: "W2", hours: 18 },
-  { week: "W3", hours: 14 },
-  { week: "W4", hours: 12 },
-  { week: "W5", hours: 9 },
-  { week: "W6", hours: 7 },
-];
-
-export const laborPerformance = users.filter(u => u.role === "labor").map(l => ({
-  name: l.name.split(" ")[0],
-  approval: l.approvalRate || 0,
-  done: l.tasksDone || 0,
-}));
-
-export const openVsResolved = [
-  { month: "Jan", open: 41, resolved: 38 },
-  { month: "Feb", open: 35, resolved: 41 },
-  { month: "Mar", open: 48, resolved: 44 },
-  { month: "Apr", open: 39, resolved: 47 },
-  { month: "May", open: 44, resolved: 49 },
-  { month: "Jun", open: 31, resolved: 36 },
-];
-
-export const overviewKpis = {
-  totalBuildings: 18,
-  activeLabor: 76,
-  tasksDoneToday: 148,
-  tasksTotal: 162,
-  pendingTasks: 14,
-  overdueTasks: 9,
-  openComplaints: 17,
-  resolvedRate: 91,
-  pendingApprovals: 23,
-  healthScore: 92,
-};
-
-export const notifications = [
-  { id: "N1", type: "overdue", title: "Task overdue: Clean main entrance", body: "Riyadh Tower A · assigned Ahmed Khan · 1 hr late", time: "12 min ago", unread: true },
-  { id: "N2", type: "complaint", title: "New complaint CMP-2026-0048", body: "Elevator not working - Khobar Heights, Unit 312", time: "34 min ago", unread: true },
-  { id: "N3", type: "approval", title: "Supervisor rejected a task", body: "Khalid Al-Otaibi rejected TSK-2618 - photo blurry", time: "1 hr ago", unread: true },
-  { id: "N4", type: "report", title: "Owner weekly summary is ready", body: "Abdulrahman Al-Saud · 3 buildings · ready to send", time: "2 hr ago", unread: false },
-  { id: "N5", type: "complaint", title: "Complaint resolved CMP-2026-0041", body: "Corridor light fixed in Olaya Residence", time: "3 hr ago", unread: false },
-  { id: "N6", type: "maintenance", title: "Maintenance escalated", body: "Plumbing leak - Olaya Residence basement", time: "5 hr ago", unread: false },
-];
-
-export const auditLogs = Array.from({ length: 14 }).map((_, i) => ({
-  id: `LOG-${4000 + i}`,
-  user: users[i % users.length].name,
-  action: ["Approved task","Rejected task","Created building","Updated user","Resolved complaint","Created task","Exported report"][i % 7],
-  module: ["Tasks","Tasks","Buildings","Staff","Complaints","Tasks","Reports"][i % 7],
-  time: `Today, ${(8 + i % 10).toString().padStart(2,"0")}:${(11 + i * 4 % 50).toString().padStart(2,"0")}`,
-  ip: `94.200.${i*3 % 250}.${i*7 % 250}`,
-  status: i % 8 === 0 ? "failed" : "success" as const,
-}));
-
-export const billing = {
-  plan: "Growth",
-  price: "2,499 SAR / mo",
-  buildingsUsed: 8,
-  buildingsLimit: 10,
-  usersUsed: 47,
-  usersLimit: 75,
-  storageUsed: 38,
-  storageLimit: 100,
-  addons: ["WhatsApp notifications", "Extra storage (50GB)", "Custom monthly reports"],
-  invoices: [
-    { id: "INV-2026-006", date: "01 Jun 2026", amount: "2,499 SAR", status: "Paid" },
-    { id: "INV-2026-005", date: "01 May 2026", amount: "2,499 SAR", status: "Paid" },
-    { id: "INV-2026-004", date: "01 Apr 2026", amount: "2,499 SAR", status: "Paid" },
-    { id: "INV-2026-003", date: "01 Mar 2026", amount: "1,999 SAR", status: "Paid" },
+// ─── SUBSCRIPTIONS / EARNINGS ────────────────────────────────
+export const mockSubscriptions = {
+  totalMRR: 3097, // 899 + 299 + 1999
+  totalOwners: 3,
+  activeOwners: 2,
+  trialOwners: 1,
+  plans: {
+    starter: 1,
+    professional: 1,
+    enterprise: 1,
+  },
+  recentPayments: [
+    { id: "PAY-001", owner: "Ahmed Al-Farsi", plan: "Professional", amount: 899, date: "Jun 1, 2026", status: "Paid" },
+    { id: "PAY-002", owner: "Khalid Mansour", plan: "Starter", amount: 299, date: "Jun 1, 2026", status: "Paid" },
+    { id: "PAY-003", owner: "Sara Al-Harbi", plan: "Enterprise", amount: 1999, date: "Jun 10, 2026", status: "Trial" },
+    { id: "PAY-004", owner: "Ahmed Al-Farsi", plan: "Professional", amount: 899, date: "May 1, 2026", status: "Paid" },
+    { id: "PAY-005", owner: "Khalid Mansour", plan: "Starter", amount: 299, date: "May 1, 2026", status: "Paid" },
+  ],
+  failedAlerts: [
+    { owner: "Omar Al-Dawoud", plan: "Starter", amount: 299, date: "Jun 5, 2026", reason: "Card declined" },
   ],
 };
+
+// ─── CHART DATA ───────────────────────────────────────────────
+export const revenueChart = [
+  { month: "Jan", revenue: 598, owners: 2 },
+  { month: "Feb", revenue: 598, owners: 2 },
+  { month: "Mar", revenue: 1198, owners: 2 },
+  { month: "Apr", revenue: 1198, owners: 2 },
+  { month: "May", revenue: 1198, owners: 2 },
+  { month: "Jun", revenue: 3097, owners: 3 },
+];
+
+export const completionChart = [
+  { day: "Mon", completion: 88 },
+  { day: "Tue", completion: 92 },
+  { day: "Wed", completion: 79 },
+  { day: "Thu", completion: 95 },
+  { day: "Fri", completion: 87 },
+  { day: "Sat", completion: 91 },
+  { day: "Sun", completion: 84 },
+];
+
+export const buildingCompletionChart = mockBuildings.map(b => ({
+  name: b.name.replace(" ", "\n"),
+  completion: b.completionToday,
+}));
+
+// ─── ADMIN OVERVIEW KPIs ─────────────────────────────────────
+export const adminKpis = {
+  totalOwners: 3,
+  activeSubscriptions: 2,
+  totalBuildings: 6,
+  totalLabour: 5,
+  todaySubmittedReports: 4,
+  pendingReports: 1,
+  missedReports: 1,
+  monthlyRevenue: 3097,
+  completionRate: 72,
+};
+
+// ─── PRICING PLANS ───────────────────────────────────────────
+export const pricingPlans = [
+  {
+    id: "starter",
+    name: "Starter",
+    price: 299,
+    description: "Best for single building owners",
+    buildings: 1,
+    labour: 5,
+    features: ["1 Building", "Up to 5 Labour", "Daily Checklists", "Report Dashboard", "Email Support"],
+  },
+  {
+    id: "professional",
+    name: "Professional",
+    price: 899,
+    description: "Best for growing portfolios",
+    buildings: 5,
+    labour: 20,
+    features: ["Up to 5 Buildings", "Up to 20 Labour", "Daily Checklists", "Advanced Reports", "Priority Support", "Custom Templates"],
+    popular: true,
+  },
+  {
+    id: "enterprise",
+    name: "Enterprise",
+    price: 1999,
+    description: "For large property groups",
+    buildings: -1, // unlimited
+    labour: -1,
+    features: ["Unlimited Buildings", "Unlimited Labour", "Advanced Analytics", "Custom Reports", "Dedicated Support", "API Access"],
+  },
+];
+
+// ─── BACKWARD COMPAT (old exports used in existing routes) ───
+export type Status = "excellent" | "good" | "attention" | "critical";
+export type Role = "admin" | "owner" | "labour";
+
+export const buildings = mockBuildings.map(b => ({
+  id: b.id,
+  name: b.name,
+  nameAr: b.name,
+  city: b.city,
+  floors: 20,
+  units: 80,
+  supervisor: "",
+  owner: b.ownerName,
+  laborCount: b.assignedLabourIds.length,
+  health: b.completionToday,
+  tasksToday: { done: b.doneTasksToday, total: b.totalTasksToday },
+  openComplaints: 0,
+  status: b.status === "Healthy" ? "excellent" as Status : b.status === "Pending" ? "good" as Status : "attention" as Status,
+  cover: b.cover,
+}));
+
+export const tasks: { id: string; name: string; category: string; building: string; labor: string; status: string; proof?: string }[] = [];
+export const complaints: { id: string; building: string; assigned: string; photo?: string }[] = [];
+export const overviewKpis = adminKpis;
+export const taskTrend = completionChart.map(d => ({ day: d.day, done: Math.round(d.completion * 0.4), missed: Math.round((100 - d.completion) * 0.1) }));
+export const complaintCategories: { name: string; value: number; color: string }[] = [];
+export const buildingHealthCompare = buildingCompletionChart;
+export const complaintResolutionTrend: { week: string; hours: number }[] = [];
+export const openVsResolved: { month: string; open: number; resolved: number }[] = [];

@@ -11,7 +11,6 @@ export const dict: Dict = {
   "nav.pricing": { en: "Pricing", ar: "الأسعار" },
   "nav.about": { en: "About", ar: "من نحن" },
   "nav.security": { en: "Security", ar: "الأمان" },
-  "nav.blog": { en: "Resources", ar: "المصادر" },
   "nav.contact": { en: "Contact", ar: "تواصل" },
   "nav.demo": { en: "Book a Demo", ar: "احجز عرضاً" },
   "nav.signin": { en: "Sign in", ar: "تسجيل الدخول" },
@@ -133,8 +132,14 @@ export const dict: Dict = {
   "sol.sub": { en: "Whether you run three towers or three hundred - FacilityOS Arabia adapts.", ar: "سواء تدير ثلاثة أبراج أو ثلاثمئة - تتكيّف فاسيليتي أو إس مع احتياجك." },
 
   // About
-  "about.title": { en: "Built by operators, for operators.", ar: "صُمّمت من قبل المشغّلين للمشغّلين." },
-  "about.body": { en: "FacilityOS Arabia is built by a team that has run facility operations across Riyadh and the Gulf. We've felt every WhatsApp group, every missing photo and every angry tenant. We built the tool we wished we had.", ar: "تأسّست فاسيليتي أو إس عربيا من قِبَل فريق أدار التشغيل في الرياض والخليج. عشنا كل مجموعة واتساب وكل صورة مفقودة وكل مستأجر غاضب، فبنينا الأداة التي تمنّيناها." },
+  "about.title": {
+    en: "A simpler way to prove daily building work is done.",
+    ar: "طريقة أبسط لإثبات إنجاز أعمال المباني اليومية."
+  },
+  "about.body": {
+    en: "FacilityOS Arabia helps building owners assign daily work, track labour checklists, and receive clear reports that show what was completed today.",
+    ar: "فاسيليتي أو إس عربيا تساعد ملاك المباني على تعيين المهام اليومية، متابعة قوائم العمال، واستلام تقارير واضحة توضّح ما تم إنجازه اليوم."
+  },
 
   // Contact
   "contact.title": { en: "Book a demo", ar: "احجز عرضاً توضيحياً" },

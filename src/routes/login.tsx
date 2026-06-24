@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Building2, Eye, EyeOff, ArrowRight, ShieldCheck, Lock } from "lucide-react";
+import { Building2, Eye, EyeOff, ArrowRight, ShieldCheck, Lock, CheckCircle2, X } from "lucide-react";
 import { useAuth, demoCredentials } from "@/lib/auth-context";
 import type { AppRole } from "@/lib/mock-data";
 
@@ -20,8 +20,11 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [successToast, setSuccessToast] = useState(false);
 
   // If already logged in, redirect
   if (user) {
@@ -37,9 +40,12 @@ function LoginPage() {
     setTimeout(() => {
       const result = login(email, password);
       if (result.success) {
-        const role = JSON.parse(sessionStorage.getItem("facilityos_auth_user") || "{}").role as AppRole;
-        const to = role === "admin" ? "/dashboard/admin" : role === "owner" ? "/dashboard/owner" : "/dashboard/labour";
-        navigate({ to });
+        setSuccessToast(true);
+        setTimeout(() => {
+          const role = JSON.parse(sessionStorage.getItem("facilityos_auth_user") || "{}").role as AppRole;
+          const to = role === "admin" ? "/dashboard/admin" : role === "owner" ? "/dashboard/owner" : "/dashboard/labour";
+          navigate({ to });
+        }, 1000);
       } else {
         setError(result.error || "Login failed");
         setLoading(false);
@@ -56,8 +62,11 @@ function LoginPage() {
     setTimeout(() => {
       const result = login(creds.email, creds.password);
       if (result.success) {
-        const to = role === "admin" ? "/dashboard/admin" : role === "owner" ? "/dashboard/owner" : "/dashboard/labour";
-        navigate({ to });
+        setSuccessToast(true);
+        setTimeout(() => {
+          const to = role === "admin" ? "/dashboard/admin" : role === "owner" ? "/dashboard/owner" : "/dashboard/labour";
+          navigate({ to });
+        }, 1000);
       } else {
         setError(result.error || "Login failed");
         setLoading(false);
@@ -117,7 +126,39 @@ function LoginPage() {
       </div>
 
       {/* Right panel - login form */}
-      <div className="flex-1 flex items-center justify-center p-6 bg-background">
+      <div className="flex-1 flex items-center justify-center p-6 bg-background relative">
+        {/* Success Toast Overlay */}
+        {successToast && (
+          <div className="absolute top-6 right-6 z-50 bg-green-50 text-green-700 p-4 rounded-xl shadow-lg border border-green-200 flex items-center gap-3 animate-in slide-in-from-top-4">
+            <CheckCircle2 className="h-5 w-5" />
+            <span className="font-medium text-sm">Login successful! Redirecting...</span>
+          </div>
+        )}
+
+        {/* Forgot Password Modal */}
+        {showForgotModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-in fade-in">
+            <div className="bg-background rounded-2xl shadow-xl w-full max-w-sm p-6 relative border border-border">
+              <button 
+                onClick={() => setShowForgotModal(false)}
+                className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-5 w-5" />
+              </button>
+              <h3 className="text-xl font-display font-semibold mb-2">Reset Password</h3>
+              <p className="text-sm text-muted-foreground mb-6">
+                Password reset is not connected yet in this frontend demo. Please contact the platform admin.
+              </p>
+              <button 
+                onClick={() => setShowForgotModal(false)}
+                className="w-full bg-navy text-white py-2.5 rounded-xl font-medium"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="flex items-center gap-3 mb-8 lg:hidden">
@@ -152,7 +193,8 @@ function LoginPage() {
                   <div className={`text-xs font-bold uppercase tracking-wider ${
                     role === "admin" ? "text-navy" : role === "owner" ? "text-accent" : "text-emerald-700"
                   }`}>{demoCredentials[role].label}</div>
-                  <div className="mt-0.5 text-[10px] text-muted-foreground leading-tight">{demoCredentials[role].description}</div>
+                  <div className="mt-0.5 text-[10px] text-muted-foreground leading-tight truncate">{demoCredentials[role].email}</div>
+                  <div className="mt-0.5 text-[10px] text-muted-foreground leading-tight">{demoCredentials[role].password}</div>
                 </button>
               ))}
             </div>
@@ -199,6 +241,25 @@ function LoginPage() {
               </div>
             </div>
 
+            <div className="flex items-center justify-between mt-2">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  className="rounded text-accent focus:ring-accent accent-accent"
+                  checked={rememberMe}
+                  onChange={e => setRememberMe(e.target.checked)}
+                />
+                <span className="text-sm text-muted-foreground">Remember me</span>
+              </label>
+              <button 
+                type="button" 
+                onClick={() => setShowForgotModal(true)}
+                className="text-sm font-medium text-accent hover:underline"
+              >
+                Forgot password?
+              </button>
+            </div>
+
             {error && (
               <div className="rounded-xl bg-rose-50 border border-rose-200 p-3 text-sm text-rose-700">
                 {error}
@@ -218,17 +279,34 @@ function LoginPage() {
             </button>
           </form>
 
-          {/* Admin note */}
-          <div className="mt-6 flex items-start gap-2.5 rounded-xl bg-secondary/60 border border-border p-3.5">
-            <Lock className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              <strong className="text-foreground">Admin access is restricted</strong> to platform management only and is not a public role. Owner and Labour access is available through subscription.
-            </p>
+          {/* Notes */}
+          <div className="mt-6 space-y-2">
+            <div className="flex items-start gap-2.5 rounded-xl bg-secondary/60 border border-border p-3">
+              <Lock className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                <strong className="text-foreground">Admin:</strong> Restricted to platform management only.
+              </p>
+            </div>
+            <div className="flex items-start gap-2.5 rounded-xl bg-accent/5 border border-accent/10 p-3">
+              <Building2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                <strong className="text-foreground">Owner:</strong> Available after subscription. <Link to="/pricing" className="text-accent hover:underline">View pricing</Link>.
+              </p>
+            </div>
+            <div className="flex items-start gap-2.5 rounded-xl bg-emerald-50 border border-emerald-100 p-3">
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                <strong className="text-foreground">Labour:</strong> Credentials provided by building owner.
+              </p>
+            </div>
           </div>
 
-          <div className="mt-6 text-center">
-            <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition">
-              ← Back to website
+          <div className="mt-8 flex justify-between text-sm">
+            <Link to="/" className="text-muted-foreground hover:text-foreground transition">
+              ← Back to home
+            </Link>
+            <Link to="/pricing" className="text-muted-foreground hover:text-foreground transition">
+              View Pricing →
             </Link>
           </div>
         </div>

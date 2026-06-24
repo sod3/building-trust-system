@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, ArrowUpRight, CheckCircle2, Camera, ShieldCheck, MessageSquare, BarChart3, WifiOff, Activity, Languages, Building, Users, Sparkles, Phone, Mail, MapPin } from "lucide-react";
+import { ArrowRight, ArrowUpRight, CheckCircle2, Camera, ShieldCheck, MessageSquare, BarChart3, WifiOff, Activity, Languages, Building, Users, Sparkles, Phone, Mail, MapPin, LayoutDashboard, ClipboardCheck } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
@@ -12,7 +12,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "FacilityOS Arabia - Smart Building Operations Platform" },
-      { name: "description", content: "Arabic-first smart building ops: tasks, photo proof, supervisor approvals, tenant complaints, owner reports. Built for Saudi & Gulf." },
+      { name: "description", content: "Simple Daily Building Operations, Verified by Labour Checklists. Built for Saudi & Gulf." },
       { property: "og:title", content: "FacilityOS Arabia - Smart Building Operations Platform" },
       { property: "og:description", content: "One platform for facility teams across Saudi Arabia and the Gulf." },
     ],
@@ -28,7 +28,7 @@ function Home() {
       <Header />
 
       {/* HERO */}
-<section 
+      <section
         className="relative min-h-[100dvh] flex items-center overflow-hidden bg-navy-gradient text-primary-foreground"
         style={{
           backgroundImage: `url(${heroImg})`,
@@ -37,47 +37,42 @@ function Home() {
           backgroundAttachment: 'fixed',
         }}
       >
-        {/* Dark overlay for text readability + depth */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/60 to-black/40" />
-        
-        {/* Subtle mesh/grid overlay for premium tech feel */}
         <div className="absolute inset-0 bg-mesh opacity-30 mix-blend-overlay" />
-        
-        {/* Top accent glow */}
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-        
+
         <div className="relative z-10 mx-auto grid max-w-7xl gap-12 px-4 py-20 sm:px-6 lg:grid-cols-12 lg:gap-8 lg:px-8 lg:py-28">
-          <div className="lg:col-span-7">
+          <div className="lg:col-span-8">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-medium text-white backdrop-blur-md shadow-inner">
               <Sparkles className="h-3.5 w-3.5 text-gold" />
               {t("badge.kingdom")}
             </span>
-            
+
             <h1 className="mt-8 text-balance font-display text-5xl font-semibold leading-[1.05] tracking-tighter sm:text-6xl lg:text-7xl drop-shadow-2xl">
-              {t("hero.title")}
+              Simple Daily Building Operations, Verified by Labour Checklists
             </h1>
-            
+
             <p className="mt-6 max-w-xl text-balance text-lg leading-relaxed text-white/90 drop-shadow-md">
-              {t("hero.sub")}
+              Give building owners a clear dashboard to assign daily tasks, track labour work, and receive daily proof that cleaning, maintenance, elevator, water, lights, and security checks are completed.
             </p>
-            
-            <div className="mt-10 flex flex-wrap items-center gap-4">
-              <Button 
-                asChild 
-                size="lg" 
-                className="bg-white text-navy hover:bg-white/95 active:scale-[0.985] transition-all duration-200 shadow-xl shadow-black/30 font-semibold"
+
+            <div className="mt-10 flex flex-col sm:flex-row items-center gap-4">
+              <Button
+                asChild
+                size="lg"
+                className="w-full sm:w-auto bg-white text-navy hover:bg-white/95 active:scale-[0.985] transition-all duration-200 shadow-xl shadow-black/30 font-semibold"
               >
-                <Link to="/login">
+                <Link to="/pricing">
                   Get Owner Dashboard Access
                   <ArrowRight className="ms-2 h-4 w-4 rtl:rotate-180" />
                 </Link>
               </Button>
-              
-              <Button 
-                asChild 
-                size="lg" 
-                variant="outline" 
-                className="border-white/30 bg-white/10 text-white hover:bg-white/15 hover:border-white/50 backdrop-blur-md transition-all duration-200"
+
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="w-full sm:w-auto border-white/30 bg-white/10 text-white hover:bg-white/15 hover:border-white/50 backdrop-blur-md transition-all duration-200"
               >
                 <Link to="/login">View Dashboard Demo</Link>
               </Button>
@@ -90,167 +85,72 @@ function Home() {
               </div>
             </div>
           </div>
-
-          {/* Empty right column - image is now full background */}
-          <div className="lg:col-span-5 hidden lg:block" />
+          <div className="lg:col-span-4 hidden lg:block" />
         </div>
-
-        {/* Bottom fade to next section */}
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent pointer-events-none" />
       </section>
 
-      {/* PROBLEM */}
+      {/* HOW IT WORKS */}
       <section className="border-b border-border bg-secondary/30">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <p className="text-xs font-semibold uppercase tracking-widest text-accent">{t("sec.problem.kicker")}</p>
-          <h2 className="mt-3 max-w-3xl text-balance font-display text-3xl font-semibold tracking-tight sm:text-4xl">
-            {t("sec.problem.title")}
-          </h2>
-          <p className="mt-4 max-w-2xl text-balance text-muted-foreground">{t("sec.problem.body")}</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-accent">Simple Workflow</p>
+          <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">How It Works</h2>
+
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              { n: "1", t: "Subscribe", b: "Choose a plan and get instant access." },
+              { n: "2", t: "Access Owner Dashboard", b: "Log in to your private owner portal." },
+              { n: "3", t: "Add Buildings and Labour", b: "Set up your properties and workers." },
+              { n: "4", t: "Assign Daily Tasks", b: "Create checklists for cleaning, safety, etc." },
+              { n: "5", t: "Labour Submits Checklist", b: "Workers use a simple mobile dashboard to mark tasks as done." },
+              { n: "6", t: "View Daily Reports", b: "Receive proof of work in your dashboard daily." },
+            ].map((s) => (
+              <div key={s.n} className="relative rounded-2xl border border-border bg-background p-6 shadow-sm flex flex-col gap-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent text-white font-bold">
+                  {s.n}
+                </div>
+                <h3 className="mt-2 font-display text-lg font-semibold">{s.t}</h3>
+                <p className="text-sm text-muted-foreground">{s.b}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* BENTO FEATURES */}
+      {/* DASHBOARDS SECTION */}
       <section id="features" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-accent">Platform</p>
             <h2 className="mt-2 max-w-2xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">
-              {lang === "ar" ? "كل ما يحتاجه فريق التشغيل، في مكان واحد." : "Everything your operations team needs, in one place."}
+              One Simple Platform. Three Powerful Dashboards.
             </h2>
           </div>
           <Link to="/product" className="inline-flex items-center gap-1 text-sm font-medium text-accent hover:text-navy">
-            {lang === "ar" ? "استكشف المنصة" : "Explore the platform"} <ArrowUpRight className="h-4 w-4" />
+            Explore the platform <ArrowUpRight className="h-4 w-4" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6 lg:grid-rows-[auto_auto_auto]">
-          {/* Large: Labor proof */}
-          <BentoCard className="lg:col-span-3 lg:row-span-2 bg-navy text-primary-foreground border-transparent">
-            <BentoHeader icon={<Camera />} title={t("bento.proof.title")} body={t("bento.proof.body")} dark />
-            <div className="mt-6 overflow-hidden rounded-xl border border-white/10">
-              <img src={laborImg} alt="Labor app" width={1024} height={1024} loading="lazy" className="h-auto w-full object-cover" />
-            </div>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {/* Admin */}
+          <BentoCard className="bg-navy text-primary-foreground border-transparent flex flex-col">
+            <BentoHeader icon={<LayoutDashboard />} title="Admin Dashboard" body="For platform owner/client/developer to manage owners, buildings, earnings, reports, and system activity." dark />
           </BentoCard>
 
-          <BentoCard className="lg:col-span-3">
-            <BentoHeader icon={<CheckCircle2 />} title={t("bento.tasks.title")} body={t("bento.tasks.body")} />
-            <div className="mt-5 grid grid-cols-3 gap-2 text-center text-xs">
-              {["Daily", "Weekly", "Monthly"].map((p) => (
-                <div key={p} className="rounded-lg border border-border bg-secondary/50 py-3 font-medium">{p}</div>
-              ))}
-            </div>
+          {/* Owner */}
+          <BentoCard className="bg-surface-2 border-border flex flex-col">
+            <BentoHeader icon={<BarChart3 />} title="Owner Dashboard" body="For building owners to manage their buildings, labour, checklist assignments, reports, and subscription." />
           </BentoCard>
 
-          <BentoCard className="lg:col-span-2">
-            <BentoHeader icon={<ShieldCheck />} title={t("bento.approve.title")} body={t("bento.approve.body")} />
+          {/* Labour */}
+          <BentoCard className="bg-accent text-accent-foreground border-transparent flex flex-col">
+            <BentoHeader icon={<ClipboardCheck />} title="Labour Dashboard" body="Simple visual checklist for workers to mark daily tasks as done and submit work." dark />
           </BentoCard>
-
-          <BentoCard className="lg:col-span-1 bg-accent text-accent-foreground border-transparent">
-            <BentoHeader icon={<Activity />} title={t("bento.health.title")} body={t("bento.health.body")} dark />
-            <div className="mt-4 text-3xl font-display font-semibold">94<span className="text-xl opacity-70">/100</span></div>
-          </BentoCard>
-
-          <BentoCard className="lg:col-span-2">
-            <BentoHeader icon={<MessageSquare />} title={t("bento.complaint.title")} body={t("bento.complaint.body")} />
-            <div className="mt-4 inline-flex items-center gap-2 rounded-md bg-secondary px-2.5 py-1 font-mono text-xs">CMP-2026-0042 · Open</div>
-          </BentoCard>
-
-          <BentoCard className="lg:col-span-4 bg-surface-2 border-transparent">
-            <div className="grid gap-6 lg:grid-cols-2">
-              <div>
-                <BentoHeader icon={<BarChart3 />} title={t("bento.owner.title")} body={t("bento.owner.body")} />
-              </div>
-              <div className="overflow-hidden rounded-xl ring-hairline">
-                <img src={ownerImg} alt="Owner dashboard" width={1400} height={1000} loading="lazy" className="h-full w-full object-cover" />
-              </div>
-            </div>
-          </BentoCard>
-
-          <BentoCard className="lg:col-span-2">
-            <BentoHeader icon={<WifiOff />} title={t("bento.offline.title")} body={t("bento.offline.body")} />
-          </BentoCard>
-
-          <BentoCard className="lg:col-span-4 bg-gradient-to-br from-navy to-navy-soft text-primary-foreground border-transparent">
-            <div className="flex flex-wrap items-start justify-between gap-6">
-              <div className="max-w-md">
-                <BentoHeader icon={<Languages />} title={t("bento.rtl.title")} body={t("bento.rtl.body")} dark />
-              </div>
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-end">عربية</div>
-                <div className="rounded-lg border border-white/10 bg-white/5 px-4 py-3">English</div>
-              </div>
-            </div>
-          </BentoCard>
-        </div>
-      </section>
-
-      {/* HOW IT WORKS */}
-      <section className="border-y border-border bg-secondary/30">
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <p className="text-xs font-semibold uppercase tracking-widest text-accent">{t("sec.how.kicker")}</p>
-          <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">{t("sec.how.title")}</h2>
-
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { n: "01", t: t("sec.how.s1.t"), b: t("sec.how.s1.b") },
-              { n: "02", t: t("sec.how.s2.t"), b: t("sec.how.s2.b") },
-              { n: "03", t: t("sec.how.s3.t"), b: t("sec.how.s3.b") },
-              { n: "04", t: t("sec.how.s4.t"), b: t("sec.how.s4.b") },
-            ].map((s) => (
-              <div key={s.n} className="relative rounded-2xl border border-border bg-background p-6 shadow-sm">
-                <span className="font-mono text-xs text-accent">{s.n}</span>
-                <h3 className="mt-2 font-display text-lg font-semibold">{s.t}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{s.b}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* USE CASES */}
-      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-        <p className="text-xs font-semibold uppercase tracking-widest text-accent">{t("sec.usecase.kicker")}</p>
-        <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">{t("sec.usecase.title")}</h2>
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            { i: Building, k: "uc.fm" },
-            { i: Building, k: "uc.dev" },
-            { i: Users, k: "uc.owners" },
-            { i: Building, k: "uc.malls" },
-            { i: Building, k: "uc.compounds" },
-            { i: ShieldCheck, k: "uc.gov" },
-          ].map(({ i: Icon, k }) => (
-            <div key={k} className="group flex items-center gap-4 rounded-xl border border-border bg-background p-5 transition-colors hover:border-accent/40">
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-secondary text-navy">
-                <Icon className="h-5 w-5" />
-              </span>
-              <span className="font-medium">{t(k)}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* LOCALIZATION */}
-      <section className="border-y border-border bg-navy text-primary-foreground bg-mesh">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:px-8">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-gold">{t("sec.local.kicker")}</p>
-            <h2 className="mt-3 max-w-md font-display text-3xl font-semibold tracking-tight sm:text-4xl">{t("sec.local.title")}</h2>
-          </div>
-          <ul className="space-y-4">
-            {["local.1", "local.2", "local.3", "local.4"].map((k) => (
-              <li key={k} className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur">
-                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-gold" />
-                <span className="text-white/85">{t(k)}</span>
-              </li>
-            ))}
-          </ul>
         </div>
       </section>
 
       {/* PRICING PREVIEW */}
-      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <section className="border-t border-border mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-accent">{t("sec.pricing.kicker")}</p>
@@ -264,42 +164,23 @@ function Home() {
         <PricingMini />
       </section>
 
-      {/* FAQ */}
-      <section className="border-y border-border bg-secondary/30">
-        <div className="mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8">
-          <p className="text-xs font-semibold uppercase tracking-widest text-accent">{t("sec.faq.kicker")}</p>
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-4xl">{t("sec.faq.title")}</h2>
-          <div className="mt-8 divide-y divide-border rounded-2xl border border-border bg-background">
-            {[1, 2, 3, 4].map((i) => (
-              <details key={i} className="group p-6 [&_summary::-webkit-details-marker]:hidden">
-                <summary className="flex cursor-pointer items-center justify-between gap-4 font-medium">
-                  {t(`faq.q${i}`)}
-                  <span className="grid h-6 w-6 place-items-center rounded-full bg-secondary text-xs transition-transform group-open:rotate-45">+</span>
-                </summary>
-                <p className="mt-3 text-sm text-muted-foreground">{t(`faq.a${i}`)}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* FINAL CTA */}
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="overflow-hidden rounded-3xl bg-navy bg-mesh p-10 text-primary-foreground sm:p-16">
           <h2 className="max-w-2xl font-display text-3xl font-semibold tracking-tight sm:text-4xl">{t("sec.cta.title")}</h2>
           <p className="mt-3 max-w-xl text-white/75">{t("sec.cta.body")}</p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button asChild size="lg" className="bg-white text-navy hover:bg-white/90">
+          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <Button asChild size="lg" className="w-full sm:w-auto bg-white text-navy hover:bg-white/90">
               <Link to="/login">Start Building Management</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-white/25 text-white hover:bg-white/10 hover:text-white">
+            <Button asChild size="lg" variant="outline" className="w-full sm:w-auto border-white/25 text-black hover:bg-white/10 hover:text-white">
               <Link to="/pricing">Subscribe to Access</Link>
             </Button>
           </div>
           <div className="mt-10 grid gap-4 text-sm text-white/70 sm:grid-cols-3">
-            <span className="flex items-center gap-2"><Phone className="h-4 w-4 text-gold" /> +966 11 000 0000</span>
-            <span className="flex items-center gap-2"><Mail className="h-4 w-4 text-gold" /> hello@facilityos.sa</span>
-            <span className="flex items-center gap-2"><MapPin className="h-4 w-4 text-gold" /> Riyadh, KSA</span>
+            <span className="flex items-center gap-2"><Phone className="h-4 w-4 text-gold" /> +966 55 125 4121</span>
+            <span className="flex items-center gap-2"><Mail className="h-4 w-4 text-gold" /> info@saturnlynk.sa</span>
+            <span className="flex items-center gap-2"><MapPin className="h-4 w-4 text-gold" /> Jeddah, Saudi Arabia</span>
           </div>
         </div>
       </section>
@@ -311,7 +192,7 @@ function Home() {
 
 function BentoCard({ className = "", children }: { className?: string; children: React.ReactNode }) {
   return (
-    <div className={`rounded-2xl border border-border bg-background p-6 transition-all hover:shadow-elevated ${className}`}>
+    <div className={`rounded-2xl border p-6 transition-all hover:shadow-elevated ${className}`}>
       {children}
     </div>
   );
@@ -320,25 +201,25 @@ function BentoCard({ className = "", children }: { className?: string; children:
 function BentoHeader({ icon, title, body, dark = false }: { icon: React.ReactNode; title: string; body: string; dark?: boolean }) {
   return (
     <div>
-      <span className={`grid h-10 w-10 place-items-center rounded-lg ${dark ? "bg-white/10 text-white" : "bg-secondary text-navy"}`}>
-        <span className="[&>svg]:h-5 [&>svg]:w-5">{icon}</span>
+      <span className={`grid h-12 w-12 place-items-center rounded-xl ${dark ? "bg-white/10 text-white" : "bg-secondary text-navy"}`}>
+        <span className="[&>svg]:h-6 [&>svg]:w-6">{icon}</span>
       </span>
-      <h3 className="mt-4 font-display text-lg font-semibold">{title}</h3>
-      <p className={`mt-2 text-sm ${dark ? "text-white/70" : "text-muted-foreground"}`}>{body}</p>
+      <h3 className="mt-5 font-display text-xl font-semibold">{title}</h3>
+      <p className={`mt-3 text-[15px] leading-relaxed ${dark ? "text-white/70" : "text-muted-foreground"}`}>{body}</p>
     </div>
   );
 }
 
 function PricingMini() {
   const plans = [
-    { name: "Starter", price: 299, scope: "1 building · For single building owners", features: ["1 Building", "Up to 5 Labour", "Daily Reports"] },
-    { name: "Professional", price: 899, scope: "Up to 5 buildings · Growing portfolios", features: ["Up to 5 Buildings", "Up to 20 Labour", "Custom Templates", "Priority Support"], popular: true },
-    { name: "Enterprise", price: 1999, scope: "Unlimited · Large property groups", features: ["Unlimited Buildings", "Unlimited Labour", "API Access", "Dedicated Support"] },
+    { name: "Starter", price: 299, scope: "1 building · For single building owners", features: ["1 Building", "Owner Dashboard", "Labour Dashboard", "Daily Reports", "Basic Support"], query: "starter" },
+    { name: "Professional", price: 899, scope: "Up to 5 buildings · Growing portfolios", features: ["Up to 5 Buildings", "Multiple Labour Accounts", "Checklist Templates", "Today's Reports", "Priority Support"], popular: true, query: "professional" },
+    { name: "Enterprise", price: 1999, scope: "Multiple · Large property groups", features: ["Multiple Buildings", "Advanced Report History", "Custom Setup", "Dedicated Support"], query: "enterprise" },
   ];
   return (
     <div className="grid gap-4 sm:grid-cols-3">
       {plans.map((p) => (
-        <div key={p.name} className={`relative rounded-2xl border p-6 ${p.popular ? "border-accent bg-accent/5 shadow-elevated" : "border-border bg-background"}`}>
+        <div key={p.name} className={`relative flex flex-col rounded-2xl border p-6 ${p.popular ? "border-accent bg-accent/5 shadow-elevated" : "border-border bg-background"}`}>
           {p.popular && <span className="absolute -top-3 start-6 rounded-full bg-accent px-2.5 py-0.5 text-xs font-semibold text-accent-foreground">Most Popular</span>}
           <h3 className="font-display text-lg font-semibold">{p.name}</h3>
           <p className="mt-1 text-sm text-muted-foreground">{p.scope}</p>
@@ -346,14 +227,15 @@ function PricingMini() {
             <span className="font-display text-3xl font-semibold">{p.price.toLocaleString()}</span>
             <span className="text-sm text-muted-foreground">SAR/mo</span>
           </div>
-          <ul className="mt-4 space-y-1.5">
+          <ul className="mt-6 flex-1 space-y-2">
             {p.features.map(f => (
               <li key={f} className="flex items-center gap-2 text-sm text-muted-foreground">
-                <span className="h-1.5 w-1.5 rounded-full bg-accent shrink-0" />{f}
+                <CheckCircle2 className="h-4 w-4 text-accent shrink-0" />
+                {f}
               </li>
             ))}
           </ul>
-          <Link to="/login" className={`mt-5 flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition ${p.popular ? "bg-accent text-white hover:bg-accent/90" : "border border-border hover:bg-secondary"}`}>
+          <Link to="/checkout" search={{ plan: p.query }} className={`mt-6 flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition w-full ${p.popular ? "bg-accent text-white hover:bg-accent/90" : "border border-border hover:bg-secondary"}`}>
             Get Owner Access <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

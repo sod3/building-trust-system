@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { useLang } from "@/lib/i18n";
-import { Lock, Shield, FileCheck, Database, KeyRound, Activity, ServerCog, ScrollText } from "lucide-react";
+import { Lock, Shield, FileCheck, KeyRound, Activity, ServerCog, ScrollText } from "lucide-react";
 
 export const Route = createFileRoute("/security")({
   head: () => ({
@@ -23,7 +23,6 @@ function SecurityPage() {
     { i: Lock, n: lang === "ar" ? "تشفير عند التخزين والنقل" : "Encryption at rest and in transit", b: lang === "ar" ? "TLS 1.3 وتشفير بمستوى الكائن في التخزين." : "TLS 1.3 and object-level encryption in storage." },
     { i: Shield, n: lang === "ar" ? "مصادقة آمنة" : "Secure authentication", b: lang === "ar" ? "JWT / جلسات آمنة وكلمات مرور مجزّأة." : "JWT / secure sessions and hashed passwords." },
     { i: Activity, n: lang === "ar" ? "سجلات التدقيق" : "Audit logs", b: lang === "ar" ? "كل إجراء مهم مسجّل وقابل للتصدير." : "Every meaningful action logged and exportable." },
-    { i: Database, n: lang === "ar" ? "استضافة داخل المملكة" : "KSA region hosting", b: lang === "ar" ? "متاحة على باقات النمو وأعلى." : "Available on Growth and above." },
     { i: FileCheck, n: lang === "ar" ? "متوافق مع PDPL" : "PDPL-aware", b: lang === "ar" ? "ضوابط معالجة وحدود احتفاظ بالبيانات." : "Processing controls and data retention limits." },
     { i: ServerCog, n: lang === "ar" ? "نسخ احتياطية" : "Backups & recovery", b: lang === "ar" ? "نسخ يومية ونقاط استعادة محددة." : "Daily backups with defined recovery points." },
     { i: ScrollText, n: lang === "ar" ? "حدود معدّل وحماية الرفع" : "Rate limiting & upload guards", b: lang === "ar" ? "حماية API ورفع صور آمن مع فحص نوع/حجم." : "API protection and safe image uploads with type/size checks." },

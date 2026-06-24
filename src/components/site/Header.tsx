@@ -10,7 +10,6 @@ const nav = [
   { to: "/pricing", key: "nav.pricing" },
   { to: "/about", key: "nav.about" },
   { to: "/security", key: "nav.security" },
-  { to: "/blog", key: "nav.blog" },
 ] as const;
 
 export function Header() {

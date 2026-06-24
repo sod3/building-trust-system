@@ -1,129 +1,113 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { Button } from "@/components/ui/button";
-import { useLang } from "@/lib/i18n";
-import { Check } from "lucide-react";
 
 export const Route = createFileRoute("/pricing")({
-  head: () => ({
-    meta: [
-      { title: "Pricing - FacilityOS Arabia" },
-      { name: "description", content: "Simple SAR pricing per portfolio. Pilot from 499 SAR/mo. Enterprise plans for facility management companies." },
-      { property: "og:title", content: "Pricing - FacilityOS Arabia" },
-      { property: "og:description", content: "From 499 SAR/mo to enterprise. WhatsApp, white-label and API add-ons available." },
-    ],
-  }),
-  component: PricingPage,
+  head: () => ({ meta: [{ title: "Pricing — FacilityOS Arabia" }] }),
+  component: Pricing,
 });
 
-function PricingPage() {
-  const { t, lang } = useLang();
-
-  const features = (en: string[], ar: string[]) => (lang === "ar" ? ar : en);
-
+function Pricing() {
   const plans = [
-    {
-      name: "Pilot", price: 499, scope: lang === "ar" ? "مبنى واحد" : "1 building",
-      features: features(
-        ["1 building, up to 30 units", "5 labor users", "1 supervisor", "Photo proof", "Tenant QR portal"],
-        ["مبنى واحد حتى 30 وحدة", "5 عمال", "مشرف واحد", "إثبات بالصور", "بوابة QR للمستأجرين"]
-      ),
+    { 
+      name: "Starter", 
+      price: 299, 
+      scope: "Best for single building owners.", 
+      features: ["1 building", "Owner dashboard access", "Labour checklist dashboard", "Daily reports", "Basic report history", "Email support"], 
+      query: "starter" 
     },
-    {
-      name: "Starter", price: 999, scope: lang === "ar" ? "حتى 3 مبانٍ" : "Up to 3 buildings",
-      features: features(
-        ["Up to 3 buildings", "15 labor users", "3 supervisors", "All Pilot features", "Email + WhatsApp alerts"],
-        ["حتى 3 مبانٍ", "15 عاملاً", "3 مشرفين", "كل ميزات Pilot", "إشعارات بريد + واتساب"]
-      ),
-      popular: true,
+    { 
+      name: "Professional", 
+      price: 899, 
+      scope: "Best for growing building portfolios.", 
+      features: ["Up to 5 buildings", "Multiple labour accounts", "Checklist templates", "Today's reports", "Report history", "Priority support"], 
+      popular: true, 
+      query: "professional" 
     },
-    {
-      name: "Growth", price: 2499, scope: lang === "ar" ? "حتى 10 مبانٍ" : "Up to 10 buildings",
-      features: features(
-        ["Up to 10 buildings", "50 labor users", "Owner dashboards", "Monthly PDF reports", "KSA hosting"],
-        ["حتى 10 مبانٍ", "50 عاملاً", "لوحات الملاك", "تقارير PDF شهرية", "استضافة داخل المملكة"]
-      ),
+    { 
+      name: "Enterprise", 
+      price: 1999, 
+      scope: "Best for large property groups.", 
+      features: ["Multiple buildings", "Custom setup", "Multiple owner/supervisor users later", "Advanced report history", "Priority onboarding", "Dedicated support"], 
+      query: "enterprise" 
     },
-    {
-      name: "Business", price: 5999, scope: lang === "ar" ? "حتى 25 مبنى" : "Up to 25 buildings",
-      features: features(
-        ["Up to 25 buildings", "Unlimited labor", "Custom roles", "Advanced analytics", "Priority support"],
-        ["حتى 25 مبنى", "عمّال غير محدودين", "صلاحيات مخصّصة", "تحليلات متقدّمة", "دعم ذو أولوية"]
-      ),
-    },
+  ];
+
+  const faqs = [
+    { q: "Is payment active now?", a: "Payment integration is coming soon. This is currently a frontend demo." },
+    { q: "Can one owner manage multiple buildings?", a: "Yes, an owner account can be assigned multiple buildings depending on the plan." },
+    { q: "Can labour use this on mobile?", a: "Yes, the labour dashboard is designed mobile-first with large visual checklist cards." },
+    { q: "Does this include tenant complaints?", a: "Not in the MVP. The first version focuses on daily labour checklist verification." }
   ];
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <section className="bg-navy bg-mesh py-20 text-primary-foreground sm:py-28">
-        <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-          <h1 className="mx-auto max-w-3xl text-balance font-display text-4xl font-semibold tracking-tight sm:text-5xl">{t("pricing.title")}</h1>
-          <p className="mx-auto mt-5 max-w-2xl text-white/75">{t("pricing.sub")}</p>
+
+      {/* HERO */}
+      <section className="bg-navy-gradient py-24 sm:py-32">
+        <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8 text-primary-foreground">
+          <h1 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+            Simple Pricing for Building Owners
+          </h1>
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-white/80">
+            Choose the plan that fits your property portfolio. No hidden fees.
+          </p>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="grid gap-5 lg:grid-cols-4">
+      {/* PRICING CARDS */}
+      <section className="-mt-16 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-24">
+        <div className="grid gap-8 sm:grid-cols-3">
           {plans.map((p) => (
-            <div key={p.name} className={`relative flex flex-col rounded-2xl border p-6 ${p.popular ? "border-accent bg-accent/5 shadow-elevated" : "border-border bg-background"}`}>
-              {p.popular && <span className="absolute -top-3 start-6 rounded-full bg-accent px-2.5 py-0.5 text-xs font-medium text-accent-foreground">{lang === "ar" ? "الأكثر طلباً" : "Most popular"}</span>}
-              <h3 className="font-display text-lg font-semibold">{p.name}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{p.scope}</p>
-              <div className="mt-5 flex items-baseline gap-1">
-                <span className="font-display text-4xl font-semibold">{p.price.toLocaleString()}</span>
-                <span className="text-sm text-muted-foreground">SAR{t("pricing.month")}</span>
+            <div key={p.name} className={`relative flex flex-col rounded-3xl border p-8 ${p.popular ? "border-accent bg-background shadow-2xl scale-105 z-10" : "border-border bg-background shadow-lg mt-8 sm:mt-0"}`}>
+              {p.popular && <span className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-accent px-4 py-1 text-sm font-semibold text-white">Most Popular</span>}
+              <h3 className="font-display text-2xl font-semibold">{p.name}</h3>
+              <p className="mt-2 text-sm text-muted-foreground min-h-[40px]">{p.scope}</p>
+              <div className="mt-6 flex items-baseline gap-1 border-b border-border pb-6">
+                <span className="font-display text-5xl font-bold">{p.price}</span>
+                <span className="text-sm font-medium text-muted-foreground">SAR/mo</span>
               </div>
-              <ul className="mt-6 flex-1 space-y-2.5 text-sm">
-                {p.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" /> {f}</li>
+              <ul className="mt-8 flex-1 space-y-4">
+                {p.features.map(f => (
+                  <li key={f} className="flex items-start gap-3 text-sm text-foreground">
+                    <CheckCircle2 className="h-5 w-5 text-accent shrink-0" />
+                    <span className="leading-tight">{f}</span>
+                  </li>
                 ))}
               </ul>
-              <Button asChild className={`mt-6 ${p.popular ? "bg-navy text-primary-foreground hover:bg-navy/90" : ""}`} variant={p.popular ? "default" : "outline"}>
-                <Link to="/login">Get Owner Access</Link>
+              <Button asChild size="lg" className={`mt-8 w-full h-12 text-base ${p.popular ? "bg-accent text-white hover:bg-accent/90" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}>
+                <Link to="/checkout" search={{ plan: p.query }}>
+                  Get Owner Access
+                </Link>
               </Button>
             </div>
           ))}
         </div>
-
-        {/* Enterprise */}
-        <div className="mt-6 rounded-2xl border border-border bg-gradient-to-br from-navy to-navy-soft p-8 text-primary-foreground sm:p-10">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <h3 className="font-display text-2xl font-semibold">Enterprise</h3>
-              <p className="mt-2 max-w-xl text-white/75">{lang === "ar" ? "لشركات إدارة المرافق والمطوّرين الكبار. تكامل ZATCA، علامة بيضاء، API، IoT/CCTV، اتفاقية SLA." : "For FM companies and large developers. ZATCA integration, white-label, API, IoT/CCTV, SLA."}</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="font-display text-3xl font-semibold">{t("pricing.custom")}</span>
-              <Button asChild size="lg" className="bg-white text-navy hover:bg-white/90"><Link to="/contact">{t("pricing.contact")}</Link></Button>
-            </div>
-          </div>
-        </div>
       </section>
 
-      {/* Add-ons */}
-      <section className="border-t border-border bg-secondary/30">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <h2 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">{t("pricing.addons")}</h2>
-          <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              [lang === "ar" ? "إشعارات واتساب" : "WhatsApp notifications", "199 SAR/mo"],
-              [lang === "ar" ? "تخزين إضافي" : "Extra storage", "99 SAR / 50GB"],
-              [lang === "ar" ? "تقارير مخصّصة" : "Custom reports", "299 SAR/mo"],
-              [lang === "ar" ? "علامة بيضاء" : "White-label branding", "899 SAR/mo"],
-              [lang === "ar" ? "وصول API" : "API access", "499 SAR/mo"],
-              [lang === "ar" ? "تكامل IoT / CCTV" : "IoT / CCTV integration", lang === "ar" ? "مخصّص" : "Custom"],
-            ].map(([name, price]) => (
-              <div key={name} className="flex items-center justify-between rounded-xl border border-border bg-background p-4">
-                <span className="font-medium">{name}</span>
-                <span className="text-sm text-muted-foreground">{price}</span>
-              </div>
+      {/* FAQ */}
+      <section className="border-t border-border bg-secondary/30 py-24">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="font-display text-3xl font-semibold sm:text-4xl">Frequently Asked Questions</h2>
+          </div>
+          <div className="space-y-4">
+            {faqs.map((faq, i) => (
+              <details key={i} className="group rounded-2xl border border-border bg-background p-6 [&_summary::-webkit-details-marker]:hidden shadow-sm">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 font-semibold text-lg">
+                  {faq.q}
+                  <span className="grid h-8 w-8 place-items-center rounded-full bg-secondary text-lg transition-transform group-open:rotate-45">+</span>
+                </summary>
+                <p className="mt-4 text-muted-foreground leading-relaxed">{faq.a}</p>
+              </details>
             ))}
           </div>
-          <p className="mt-6 text-sm text-muted-foreground">{lang === "ar" ? "رسوم إعداد لمرة واحدة قد تنطبق على بعض الباقات والإضافات." : "One-time setup fees may apply on some plans and add-ons."}</p>
         </div>
       </section>
+
       <Footer />
     </div>
   );

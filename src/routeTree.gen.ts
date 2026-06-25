@@ -14,6 +14,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SecurityRouteImport } from './routes/security'
 import { Route as ProductRouteImport } from './routes/product'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PaymentResultRouteImport } from './routes/payment-result'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -65,6 +66,11 @@ const ProductRoute = ProductRouteImport.update({
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentResultRoute = PaymentResultRouteImport.update({
+  id: '/payment-result',
+  path: '/payment-result',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -214,6 +220,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRouteWithChildren
   '/demo': typeof DemoRoute
   '/login': typeof LoginRoute
+  '/payment-result': typeof PaymentResultRoute
   '/pricing': typeof PricingRoute
   '/product': typeof ProductRoute
   '/security': typeof SecurityRoute
@@ -247,6 +254,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/demo': typeof DemoRoute
   '/login': typeof LoginRoute
+  '/payment-result': typeof PaymentResultRoute
   '/pricing': typeof PricingRoute
   '/product': typeof ProductRoute
   '/security': typeof SecurityRoute
@@ -280,6 +288,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteWithChildren
   '/demo': typeof DemoRoute
   '/login': typeof LoginRoute
+  '/payment-result': typeof PaymentResultRoute
   '/pricing': typeof PricingRoute
   '/product': typeof ProductRoute
   '/security': typeof SecurityRoute
@@ -316,6 +325,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/demo'
     | '/login'
+    | '/payment-result'
     | '/pricing'
     | '/product'
     | '/security'
@@ -349,6 +359,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/demo'
     | '/login'
+    | '/payment-result'
     | '/pricing'
     | '/product'
     | '/security'
@@ -381,6 +392,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/demo'
     | '/login'
+    | '/payment-result'
     | '/pricing'
     | '/product'
     | '/security'
@@ -416,6 +428,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRouteWithChildren
   DemoRoute: typeof DemoRoute
   LoginRoute: typeof LoginRoute
+  PaymentResultRoute: typeof PaymentResultRoute
   PricingRoute: typeof PricingRoute
   ProductRoute: typeof ProductRoute
   SecurityRoute: typeof SecurityRoute
@@ -458,6 +471,13 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment-result': {
+      id: '/payment-result'
+      path: '/payment-result'
+      fullPath: '/payment-result'
+      preLoaderRoute: typeof PaymentResultRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -730,6 +750,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRouteWithChildren,
   DemoRoute: DemoRoute,
   LoginRoute: LoginRoute,
+  PaymentResultRoute: PaymentResultRoute,
   PricingRoute: PricingRoute,
   ProductRoute: ProductRoute,
   SecurityRoute: SecurityRoute,

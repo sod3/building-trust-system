@@ -93,6 +93,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      // Moyasar payment form CSS — loaded globally so it is available on the checkout page
+      { rel: "stylesheet", href: "https://cdn.moyasar.com/mpf/1.14.0/moyasar.css" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -100,6 +102,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap",
       },
     ],
+    // NOTE: Moyasar JS is NOT loaded here globally — it is loaded dynamically
+    // inside the Checkout component's useEffect (only on the /checkout page).
+    // Loading it globally with defer caused "Element: null" errors on other pages.
   }),
   shellComponent: RootShell,
   component: RootComponent,

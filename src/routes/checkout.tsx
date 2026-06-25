@@ -1,7 +1,6 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Building2, CheckCircle2, ArrowRight, CreditCard, Receipt, Building, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Building2, CheckCircle2, Shield, Lock, CreditCard } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { z } from "zod";
 import { useLang } from "@/lib/i18n";
 
@@ -15,178 +14,270 @@ export const Route = createFileRoute("/checkout")({
   component: Checkout,
 });
 
-const planDetails: Record<string, { name: string; price: number; features: string[] }> = {
+const planDetails: Record<string, { name: string; price: number; halalas: number; description: string; features: string[] }> = {
   starter: {
     name: "Starter",
     price: 299,
-    features: ["1 building", "Owner dashboard access", "Labour checklist dashboard", "Daily reports"],
+    halalas: 29900, // SAR 299 × 100 — Moyasar requires amounts in halalas
+    description: "Perfect for single-building owners getting started.",
+    features: ["1 building", "Owner dashboard access", "Labour checklist dashboard", "Daily reports", "Basic report history", "Email support"],
   },
   professional: {
     name: "Professional",
     price: 899,
-    features: ["Up to 5 buildings", "Multiple labour accounts", "Checklist templates", "Today's reports"],
+    halalas: 89900, // SAR 899 × 100
+    description: "Ideal for multi-building operations and growing portfolios.",
+    features: ["Up to 5 buildings", "Multiple labour accounts", "Checklist templates", "Today's reports", "Full report history", "Priority support"],
   },
   enterprise: {
     name: "Enterprise",
     price: 1999,
-    features: ["Multiple buildings", "Custom setup", "Advanced report history", "Priority onboarding"],
+    halalas: 199900, // SAR 1999 × 100
+    description: "Full-scale solution for large property management operations.",
+    features: ["Multiple buildings", "Custom setup", "Multiple user accounts", "Advanced report history", "Priority support", "Dedicated onboarding"],
   },
 };
+
+// Extend window type for the Moyasar global loaded from CDN
+declare global {
+  interface Window {
+    Moyasar?: {
+      init: (config: MoyasarConfig) => void;
+    };
+  }
+}
+
+interface MoyasarConfig {
+  element: HTMLElement;
+  amount: number;
+  currency: string;
+  description: string;
+  publishable_api_key: string;
+  callback_url: string;
+  methods: string[];
+  supported_networks: string[];
+}
 
 function Checkout() {
   const { t } = useLang();
   const search = Route.useSearch();
-  const planKey = search.plan || "starter";
-  const plan = planDetails[planKey] || planDetails.starter;
-  const navigate = useNavigate();
+  const planKey = (search.plan && planDetails[search.plan]) ? search.plan : "starter";
+  const plan = planDetails[planKey];
+  const formRef = useRef<HTMLDivElement>(null);
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  useEffect(() => {
+    // cancelled flag — stops stale setTimeout callbacks from firing after unmount
+    let cancelled = false;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      setSuccess(true);
-      setTimeout(() => {
-        navigate({ to: "/dashboard/owner" });
-      }, 1500);
-    }, 1000);
-  };
+    const callbackUrl = `${window.location.origin}/payment-result?plan=${planKey}`;
+
+    function initMoyasar() {
+      if (cancelled) return;
+
+      // Guard 1: the DOM element must exist before calling Moyasar.init
+      const el = document.getElementById("moyasar-form");
+      if (!el) {
+        setTimeout(initMoyasar, 100);
+        return;
+      }
+
+      // Guard 2: the Moyasar global must be available (script fully loaded)
+      if (!window.Moyasar) {
+        setTimeout(initMoyasar, 100);
+        return;
+      }
+
+      // Clear any previous Moyasar form HTML before re-initialising
+      el.innerHTML = "";
+
+      window.Moyasar.init({
+        // Pass the actual DOM element — avoids "Element: null" errors from selector lookups
+        element: el,
+
+        // Amount MUST be in halalas (SAR × 100)
+        // SAR 299 → 29900 | SAR 899 → 89900 | SAR 1999 → 199900
+        amount: plan.halalas,
+
+        currency: "SAR",
+        description: `${plan.name} Plan — FacilityOS Arabia`,
+
+        // Publishable key — SAFE for frontend (Vite inlines VITE_* env vars at build time)
+        // NEVER put MOYASAR_SECRET_KEY here — it lives server-side in payment-server.ts only
+        publishable_api_key: import.meta.env.VITE_MOYASAR_PUBLISHABLE_KEY as string,
+
+        // Moyasar redirects here after payment, appending ?id=&status=&message=
+        callback_url: callbackUrl,
+
+        // creditcard covers mada, Visa, and Mastercard
+        methods: ["creditcard"],
+
+        // Supported card networks for Saudi Arabia launch
+        supported_networks: ["mada", "visa", "mastercard"],
+      });
+    }
+
+    // Load Moyasar JS dynamically — only on the checkout page, not globally.
+    // Global loading caused "Element: null" errors on other pages.
+    // To switch from test to live: update VITE_MOYASAR_PUBLISHABLE_KEY in .env / Vercel
+    const MOYASAR_SRC = "https://cdn.moyasar.com/mpf/1.14.0/moyasar.js";
+    const existing = document.querySelector(`script[src="${MOYASAR_SRC}"]`);
+
+    if (existing) {
+      // Script already in DOM from a previous visit — Moyasar global may or may not be ready
+      initMoyasar();
+    } else {
+      const script = document.createElement("script");
+      script.src = MOYASAR_SRC;
+      script.async = true;
+      script.onload = () => { if (!cancelled) initMoyasar(); };
+      script.onerror = () => console.error("[Moyasar] Failed to load payment script from CDN.");
+      document.head.appendChild(script);
+    }
+
+    return () => {
+      cancelled = true; // stop any pending retry timeouts
+      const container = document.getElementById("moyasar-form");
+      if (container) container.innerHTML = "";
+    };
+  }, [planKey, plan.halalas]);
 
   return (
-    <div className="min-h-screen bg-surface-2 flex flex-col md:flex-row">
-      {/* LEFT SIDE - SUMMARY */}
-      <div className="bg-navy text-primary-foreground p-8 md:p-12 lg:p-16 flex-1 lg:max-w-md xl:max-w-lg flex flex-col justify-between">
+    <div className="min-h-screen bg-surface-2 flex flex-col lg:flex-row">
+
+      {/* ===== LEFT PANEL — ORDER SUMMARY ===== */}
+      <div className="bg-navy text-primary-foreground p-8 md:p-12 lg:p-16 lg:w-[420px] xl:w-[480px] flex flex-col justify-between shrink-0">
         <div>
-          <Link to="/" className="inline-flex items-center gap-2 mb-12">
-            <span className="grid h-8 w-8 place-items-center rounded-lg bg-white/10 backdrop-blur border border-white/15">
-              <Building2 className="h-4 w-4" />
+          {/* Logo */}
+          <Link to="/" className="inline-flex items-center gap-2.5 mb-12 group">
+            <span className="grid h-9 w-9 place-items-center rounded-xl bg-white/10 backdrop-blur border border-white/20 group-hover:bg-white/15 transition">
+              <Building2 className="h-5 w-5" />
             </span>
             <span className="font-display font-semibold tracking-tight text-lg">FacilityOS</span>
           </Link>
 
-          <div className="space-y-6">
-            <h2 className="text-sm font-semibold uppercase tracking-widest text-gold">{t("checkout.selected_plan", { fallback: "Order Summary" })}</h2>
-            <div className="flex items-baseline gap-2 pb-6 border-b border-white/10">
-              <span className="font-display text-5xl font-bold">{plan.price}</span>
-              <span className="text-white/60">{t("pricing.sar_mo")}</span>
-            </div>
+          {/* Plan badge */}
+          <div className="inline-flex items-center gap-2 rounded-full bg-gold/20 border border-gold/30 px-3 py-1 text-xs font-semibold text-gold uppercase tracking-widest mb-6">
+            {t("checkout.selected_plan", { fallback: "Order Summary" })}
+          </div>
 
-            <div className="pt-2">
-              <h3 className="font-display text-xl font-semibold">{plan.name} Plan</h3>
-              <ul className="mt-6 space-y-4">
-                {plan.features.map(f => (
-                  <li key={f} className="flex items-center gap-3 text-sm text-white/80">
-                    <CheckCircle2 className="h-5 w-5 text-gold shrink-0" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
+          {/* Plan name + price */}
+          <div className="pb-7 border-b border-white/10">
+            <h2 className="font-display text-3xl font-bold mb-1">{plan.name} Plan</h2>
+            <p className="text-white/60 text-sm leading-relaxed">{plan.description}</p>
+            <div className="mt-5 flex items-baseline gap-2">
+              <span className="font-display text-5xl font-bold">{plan.price.toLocaleString()}</span>
+              <span className="text-white/60 text-sm">{t("pricing.sar_mo")}</span>
             </div>
+          </div>
+
+          {/* Features list */}
+          <ul className="mt-7 space-y-3.5">
+            {plan.features.map((f) => (
+              <li key={f} className="flex items-center gap-3 text-sm text-white/80">
+                <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-gold/20 border border-gold/30">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-gold" />
+                </span>
+                {f}
+              </li>
+            ))}
+          </ul>
+
+          {/* Dashboard access note */}
+          <div className="mt-8 rounded-2xl bg-white/8 border border-white/12 p-4 text-sm text-white/70 leading-relaxed">
+            <span className="text-gold font-semibold">✓ </span>
+            After successful payment, your owner dashboard access will be activated immediately.
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-white/10 text-sm text-white/50">
+        {/* Footer trust copy */}
+        <div className="mt-10 pt-7 border-t border-white/10 text-xs text-white/40 leading-relaxed">
           <p>You can cancel your subscription at any time. By continuing, you agree to our Terms of Service and Privacy Policy.</p>
+          <p className="mt-2">© {new Date().getFullYear()} FacilityOS Arabia. All rights reserved.</p>
         </div>
       </div>
 
-      {/* RIGHT SIDE - FORM */}
-      <div className="flex-1 p-8 md:p-12 lg:p-16 flex items-center justify-center overflow-y-auto">
-        <div className="w-full max-w-xl">
+      {/* ===== RIGHT PANEL — MOYASAR PAYMENT FORM ===== */}
+      <div className="flex-1 p-8 md:p-12 lg:p-16 flex items-start justify-center overflow-y-auto bg-background">
+        <div className="w-full max-w-lg">
+
+          {/* Header */}
           <div className="mb-8">
-            <h1 className="font-display text-3xl font-semibold text-foreground">{t("checkout.title")}</h1>
-            <p className="mt-2 text-muted-foreground">{t("checkout.complete_access")}</p>
+            <h1 className="font-display text-3xl font-semibold text-foreground tracking-tight">
+              Complete Payment
+            </h1>
+            <p className="mt-2 text-muted-foreground">
+              Pay securely using mada, Visa, or Mastercard.
+            </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold border-b pb-2">{t("checkout.customer_info")}</h2>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">{t("checkout.full_name")}</label>
-                  <input required type="text" className="w-full h-11 rounded-xl border px-3 text-sm focus:ring-2 focus:ring-accent/20 outline-none transition" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">{t("checkout.work_email")}</label>
-                  <input required type="email" className="w-full h-11 rounded-xl border px-3 text-sm focus:ring-2 focus:ring-accent/20 outline-none transition" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">{t("checkout.phone")}</label>
-                  <input required type="tel" className="w-full h-11 rounded-xl border px-3 text-sm focus:ring-2 focus:ring-accent/20 outline-none transition" dir="ltr" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">{t("common.city")}</label>
-                  <input required type="text" className="w-full h-11 rounded-xl border px-3 text-sm focus:ring-2 focus:ring-accent/20 outline-none transition" />
-                </div>
-              </div>
+          {/* Trust badges */}
+          <div className="flex flex-wrap items-center gap-3 mb-8">
+            <div className="flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1.5 text-xs font-semibold text-emerald-700">
+              <Lock className="h-3.5 w-3.5" />
+              256-bit SSL Encryption
             </div>
-
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold border-b pb-2">{t("checkout.customer_info", { fallback: "Company Details" })}</h2>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">{t("checkout.company")}</label>
-                  <input required type="text" className="w-full h-11 rounded-xl border px-3 text-sm focus:ring-2 focus:ring-accent/20 outline-none transition" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">{t("checkout.num_buildings")}</label>
-                  <select required className="w-full h-11 rounded-xl border px-3 text-sm focus:ring-2 focus:ring-accent/20 outline-none transition bg-white">
-                    <option value="">...</option>
-                    <option value="1">1</option>
-                    <option value="2-5">2-5</option>
-                    <option value="6-10">6-10</option>
-                    <option value="11+">11+</option>
-                  </select>
-                </div>
-              </div>
+            <div className="flex items-center gap-1.5 rounded-full bg-blue-50 border border-blue-200 px-3 py-1.5 text-xs font-semibold text-blue-700">
+              <Shield className="h-3.5 w-3.5" />
+              PCI DSS Compliant
             </div>
-
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold border-b pb-2">{t("checkout.payment_method")}</h2>
-              <div className="p-4 rounded-xl border border-blue-200 bg-blue-50 text-blue-800 text-sm mb-4 flex items-start gap-3">
-                <span className="bg-blue-100 p-1 rounded-md shrink-0"><CheckCircle2 className="h-4 w-4" /></span>
-                <p>{t("checkout.demo_notice")}. {t("checkout.integration_soon")}</p>
-              </div>
-
-              <div className="grid gap-3 sm:grid-cols-3">
-                <div className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 border-accent bg-accent/5 cursor-pointer">
-                  <CreditCard className="h-6 w-6 text-accent" />
-                  <span className="text-sm font-medium text-accent">Credit Card</span>
-                </div>
-                <div className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border border-border hover:bg-secondary cursor-pointer transition">
-                  <Building className="h-6 w-6 text-muted-foreground" />
-                  <span className="text-sm font-medium text-muted-foreground">Bank Transfer</span>
-                </div>
-                <div className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border border-border hover:bg-secondary cursor-pointer transition">
-                  <Receipt className="h-6 w-6 text-muted-foreground" />
-                  <span className="text-sm font-medium text-muted-foreground">Invoice</span>
-                </div>
-              </div>
+            <div className="flex items-center gap-1.5 rounded-full bg-secondary border border-border px-3 py-1.5 text-xs font-semibold text-foreground">
+              <CreditCard className="h-3.5 w-3.5" />
+              Powered by Moyasar
             </div>
+          </div>
 
-            {success ? (
-              <div className="p-4 rounded-xl bg-green-50 border border-green-200 text-green-700 flex items-center gap-3">
-                <CheckCircle2 className="h-5 w-5" />
-                <span className="font-medium">{t("checkout.success")}. {t("checkout.redirecting")}</span>
-              </div>
-            ) : (
-              <Button type="submit" size="lg" className="w-full h-12 text-base" disabled={isLoading}>
-                {isLoading ? (
-                  <><Loader2 className="me-2 h-5 w-5 animate-spin" /> ...</>
-                ) : (
-                  <>{t("checkout.continue_demo")} <ArrowRight className="ms-2 h-5 w-5 rtl:rotate-180" /></>
-                )}
-              </Button>
-            )}
-
-            <div className="text-center">
-              <Link to="/login" className="text-sm font-semibold text-accent hover:underline">{t("checkout.already_have")}</Link>
+          {/* Supported payment methods */}
+          <div className="mb-8 rounded-2xl border border-border bg-secondary/30 p-4">
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">
+              Accepted Payment Methods
+            </p>
+            <div className="flex flex-wrap items-center gap-2">
+              {/* mada */}
+              <span className="flex items-center gap-1.5 rounded-xl bg-background border border-border px-3 py-2 text-sm font-bold text-[#0a5c2f]">
+                <span className="h-4 w-4 rounded bg-[#0a5c2f] grid place-items-center text-white text-[9px] font-black">m</span>
+                mada
+              </span>
+              {/* Visa */}
+              <span className="flex items-center gap-1.5 rounded-xl bg-background border border-border px-3 py-2 text-sm font-bold text-[#1a1f71]">
+                <span className="font-black italic text-[#1a1f71]">VISA</span>
+              </span>
+              {/* Mastercard */}
+              <span className="flex items-center gap-1.5 rounded-xl bg-background border border-border px-3 py-2 text-sm font-semibold text-foreground">
+                <span className="flex">
+                  <span className="h-4 w-4 rounded-full bg-[#eb001b] inline-block" />
+                  <span className="h-4 w-4 rounded-full bg-[#f79e1b] inline-block -ml-2 opacity-90" />
+                </span>
+                Mastercard
+              </span>
             </div>
-          </form>
+          </div>
+
+          {/* Moyasar injects card fields into this div via Moyasar.init() */}
+          <div
+            id="moyasar-form"
+            ref={formRef}
+            className="moyasar-form-wrapper min-h-[200px]"
+          />
+
+          {/* Bottom trust copy */}
+          <p className="mt-6 text-center text-xs text-muted-foreground">
+            🔒 Secure checkout powered by{" "}
+            <a
+              href="https://moyasar.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-foreground hover:underline"
+            >
+              Moyasar
+            </a>
+            {" "}— Saudi Arabia's trusted payment gateway
+          </p>
+
+          <div className="mt-3 text-center">
+            <Link to="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition">
+              ← Back to pricing
+            </Link>
+          </div>
         </div>
       </div>
     </div>

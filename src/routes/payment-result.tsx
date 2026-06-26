@@ -24,7 +24,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { CheckCircle2, XCircle, Loader2, Building2, ArrowRight, RotateCcw, MessageCircle } from "lucide-react";
 import { z } from "zod";
-import { verifyPayment, type PaymentVerificationResult } from "@/lib/payment-server";
+import { apiFetch, storeAuthSession } from "@/lib/api-client";
+import type { AuthUser } from "@/lib/auth-context";
 
 const paymentResultSearchSchema = z.object({
   id: z.string().optional(),
@@ -41,8 +42,21 @@ export const Route = createFileRoute("/payment-result")({
 
 type VerifyState =
   | { phase: "loading" }
-  | { phase: "success"; result: Extract<PaymentVerificationResult, { success: true }> }
+  | { phase: "success"; result: PaymentVerificationSuccess }
   | { phase: "failed"; message: string };
+
+type PaymentVerificationSuccess = {
+  success: true;
+  token?: string;
+  user?: AuthUser;
+  status: string;
+  plan: string;
+  planName?: string;
+  amount: number;
+  currency: string;
+  paymentId: string;
+  orderId: string;
+};
 
 function PaymentResult() {
   const search = Route.useSearch();
@@ -71,9 +85,12 @@ function PaymentResult() {
 
       try {
         // Call server function — verifies payment using MOYASAR_SECRET_KEY (server-side only)
-        const result = await verifyPayment({ data: paymentId });
+        const result = await apiFetch<PaymentVerificationSuccess>(`/api/verify-payment?id=${encodeURIComponent(paymentId)}`);
 
         if (result.success) {
+          if (result.token && result.user) {
+            storeAuthSession(result.user, result.token, true);
+          }
           // Store access state in localStorage (temporary — Phase 2 will use DB)
           localStorage.setItem("ownerAccess", "active");
           localStorage.setItem("paymentStatus", "paid");
@@ -82,13 +99,15 @@ function PaymentResult() {
 
           setState({ phase: "success", result });
         } else {
-          setState({ phase: "failed", message: result.message });
+          setState({ phase: "failed", message: result.message || "Unable to verify payment." });
         }
       } catch (err) {
         console.error("[PaymentResult] Verification error:", err);
         setState({
           phase: "failed",
-          message: "Unable to verify payment. Please contact support if you were charged.",
+          message: err instanceof Error
+            ? err.message
+            : "Unable to verify payment. Please contact support if you were charged.",
         });
       }
     }

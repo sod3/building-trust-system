@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
+import { apiFetch, getAuthToken } from "@/lib/api-client";
 import { mockOwners } from "@/lib/mock-data";
 import { useState, useEffect } from "react";
 import { useLang } from "@/lib/i18n";
@@ -32,6 +33,7 @@ function OwnerLayout() {
   const navigate = useNavigate();
   const pathname = useRouterState({ select: s => s.location.pathname });
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
+  const [subscription, setSubscription] = useState<any | null>(null);
   
   const navItems = getNavItems(t);
 
@@ -41,6 +43,32 @@ function OwnerLayout() {
   }, [pathname]);
 
   const ownerData = mockOwners.find(o => o.id === user?.ownerId) || mockOwners[0];
+  const ownerPlan = subscription?.planName || ownerData.plan;
+  const ownerBuildingLimit = subscription?.buildingLimit || ownerData.buildingIds.length;
+
+  useEffect(() => {
+    if (!user || user.role !== "owner" || !getAuthToken()) return;
+
+    let cancelled = false;
+    apiFetch<{ access: "active" | "inactive"; subscription: any | null }>("/api/owner/subscription")
+      .then((result) => {
+        if (cancelled) return;
+        setSubscription(result.subscription);
+        if (result.access !== "active") {
+          localStorage.removeItem("ownerAccess");
+          navigate({ to: "/pricing" });
+        }
+      })
+      .catch(() => {
+        if (!cancelled && localStorage.getItem("ownerAccess") !== "active") {
+          navigate({ to: "/pricing" });
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [navigate, user]);
 
   function handleLogout() {
     logout();
@@ -81,7 +109,7 @@ function OwnerLayout() {
         <div className="mx-3 mt-3 rounded-xl bg-white/5 border border-white/10 px-3 py-2.5">
           <div className="text-[11px] text-white/50 uppercase tracking-wider mb-1">{t("dashboard.owner.hub", { fallback: "Your Building Operations Hub" })}</div>
           <div className="font-semibold text-sm text-white">{ownerData.company}</div>
-          <div className="text-xs text-white/60 mt-0.5">{t(`pricing.plan.${ownerData.plan.toLowerCase()}`, { fallback: ownerData.plan })} {t("common.plan", { fallback: "Plan" })} · {ownerData.buildingIds.length} {t("common.buildings", { fallback: "Buildings" })}</div>
+          <div className="text-xs text-white/60 mt-0.5">{t(`pricing.plan.${String(ownerPlan).toLowerCase()}`, { fallback: ownerPlan })} {t("common.plan", { fallback: "Plan" })} · {ownerData.buildingIds.length}/{ownerBuildingLimit} {t("common.buildings", { fallback: "Buildings" })}</div>
         </div>
 
         {/* Nav */}
@@ -117,7 +145,7 @@ function OwnerLayout() {
             </div>
             <div className="min-w-0 flex-1">
               <div className="truncate text-xs font-semibold text-white">{ownerData.name}</div>
-              <div className="text-[10px] text-white/50">{t(`pricing.plan.${ownerData.plan.toLowerCase()}`, { fallback: ownerData.plan })} {t("common.owner", { fallback: "Owner" })}</div>
+              <div className="text-[10px] text-white/50">{t(`pricing.plan.${String(ownerPlan).toLowerCase()}`, { fallback: ownerPlan })} {t("common.owner", { fallback: "Owner" })}</div>
             </div>
           </div>
           <button

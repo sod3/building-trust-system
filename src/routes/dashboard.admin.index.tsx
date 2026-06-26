@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import {
   Building2, Users, FileBarChart2, Wallet, CheckCircle2,
   Clock, TrendingUp, AlertTriangle, BarChart3,
@@ -14,6 +15,7 @@ import {
   AreaChart, Area, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid,
 } from "recharts";
 import { useLang } from "@/lib/i18n";
+import { apiFetch, getAuthToken } from "@/lib/api-client";
 
 export const Route = createFileRoute("/dashboard/admin/")({
   head: () => ({ meta: [{ title: "Admin Overview — FacilityOS Arabia" }] }),
@@ -22,9 +24,21 @@ export const Route = createFileRoute("/dashboard/admin/")({
 
 function AdminOverview() {
   const { t } = useLang();
+  const [earnings, setEarnings] = useState<{
+    monthlyRevenueSar: number;
+    activeSubscriptions: number;
+    paidOwners: number;
+  } | null>(null);
   const todayReports = mockReports.filter(r => r.date === "Jun 24, 2026");
   const recentOwners = mockOwners.slice(0, 3);
   const recentReports = mockReports.slice(0, 5);
+
+  useEffect(() => {
+    if (!getAuthToken()) return;
+    apiFetch<{ monthlyRevenueSar: number; activeSubscriptions: number; paidOwners: number }>("/api/admin/earnings")
+      .then(setEarnings)
+      .catch(() => setEarnings(null));
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -41,7 +55,7 @@ function AdminOverview() {
 
       {/* KPI Cards - Row 1 */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <Kpi accent="navy" label={t("admin.kpi.revenue", { fallback: "Monthly Revenue" })} value={`SAR ${adminKpis.monthlyRevenue.toLocaleString()}`} sub={t("admin.kpi.revenue.sub", { fallback: "3 active subscriptions" })} icon={<Wallet className="h-4 w-4" />} delta={t("admin.kpi.revenue.delta", { fallback: "+SAR 1,999 this month" })} tone="up" />
+        <Kpi accent="navy" label={t("admin.kpi.revenue", { fallback: "Monthly Revenue" })} value={`SAR ${(earnings?.monthlyRevenueSar ?? adminKpis.monthlyRevenue).toLocaleString()}`} sub={`${earnings?.activeSubscriptions ?? 3} active subscriptions`} icon={<Wallet className="h-4 w-4" />} delta={t("admin.kpi.revenue.delta", { fallback: "+SAR 1,999 this month" })} tone="up" />
         <Kpi accent="teal" label={t("admin.kpi.buildings", { fallback: "Total Buildings" })} value={adminKpis.totalBuildings} sub={t("admin.kpi.buildings.sub", { fallback: "Across all owners" })} icon={<Building2 className="h-4 w-4" />} delta={t("admin.kpi.buildings.delta", { fallback: "+1 this month" })} tone="up" />
         <Kpi accent="emerald" label={t("admin.kpi.today_submitted", { fallback: "Today Submitted" })} value={adminKpis.todaySubmittedReports} sub={`${adminKpis.pendingReports} ${t("common.pending", { fallback: "pending" })}`} icon={<CheckCircle2 className="h-4 w-4" />} />
         <Kpi accent="gold" label={t("admin.kpi.completion", { fallback: "Completion Rate" })} value={`${adminKpis.completionRate}%`} sub={t("admin.kpi.completion.sub", { fallback: "Platform average today" })} icon={<TrendingUp className="h-4 w-4" />} />
@@ -49,8 +63,8 @@ function AdminOverview() {
 
       {/* KPI Cards - Row 2 */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Kpi label={t("admin.kpi.owners", { fallback: "Total Owners" })} value={adminKpis.totalOwners} icon={<Users className="h-4 w-4" />} sub={t("admin.kpi.owners.sub", { fallback: "2 active, 1 trial" })} />
-        <Kpi label={t("admin.kpi.subs", { fallback: "Active Subscriptions" })} value={adminKpis.activeSubscriptions} icon={<CheckCircle2 className="h-4 w-4" />} sub={t("admin.kpi.subs.sub", { fallback: "Paying customers" })} />
+        <Kpi label={t("admin.kpi.owners", { fallback: "Total Owners" })} value={earnings?.paidOwners ?? adminKpis.totalOwners} icon={<Users className="h-4 w-4" />} sub={t("admin.kpi.owners.sub", { fallback: "2 active, 1 trial" })} />
+        <Kpi label={t("admin.kpi.subs", { fallback: "Active Subscriptions" })} value={earnings?.activeSubscriptions ?? adminKpis.activeSubscriptions} icon={<CheckCircle2 className="h-4 w-4" />} sub={t("admin.kpi.subs.sub", { fallback: "Paying customers" })} />
         <Kpi label={t("admin.kpi.labour", { fallback: "Total Labour" })} value={adminKpis.totalLabour} icon={<Users className="h-4 w-4" />} sub={t("admin.kpi.labour.sub", { fallback: "Across 5 buildings" })} />
         <Kpi label={t("admin.kpi.missed", { fallback: "Missed Reports" })} value={adminKpis.missedReports} icon={<AlertTriangle className="h-4 w-4" />} sub={t("admin.kpi.missed.sub", { fallback: "Today, needs attention" })} delta={t("admin.kpi.missed.delta", { fallback: "1 building unassigned" })} tone="down" />
       </div>

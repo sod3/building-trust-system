@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Wallet, Users, TrendingUp, AlertTriangle, CheckCircle2, ArrowUpRight } from "lucide-react";
 import { Kpi, Card, SectionTitle, StatusPill } from "@/components/dashboard/ui";
 import { mockSubscriptions, mockOwners, revenueChart, pricingPlans } from "@/lib/mock-data";
@@ -6,6 +7,7 @@ import {
   AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid,
 } from "recharts";
 import { useLang } from "@/lib/i18n";
+import { apiFetch, getAuthToken } from "@/lib/api-client";
 
 export const Route = createFileRoute("/dashboard/admin/earnings")({
   head: () => ({ meta: [{ title: "Earnings — Admin Dashboard" }] }),
@@ -14,11 +16,41 @@ export const Route = createFileRoute("/dashboard/admin/earnings")({
 
 function AdminEarnings() {
   const { t } = useLang();
+  const [earnings, setEarnings] = useState<{
+    totalRevenueSar: number;
+    monthlyRevenueSar: number;
+    activeSubscriptions: number;
+    paidOwners: number;
+    recentPayments: any[];
+  } | null>(null);
   const planColors: Record<string, string> = {
     Starter: "bg-sky-100 text-sky-800",
     Professional: "bg-indigo-100 text-indigo-800",
     Enterprise: "bg-navy/15 text-navy",
   };
+  const recentPayments = earnings?.recentPayments?.length
+    ? earnings.recentPayments.map((payment) => ({
+        id: payment.paymentId,
+        owner: payment.owner?.name || "Owner",
+        plan: payment.planId ? payment.planId[0].toUpperCase() + payment.planId.slice(1) : "Plan",
+        amount: (payment.amountHalalas || 0) / 100,
+        date: payment.createdAt ? new Date(payment.createdAt).toLocaleDateString() : "",
+        status: payment.status === "paid" ? "Paid" : payment.status,
+      }))
+    : mockSubscriptions.recentPayments;
+
+  useEffect(() => {
+    if (!getAuthToken()) return;
+    apiFetch<{
+      totalRevenueSar: number;
+      monthlyRevenueSar: number;
+      activeSubscriptions: number;
+      paidOwners: number;
+      recentPayments: any[];
+    }>("/api/admin/earnings")
+      .then(setEarnings)
+      .catch(() => setEarnings(null));
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -30,8 +62,8 @@ function AdminEarnings() {
 
       {/* KPI Row */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <Kpi accent="navy" label={t("admin.earnings.mrr", { fallback: "Monthly Recurring Revenue" })} value={`SAR ${mockSubscriptions.totalMRR.toLocaleString()}`} sub={t("admin.earnings.subs", { fallback: "3 subscriptions" })} icon={<Wallet className="h-4 w-4" />} delta="+SAR 1,999 vs last month" tone="up" />
-        <Kpi accent="emerald" label={t("admin.earnings.active_owners", { fallback: "Active Owners" })} value={mockSubscriptions.activeOwners} sub={t("admin.earnings.paying", { fallback: "Paying customers" })} icon={<Users className="h-4 w-4" />} />
+        <Kpi accent="navy" label={t("admin.earnings.mrr", { fallback: "Monthly Recurring Revenue" })} value={`SAR ${(earnings?.monthlyRevenueSar ?? mockSubscriptions.totalMRR).toLocaleString()}`} sub={t("admin.earnings.subs", { fallback: "3 subscriptions" })} icon={<Wallet className="h-4 w-4" />} delta={`SAR ${(earnings?.totalRevenueSar ?? mockSubscriptions.totalMRR).toLocaleString()} total`} tone="up" />
+        <Kpi accent="emerald" label={t("admin.earnings.active_owners", { fallback: "Active Owners" })} value={earnings?.paidOwners ?? mockSubscriptions.activeOwners} sub={t("admin.earnings.paying", { fallback: "Paying customers" })} icon={<Users className="h-4 w-4" />} />
         <Kpi label={t("admin.earnings.trial_owners", { fallback: "Trial Owners" })} value={mockSubscriptions.trialOwners} icon={<TrendingUp className="h-4 w-4" />} sub={t("admin.earnings.converting", { fallback: "Converting soon" })} />
         <Kpi label={t("admin.earnings.failed", { fallback: "Failed Payments" })} value={mockSubscriptions.failedAlerts.length} icon={<AlertTriangle className="h-4 w-4" />} sub={t("admin.earnings.follow_up", { fallback: "Needs follow-up" })} delta={t("admin.earnings.action", { fallback: "Requires action" })} tone="down" />
       </div>
@@ -123,7 +155,7 @@ function AdminEarnings() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {mockSubscriptions.recentPayments.map(p => (
+              {recentPayments.map(p => (
                 <tr key={p.id} className="hover:bg-secondary/30 transition">
                   <td className="py-3 font-mono text-xs text-muted-foreground">{p.id}</td>
                   <td className="py-3 font-medium">{p.owner}</td>

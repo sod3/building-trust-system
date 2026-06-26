@@ -5,6 +5,13 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import type { AppRole, MockAuthUser } from "./mock-data";
 import { mockAuthUsers } from "./mock-data";
+import {
+  AUTH_TOKEN_KEY,
+  AUTH_USER_KEY,
+  apiFetch,
+  clearAuthSession,
+  storeAuthSession,
+} from "./api-client";
 
 export interface AuthUser {
   id: string;
@@ -17,23 +24,21 @@ export interface AuthUser {
 
 interface AuthCtx {
   user: AuthUser | null;
-  login: (email: string, password: string) => { success: boolean; error?: string };
+  login: (email: string, password: string, remember?: boolean) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthCtx | null>(null);
 
-const SESSION_KEY = "facilityos_auth_user";
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Restore session from sessionStorage on mount
+  // Restore session from browser storage on mount
   useEffect(() => {
     try {
-      const stored = sessionStorage.getItem(SESSION_KEY);
+      const stored = localStorage.getItem(AUTH_USER_KEY) || sessionStorage.getItem(AUTH_USER_KEY);
       if (stored) {
         setUser(JSON.parse(stored));
       }
@@ -43,7 +48,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(false);
   }, []);
 
-  function login(email: string, password: string): { success: boolean; error?: string } {
+  async function login(email: string, password: string, remember = false): Promise<{ success: boolean; error?: string }> {
+    try {
+      const result = await apiFetch<{ token: string; user: AuthUser }>("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      });
+
+      setUser(result.user);
+      storeAuthSession(result.user, result.token, remember);
+      return { success: true };
+    } catch {
+      // Keep demo credentials available when backend env vars are not configured locally.
+    }
+
     const found = mockAuthUsers.find(
       (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
     );
@@ -60,7 +78,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
     setUser(authUser);
     try {
-      sessionStorage.setItem(SESSION_KEY, JSON.stringify(authUser));
+      sessionStorage.setItem(AUTH_USER_KEY, JSON.stringify(authUser));
+      sessionStorage.removeItem(AUTH_TOKEN_KEY);
     } catch {
       // ignore
     }
@@ -69,11 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   function logout() {
     setUser(null);
-    try {
-      sessionStorage.removeItem(SESSION_KEY);
-    } catch {
-      // ignore
-    }
+    clearAuthSession();
   }
 
   return (

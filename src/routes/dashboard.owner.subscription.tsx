@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CheckCircle2, CreditCard, Calendar, ArrowUpRight, Download, RotateCcw } from "lucide-react";
 import { PageHeader, Card, StatusPill, Btn, Toast } from "@/components/dashboard/ui";
 import { useAuth } from "@/lib/auth-context";
+import { apiFetch, getAuthToken } from "@/lib/api-client";
 import { mockOwners, pricingPlans } from "@/lib/mock-data";
 import { useLang } from "@/lib/i18n";
 
@@ -24,8 +25,40 @@ function OwnerSubscription() {
   const owner = mockOwners.find(o => o.id === user?.ownerId) || mockOwners[0];
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [liveSubscription, setLiveSubscription] = useState<any | null>(null);
+  const [livePayments, setLivePayments] = useState<any[]>([]);
 
-  const currentPlan = pricingPlans.find(p => p.name === owner.plan) || pricingPlans[1];
+  useEffect(() => {
+    if (!getAuthToken()) return;
+
+    apiFetch<{ subscription: any | null; payments: any[] }>("/api/owner/subscription")
+      .then((result) => {
+        setLiveSubscription(result.subscription);
+        setLivePayments(result.payments || []);
+      })
+      .catch(() => {
+        setLiveSubscription(null);
+        setLivePayments([]);
+      });
+  }, []);
+
+  const planName = liveSubscription?.planName || owner.plan;
+  const planStatus = liveSubscription?.status || owner.status;
+  const nextBilling = liveSubscription?.currentPeriodEnd
+    ? new Date(liveSubscription.currentPeriodEnd).toLocaleDateString()
+    : owner.nextBilling;
+  const amountSar = liveSubscription?.amountSar || owner.monthlyPayment;
+  const currentPlan = pricingPlans.find(p => p.name === planName) || pricingPlans[1];
+  const buildingLimit = liveSubscription?.buildingLimit ?? currentPlan.buildings;
+  const labourLimit = liveSubscription?.labourLimit ?? currentPlan.labour;
+  const invoices = livePayments.length
+    ? livePayments.map((payment) => ({
+        id: payment.paymentId,
+        date: new Date(payment.createdAt).toLocaleDateString(),
+        amount: (payment.amountHalalas || 0) / 100,
+        status: payment.status === "paid" ? "Paid" : payment.status,
+      }))
+    : mockInvoices;
 
   return (
     <div className="space-y-6 max-w-3xl">
@@ -40,11 +73,11 @@ function OwnerSubscription() {
           <div className="text-xs font-semibold uppercase tracking-widest text-white/50 mb-1">{t("owner.subscription.current_plan", { fallback: "Current Plan" })}</div>
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 className="font-display text-3xl font-semibold">{owner.plan}</h2>
+              <h2 className="font-display text-3xl font-semibold">{planName}</h2>
               <p className="text-white/70 mt-1">{currentPlan.description}</p>
             </div>
             <div className="text-end shrink-0">
-              <div className="font-display text-3xl font-semibold">SAR {owner.monthlyPayment.toLocaleString()}</div>
+              <div className="font-display text-3xl font-semibold">SAR {amountSar.toLocaleString()}</div>
               <div className="text-sm text-white/60">{t("common.per_month", { fallback: "/month" })}</div>
             </div>
           </div>
@@ -54,16 +87,16 @@ function OwnerSubscription() {
               <div className="text-xs text-white/60">{t("common.status", { fallback: "Status" })}</div>
               <div className="font-semibold mt-0.5 flex items-center gap-1.5">
                 <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                {owner.status}
+                {planStatus}
               </div>
             </div>
             <div className="rounded-xl bg-white/10 px-4 py-3">
               <div className="text-xs text-white/60">{t("common.buildings", { fallback: "Buildings" })}</div>
-              <div className="font-semibold mt-0.5">{owner.buildingIds.length} / {currentPlan.buildings > 0 ? currentPlan.buildings : "∞"}</div>
+              <div className="font-semibold mt-0.5">{owner.buildingIds.length} / {buildingLimit > 0 && buildingLimit < 999 ? buildingLimit : "∞"}</div>
             </div>
             <div className="rounded-xl bg-white/10 px-4 py-3">
               <div className="text-xs text-white/60">{t("owner.subscription.next_billing", { fallback: "Next Billing" })}</div>
-              <div className="font-semibold mt-0.5 text-sm">{owner.nextBilling}</div>
+              <div className="font-semibold mt-0.5 text-sm">{nextBilling}</div>
             </div>
           </div>
 
@@ -86,7 +119,11 @@ function OwnerSubscription() {
 
       {/* Plan features */}
       <Card>
-        <h3 className="font-display font-semibold mb-4">{t("owner.subscription.included", { fallback: "What's included in" })} {owner.plan}</h3>
+        <h3 className="font-display font-semibold mb-4">{t("owner.subscription.included", { fallback: "What's included in" })} {planName}</h3>
+        <div className="mb-4 grid gap-2 text-sm sm:grid-cols-2">
+          <div className="rounded-xl bg-secondary px-3 py-2">Building limit: <strong>{buildingLimit > 0 && buildingLimit < 999 ? buildingLimit : "Unlimited"}</strong></div>
+          <div className="rounded-xl bg-secondary px-3 py-2">Labour limit: <strong>{labourLimit > 0 && labourLimit < 999 ? labourLimit : "Unlimited"}</strong></div>
+        </div>
         <div className="grid gap-2 sm:grid-cols-2">
           {currentPlan.features.map(f => (
             <div key={f} className="flex items-center gap-2.5 text-sm">
@@ -105,7 +142,7 @@ function OwnerSubscription() {
             {pricingPlans.map(plan => (
               <div
                 key={plan.id}
-                className={`rounded-2xl border-2 p-5 ${plan.name === owner.plan ? "border-accent bg-accent/5" : "border-border"}`}
+                className={`rounded-2xl border-2 p-5 ${plan.name === planName ? "border-accent bg-accent/5" : "border-border"}`}
               >
                 {plan.popular && <div className="text-[11px] font-semibold text-accent uppercase tracking-wider mb-1">{t("admin.earnings.popular", { fallback: "Most Popular" })}</div>}
                 <div className="font-display text-lg font-semibold">{plan.name}</div>
@@ -124,13 +161,13 @@ function OwnerSubscription() {
                 <button
                   onClick={() => { setShowUpgrade(false); setToast(`Upgrade to ${plan.name} requested (demo)`); }}
                   className={`mt-4 w-full rounded-xl py-2 text-sm font-medium transition ${
-                    plan.name === owner.plan
+                    plan.name === planName
                       ? "bg-secondary text-muted-foreground cursor-default"
                       : "bg-navy text-white hover:bg-navy/90"
                   }`}
-                  disabled={plan.name === owner.plan}
+                  disabled={plan.name === planName}
                 >
-                  {plan.name === owner.plan ? t("owner.subscription.current_plan", { fallback: "Current Plan" }) : `${t("owner.subscription.switch_to", { fallback: "Switch to" })} ${plan.name}`}
+                  {plan.name === planName ? t("owner.subscription.current_plan", { fallback: "Current Plan" }) : `${t("owner.subscription.switch_to", { fallback: "Switch to" })} ${plan.name}`}
                 </button>
               </div>
             ))}
@@ -157,7 +194,7 @@ function OwnerSubscription() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {mockInvoices.map(inv => (
+              {invoices.map(inv => (
                 <tr key={inv.id} className="hover:bg-secondary/30 transition">
                   <td className="py-3 font-mono text-xs text-muted-foreground">{inv.id}</td>
                   <td className="py-3">{inv.date}</td>

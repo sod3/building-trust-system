@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Plus, Search, Edit, Building2, Eye, RotateCcw } from "lucide-react";
 import {
   PageHeader, StatusPill, Card, Modal, FormInput, FormSelect, Btn, Toast, EmptyState,
 } from "@/components/dashboard/ui";
+import { apiFetch, getAuthToken } from "@/lib/api-client";
 import { mockOwners, mockBuildings, pricingPlans, type MockOwner, type PlanType, type OwnerStatus } from "@/lib/mock-data";
 import { useLang } from "@/lib/i18n";
 
@@ -23,6 +24,30 @@ function AdminOwners() {
 
   // Form state
   const [form, setForm] = useState({ name: "", email: "", phone: "", company: "", plan: "Starter" as PlanType, status: "Active" as OwnerStatus });
+
+  useEffect(() => {
+    if (!getAuthToken()) return;
+
+    apiFetch<{ owners: any[] }>("/api/admin/owners")
+      .then((result) => {
+        setOwners(result.owners.map((owner) => ({
+          id: owner.id,
+          name: owner.name,
+          email: owner.email,
+          phone: owner.phone || "",
+          company: owner.name,
+          plan: (owner.plan === "No Plan" ? "Starter" : owner.plan) as PlanType,
+          status: owner.subscriptionStatus === "active" ? "Active" : owner.status === "suspended" ? "Suspended" : "Trial",
+          buildingIds: Array.from({ length: owner.buildingCount || 0 }, (_, index) => `BLD-${index}`),
+          monthlyPayment: owner.totalPaidSar || 0,
+          joinedDate: owner.createdAt ? new Date(owner.createdAt).toLocaleDateString() : "",
+          nextBilling: owner.currentPeriodEnd ? new Date(owner.currentPeriodEnd).toLocaleDateString() : "",
+        })));
+      })
+      .catch(() => {
+        showToast("Could not load MongoDB owners. Showing demo data.", "error");
+      });
+  }, []);
 
   const filtered = owners.filter(o => {
     const matchSearch = o.name.toLowerCase().includes(search.toLowerCase()) || o.email.toLowerCase().includes(search.toLowerCase());

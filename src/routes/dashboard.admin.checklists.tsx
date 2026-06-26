@@ -78,49 +78,49 @@ function AdminChecklists() {
       />
 
       <div className="space-y-4">
-        {templates.map(t => (
-          <Card key={t.id}>
+        {templates.map(template => (
+          <Card key={template.id}>
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-3">
                 <div className="grid h-10 w-10 place-items-center rounded-xl bg-navy/10">
                   <ClipboardList className="h-5 w-5 text-navy" />
                 </div>
                 <div>
-                  <div className="font-semibold">{t.name}</div>
-                  <div className="text-xs text-muted-foreground mt-0.5">{t.description}</div>
+                  <div className="font-semibold">{template.name}</div>
+                  <div className="text-xs text-muted-foreground mt-0.5">{template.description}</div>
                   <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
-                    <span>{t("common.tasks_count", { count: t.tasks.length, fallback: `${t.tasks.length} tasks` })}</span>
+                    <span>{t("common.tasks_count", { count: template.tasks.length, fallback: `${template.tasks.length} tasks` })}</span>
                     <span>·</span>
-                    <span>{t("common.created_at", { fallback: "Created" })} {t.createdAt}</span>
-                    {t.assignedBuildings.length > 0 && (
+                    <span>{t("common.created_at", { fallback: "Created" })} {template.createdAt}</span>
+                    {template.assignedBuildings.length > 0 && (
                       <>
                         <span>·</span>
-                        <span className="flex items-center gap-1"><Building2 className="h-3 w-3" />{t("common.buildings_count", { count: t.assignedBuildings.length, fallback: `${t.assignedBuildings.length} buildings` })}</span>
+                        <span className="flex items-center gap-1"><Building2 className="h-3 w-3" />{t("common.buildings_count", { count: template.assignedBuildings.length, fallback: `${template.assignedBuildings.length} buildings` })}</span>
                       </>
                     )}
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <Btn size="sm" variant="ghost" onClick={() => handleDuplicate(t)}>
+                <Btn size="sm" variant="ghost" onClick={() => handleDuplicate(template)}>
                   <Copy className="h-3.5 w-3.5" /> {t("common.duplicate", { fallback: "Duplicate" })}
                 </Btn>
                 <Btn size="sm" variant="outline" onClick={() => showToast("Building assigned (demo)")}>
                   <Building2 className="h-3.5 w-3.5" /> {t("common.assign", { fallback: "Assign" })}
                 </Btn>
                 <button
-                  onClick={() => setExpanded(expanded === t.id ? null : t.id)}
+                  onClick={() => setExpanded(expanded === template.id ? null : template.id)}
                   className="grid h-8 w-8 place-items-center rounded-xl border border-border hover:bg-secondary transition text-muted-foreground"
                 >
-                  {expanded === t.id ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                  {expanded === template.id ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                 </button>
               </div>
             </div>
 
-            {expanded === t.id && (
+            {expanded === template.id && (
               <div className="mt-4 border-t border-border pt-4">
                 <div className="grid gap-2 sm:grid-cols-2">
-                  {t.tasks.map((task, i) => (
+                  {template.tasks.map((task, i) => (
                     <div key={i} className="flex items-center gap-3 rounded-xl border border-border p-3">
                       <span className="text-lg">{iconMap[task.category] || "📋"}</span>
                       <div className="min-w-0 flex-1">

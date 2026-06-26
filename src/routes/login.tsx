@@ -39,12 +39,13 @@ function LoginPage() {
     e.preventDefault();
     setError("");
     setLoading(true);
-    setTimeout(() => {
-      const result = login(email, password);
+    setTimeout(async () => {
+      const result = await login(email, password, rememberMe);
       if (result.success) {
         setSuccessToast(true);
         setTimeout(() => {
-          const role = JSON.parse(sessionStorage.getItem("facilityos_auth_user") || "{}").role as AppRole;
+          const storedUser = localStorage.getItem("facilityos_auth_user") || sessionStorage.getItem("facilityos_auth_user") || "{}";
+          const role = JSON.parse(storedUser).role as AppRole;
           const to = role === "admin" ? "/dashboard/admin" : role === "owner" ? "/dashboard/owner" : "/dashboard/labour";
           navigate({ to });
         }, 1000);
@@ -61,8 +62,8 @@ function LoginPage() {
     setPassword(creds.password);
     setError("");
     setLoading(true);
-    setTimeout(() => {
-      const result = login(creds.email, creds.password);
+    setTimeout(async () => {
+      const result = await login(creds.email, creds.password, rememberMe);
       if (result.success) {
         setSuccessToast(true);
         setTimeout(() => {

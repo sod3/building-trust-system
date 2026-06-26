@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Building2, CheckCircle2, Shield, Lock, CreditCard } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { useLang } from "@/lib/i18n";
+import { useAuth } from "@/lib/auth-context";
+import { apiFetch } from "@/lib/api-client";
 
 const checkoutSearchSchema = z.object({
   plan: z.string().optional(),
@@ -56,20 +58,43 @@ interface MoyasarConfig {
   callback_url: string;
   methods: string[];
   supported_networks: string[];
+  metadata?: Record<string, string>;
 }
+
+type CheckoutOrder = {
+  orderId: string;
+  userId: string;
+  planId: string;
+  planName: string;
+  amountHalalas: number;
+  currency: string;
+  description: string;
+};
 
 function Checkout() {
   const { t } = useLang();
+  const { user } = useAuth();
   const search = Route.useSearch();
   const planKey = (search.plan && planDetails[search.plan]) ? search.plan : "starter";
   const plan = planDetails[planKey];
   const formRef = useRef<HTMLDivElement>(null);
+  const [ownerInfo, setOwnerInfo] = useState({
+    ownerName: user?.name || "",
+    email: user?.email || "",
+    phone: "",
+  });
+  const [order, setOrder] = useState<CheckoutOrder | null>(null);
+  const [isCreatingOrder, setIsCreatingOrder] = useState(false);
+  const [checkoutError, setCheckoutError] = useState("");
 
   useEffect(() => {
+    if (!order) return;
+    const activeOrder = order;
+
     // cancelled flag — stops stale setTimeout callbacks from firing after unmount
     let cancelled = false;
 
-    const callbackUrl = `${window.location.origin}/payment-result?plan=${planKey}`;
+    const callbackUrl = `${window.location.origin}/payment-result?plan=${activeOrder.planId}`;
 
     function initMoyasar() {
       if (cancelled) return;
@@ -96,10 +121,10 @@ function Checkout() {
 
         // Amount MUST be in halalas (SAR × 100)
         // SAR 299 → 29900 | SAR 899 → 89900 | SAR 1999 → 199900
-        amount: plan.halalas,
+        amount: activeOrder.amountHalalas,
 
-        currency: "SAR",
-        description: `${plan.name} Plan — FacilityOS Arabia`,
+        currency: activeOrder.currency,
+        description: activeOrder.description,
 
         // Publishable key — SAFE for frontend (Vite inlines VITE_* env vars at build time)
         // NEVER put MOYASAR_SECRET_KEY here — it lives server-side in payment-server.ts only
@@ -107,6 +132,11 @@ function Checkout() {
 
         // Moyasar redirects here after payment, appending ?id=&status=&message=
         callback_url: callbackUrl,
+        metadata: {
+          orderId: activeOrder.orderId,
+          userId: activeOrder.userId,
+          planId: activeOrder.planId,
+        },
 
         // creditcard covers mada, Visa, and Mastercard
         methods: ["creditcard"],
@@ -139,7 +169,26 @@ function Checkout() {
       const container = document.getElementById("moyasar-form");
       if (container) container.innerHTML = "";
     };
-  }, [planKey, plan.halalas]);
+  }, [order]);
+
+  async function handleCreateOrder(event: React.FormEvent) {
+    event.preventDefault();
+    setCheckoutError("");
+    setIsCreatingOrder(true);
+
+    try {
+      const result = await apiFetch<CheckoutOrder>("/api/checkout/create-order", {
+        method: "POST",
+        body: JSON.stringify({ planId: planKey, ...ownerInfo }),
+      });
+
+      setOrder(result);
+    } catch (error) {
+      setCheckoutError(error instanceof Error ? error.message : "Could not start checkout.");
+    } finally {
+      setIsCreatingOrder(false);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-surface-2 flex flex-col lg:flex-row">
@@ -251,6 +300,60 @@ function Checkout() {
               </span>
             </div>
           </div>
+
+          <form onSubmit={handleCreateOrder} className="mb-6 rounded-2xl border border-border bg-secondary/20 p-4">
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">
+              Owner Details
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label className="text-sm">
+                <span className="mb-1 block text-xs font-medium text-muted-foreground">Full Name</span>
+                <input
+                  value={ownerInfo.ownerName}
+                  onChange={(event) => setOwnerInfo((current) => ({ ...current, ownerName: event.target.value }))}
+                  className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+                  required
+                />
+              </label>
+              <label className="text-sm">
+                <span className="mb-1 block text-xs font-medium text-muted-foreground">Phone</span>
+                <input
+                  value={ownerInfo.phone}
+                  onChange={(event) => setOwnerInfo((current) => ({ ...current, phone: event.target.value }))}
+                  className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+                  placeholder="+966 55 000 0000"
+                />
+              </label>
+              <label className="text-sm sm:col-span-2">
+                <span className="mb-1 block text-xs font-medium text-muted-foreground">Email</span>
+                <input
+                  type="email"
+                  value={ownerInfo.email}
+                  onChange={(event) => setOwnerInfo((current) => ({ ...current, email: event.target.value }))}
+                  className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+                  required
+                />
+              </label>
+            </div>
+            {checkoutError && (
+              <div className="mt-3 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
+                {checkoutError}
+              </div>
+            )}
+            <button
+              type="submit"
+              disabled={isCreatingOrder || !ownerInfo.ownerName || !ownerInfo.email}
+              className="mt-4 h-11 w-full rounded-xl bg-navy text-sm font-semibold text-white transition hover:bg-navy/90 disabled:opacity-60"
+            >
+              {order ? "Refresh Payment Form" : isCreatingOrder ? "Preparing Secure Checkout..." : "Prepare Secure Checkout"}
+            </button>
+          </form>
+
+          {!order && (
+            <div className="mb-3 rounded-2xl border border-dashed border-border bg-background p-5 text-center text-sm text-muted-foreground">
+              Enter owner details to create a secure order before payment.
+            </div>
+          )}
 
           {/* Moyasar injects card fields into this div via Moyasar.init() */}
           <div

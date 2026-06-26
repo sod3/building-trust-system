@@ -13,28 +13,36 @@ export default async function handler(req, res) {
     const owners = await db
       .collection("users")
       .aggregate([
-        { $match: { role: "owner" } },
+        { $match: { role: { $in: ["OWNER", "owner"] } } },
+        {
+          $lookup: {
+            from: "organizations",
+            localField: "_id",
+            foreignField: "ownerUserId",
+            as: "orgRows",
+          },
+        },
         {
           $lookup: {
             from: "subscriptions",
-            localField: "_id",
-            foreignField: "userId",
+            localField: "orgRows._id",
+            foreignField: "orgId",
             as: "subscriptionRows",
           },
         },
         {
           $lookup: {
             from: "payments",
-            localField: "_id",
-            foreignField: "userId",
+            localField: "orgRows._id",
+            foreignField: "orgId",
             as: "paymentRows",
           },
         },
         {
           $lookup: {
             from: "buildings",
-            localField: "_id",
-            foreignField: "ownerId",
+            localField: "orgRows._id",
+            foreignField: "orgId",
             as: "buildingRows",
           },
         },
@@ -60,11 +68,12 @@ export default async function handler(req, res) {
         email: owner.email,
         phone: owner.phone || "",
         status: owner.status,
+        organization: owner.orgRows?.[0] || null,
         plan: subscription?.planName || "No Plan",
         planId: subscription?.planId || null,
         subscriptionStatus: subscription?.status || "inactive",
         currentPeriodEnd: subscription?.currentPeriodEnd || null,
-        buildingCount: owner.buildingRows?.length || 0,
+        buildingCount: (owner.buildingRows || []).filter((building) => building.status !== "deleted").length,
         totalPaidSar: totalPaidHalalas / 100,
         createdAt: owner.createdAt,
       };

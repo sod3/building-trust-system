@@ -1,23 +1,20 @@
-// FacilityOS Arabia — Authentication Context
-// Frontend-only mock auth. No backend. No real auth library.
-// Credentials are checked against mockAuthUsers in mock-data.ts
-
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
-import type { AppRole, MockAuthUser } from "./mock-data";
-import { mockAuthUsers } from "./mock-data";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import {
-  AUTH_TOKEN_KEY,
   AUTH_USER_KEY,
   apiFetch,
   clearAuthSession,
   storeAuthSession,
 } from "./api-client";
 
+export type AppRole = "admin" | "owner" | "labour" | "supervisor";
+
 export interface AuthUser {
   id: string;
   name: string;
   email: string;
   role: AppRole;
+  systemRole?: string;
+  orgId?: string | null;
   ownerId?: string;
   labourId?: string;
 }
@@ -35,17 +32,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Restore session from browser storage on mount
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(AUTH_USER_KEY) || sessionStorage.getItem(AUTH_USER_KEY);
-      if (stored) {
-        setUser(JSON.parse(stored));
+    let cancelled = false;
+
+    async function restore() {
+      try {
+        const stored = localStorage.getItem(AUTH_USER_KEY) || sessionStorage.getItem(AUTH_USER_KEY);
+        if (stored && !cancelled) setUser(JSON.parse(stored));
+      } catch {
+        // Ignore invalid browser storage.
       }
-    } catch {
-      // ignore
+
+      try {
+        const result = await apiFetch<{ user: AuthUser }>("/api/auth/me");
+        if (!cancelled) {
+          setUser(result.user);
+          storeAuthSession(result.user, undefined, true);
+        }
+      } catch {
+        if (!cancelled) {
+          setUser(null);
+          clearAuthSession();
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
     }
-    setIsLoading(false);
+
+    restore();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   async function login(email: string, password: string, remember = false): Promise<{ success: boolean; error?: string }> {
@@ -58,37 +75,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(result.user);
       storeAuthSession(result.user, result.token, remember);
       return { success: true };
-    } catch {
-      // Keep demo credentials available when backend env vars are not configured locally.
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Invalid email or password. Please check your credentials.",
+      };
     }
-
-    const found = mockAuthUsers.find(
-      (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
-    );
-    if (!found) {
-      return { success: false, error: "Invalid email or password. Please check your credentials." };
-    }
-    const authUser: AuthUser = {
-      id: found.id,
-      name: found.name,
-      email: found.email,
-      role: found.role,
-      ownerId: found.ownerId,
-      labourId: found.labourId,
-    };
-    setUser(authUser);
-    try {
-      sessionStorage.setItem(AUTH_USER_KEY, JSON.stringify(authUser));
-      sessionStorage.removeItem(AUTH_TOKEN_KEY);
-    } catch {
-      // ignore
-    }
-    return { success: true };
   }
 
   function logout() {
     setUser(null);
     clearAuthSession();
+    apiFetch("/api/auth/logout", { method: "POST" }).catch(() => {});
   }
 
   return (
@@ -104,7 +102,6 @@ export function useAuth() {
   return ctx;
 }
 
-// Helper to get demo credentials for quick login buttons
 export const demoCredentials: Record<AppRole, { email: string; password: string; label: string; description: string }> = {
   admin: {
     email: "admin@facilityos.com",
@@ -116,12 +113,18 @@ export const demoCredentials: Record<AppRole, { email: string; password: string;
     email: "owner@building.com",
     password: "owner123",
     label: "Owner",
-    description: "Ahmed Al-Farsi · 3 Buildings",
+    description: "Paid owner account",
   },
   labour: {
     email: "labour@building.com",
     password: "labour123",
     label: "Labour",
-    description: "Ali Hassan · Riyadh Tower A",
+    description: "Assigned building worker",
+  },
+  supervisor: {
+    email: "supervisor@facilityos.com",
+    password: "supervisor123",
+    label: "Supervisor",
+    description: "Coming soon",
   },
 };

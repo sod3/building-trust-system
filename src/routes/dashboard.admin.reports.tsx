@@ -1,136 +1,103 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { Search, Eye, CheckCircle2, Clock, AlertTriangle } from "lucide-react";
-import {
-  PageHeader, StatusPill, Card, Modal, Btn, EmptyState, ProgressBar,
-} from "@/components/dashboard/ui";
-import { mockReports, mockBuildings, mockOwners, type MockReport } from "@/lib/mock-data";
+import { useEffect, useState } from "react";
+import { Search, CheckCircle2, Clock, AlertTriangle } from "lucide-react";
+import { PageHeader, Card, StatusPill, ProgressBar, EmptyState } from "@/components/dashboard/ui";
+import { apiFetch } from "@/lib/api-client";
 import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard/admin/reports")({
-  head: () => ({ meta: [{ title: "Daily Reports — Admin Dashboard" }] }),
+  head: () => ({ meta: [{ title: "Reports - Admin Dashboard" }] }),
   component: AdminReports,
 });
 
 function AdminReports() {
   const { t } = useLang();
+  const [reports, setReports] = useState<any[]>([]);
   const [search, setSearch] = useState("");
-  const [filterStatus, setFilterStatus] = useState("All");
-  const [selected, setSelected] = useState<MockReport | null>(null);
+  const [status, setStatus] = useState("All");
 
-  const filtered = mockReports.filter(r => {
-    const matchSearch =
-      r.buildingName.toLowerCase().includes(search.toLowerCase()) ||
-      r.labourName.toLowerCase().includes(search.toLowerCase()) ||
-      r.ownerName.toLowerCase().includes(search.toLowerCase());
-    const matchStatus = filterStatus === "All" || r.status === filterStatus;
-    return matchSearch && matchStatus;
+  useEffect(() => {
+    apiFetch<{ reports: any[] }>("/api/daily-reports/history")
+      .then((result) => setReports(result.reports || []))
+      .catch(() => setReports([]));
+  }, []);
+
+  const filtered = reports.filter((report) => {
+    const haystack = [report.buildingName, report.labourName, report.date, report.status].join(" ").toLowerCase();
+    return haystack.includes(search.toLowerCase()) && (status === "All" || report.status === status);
   });
 
-  const completedTasks = [
-    "Clean Entrance", "Check Elevator", "Remove Garbage",
-    "Check Water Tank", "Check Lights", "Clean Stairs",
-  ];
-  const pendingTasks = ["Check Parking", "Security Gate Check"];
+  const counts = {
+    total: reports.length,
+    submitted: reports.filter((report) => report.status === "Submitted" || report.status === "Approved").length,
+    pending: reports.filter((report) => report.status === "Pending").length,
+    missed: reports.filter((report) => report.status === "Missed").length,
+  };
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title={t("admin.reports.title", { fallback: "Daily Reports" })}
-        subtitle={t("admin.reports.subtitle", { fallback: "All submitted daily labour reports across the platform." })}
-      />
+      <PageHeader title={t("dashboard.admin.nav.reports", { fallback: "Reports" })} subtitle="All submitted daily reports across the platform." />
 
-      {/* Summary KPIs */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[
-          { label: t("admin.reports.total", { fallback: "Total Reports" }), value: mockReports.length, icon: <CheckCircle2 className="h-4 w-4" />, color: "bg-sky-50 text-sky-700" },
-          { label: t("admin.reports.submitted", { fallback: "Submitted" }), value: mockReports.filter(r => r.status === "Submitted" || r.status === "Approved").length, icon: <CheckCircle2 className="h-4 w-4" />, color: "bg-emerald-50 text-emerald-700" },
-          { label: t("admin.reports.pending", { fallback: "Pending" }), value: mockReports.filter(r => r.status === "Pending").length, icon: <Clock className="h-4 w-4" />, color: "bg-amber-50 text-amber-700" },
-          { label: t("admin.reports.missed", { fallback: "Missed" }), value: mockReports.filter(r => r.status === "Missed").length, icon: <AlertTriangle className="h-4 w-4" />, color: "bg-rose-50 text-rose-700" },
-        ].map(k => (
-          <div key={k.label} className="rounded-2xl border border-border bg-card p-4">
-            <div className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium ${k.color}`}>
-              {k.icon} {k.label}
+          { label: t("admin.reports.total", { fallback: "Total Reports" }), value: counts.total, icon: <CheckCircle2 className="h-4 w-4" />, color: "bg-sky-50 text-sky-700" },
+          { label: t("admin.reports.submitted", { fallback: "Submitted" }), value: counts.submitted, icon: <CheckCircle2 className="h-4 w-4" />, color: "bg-emerald-50 text-emerald-700" },
+          { label: t("admin.reports.pending", { fallback: "Pending" }), value: counts.pending, icon: <Clock className="h-4 w-4" />, color: "bg-amber-50 text-amber-700" },
+          { label: t("admin.reports.missed", { fallback: "Missed" }), value: counts.missed, icon: <AlertTriangle className="h-4 w-4" />, color: "bg-rose-50 text-rose-700" },
+        ].map((item) => (
+          <div key={item.label} className={`flex items-center gap-3 rounded-2xl p-4 ${item.color}`}>
+            {item.icon}
+            <div>
+              <div className="font-display text-2xl font-semibold">{item.value}</div>
+              <div className="text-xs font-medium">{item.label}</div>
             </div>
-            <div className="mt-2 font-display text-3xl font-semibold">{k.value}</div>
           </div>
         ))}
       </div>
 
-      {/* Filters */}
       <Card>
         <div className="flex flex-wrap items-center gap-3">
-          <div className="relative flex-1 min-w-48">
+          <div className="relative min-w-48 flex-1">
             <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              placeholder={t("admin.reports.search", { fallback: "Search by building, labour, or owner…" })}
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="h-9 w-full rounded-xl border border-border bg-background px-9 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition"
-            />
+            <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search reports..." className="h-9 w-full rounded-xl border border-border bg-background px-9 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20" />
           </div>
-          <div className="flex items-center gap-2">
-            {["All", "Submitted", "Approved", "Pending", "Missed"].map(s => (
-              <button
-                key={s}
-                onClick={() => setFilterStatus(s)}
-                className={`rounded-xl px-3 py-1.5 text-xs font-medium transition ${filterStatus === s ? "bg-navy text-white" : "border border-border text-muted-foreground hover:bg-secondary"}`}
-              >
-                {s}
+          <div className="flex gap-2">
+            {["All", "Submitted", "Pending", "Missed"].map((item) => (
+              <button key={item} onClick={() => setStatus(item)} className={`rounded-xl px-3 py-1.5 text-xs font-medium transition ${status === item ? "bg-navy text-white" : "border border-border text-muted-foreground hover:bg-secondary"}`}>
+                {item}
               </button>
             ))}
           </div>
         </div>
       </Card>
 
-      {/* Reports Table */}
       {filtered.length === 0 ? (
-        <Card><EmptyState icon={<Search className="h-5 w-5" />} title={t("admin.reports.no_records", { fallback: "No reports found" })} body={t("common.no_records_body", { fallback: "Try adjusting your search or filter." })} /></Card>
+        <Card><EmptyState title="No reports found" body="Reports will appear after labour users submit daily checklists." /></Card>
       ) : (
         <Card>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="text-start text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border">
+              <thead className="border-b border-border text-start text-[11px] uppercase tracking-wider text-muted-foreground">
                 <tr>
-                  <th className="pb-3">{t("common.date", { fallback: "Date" })}</th>
-                  <th className="pb-3">{t("common.building", { fallback: "Building" })}</th>
-                  <th className="pb-3">{t("common.labour", { fallback: "Labour" })}</th>
-                  <th className="pb-3">{t("common.owner", { fallback: "Owner" })}</th>
-                  <th className="pb-3">{t("common.tasks", { fallback: "Tasks" })}</th>
-                  <th className="pb-3">{t("common.completion", { fallback: "Completion" })}</th>
-                  <th className="pb-3">{t("common.submitted_at", { fallback: "Submitted At" })}</th>
-                  <th className="pb-3">{t("common.status", { fallback: "Status" })}</th>
-                  <th className="pb-3"></th>
+                  <th className="pb-3">Date</th>
+                  <th className="pb-3">Building</th>
+                  <th className="pb-3">Labour</th>
+                  <th className="pb-3">Tasks</th>
+                  <th className="pb-3">Completion</th>
+                  <th className="pb-3">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {filtered.map(r => (
-                  <tr key={r.id} className="hover:bg-secondary/30 transition">
-                    <td className="py-3 text-xs text-muted-foreground whitespace-nowrap">{r.date}</td>
-                    <td className="py-3 font-medium">{r.buildingName}</td>
-                    <td className="py-3 text-muted-foreground">{r.labourName}</td>
-                    <td className="py-3 text-muted-foreground">{r.ownerName}</td>
-                    <td className="py-3">
-                      <span className="text-emerald-700 font-semibold">{r.completedTasks}</span>
-                      <span className="text-muted-foreground">/{r.totalTasks}</span>
+                {filtered.map((report) => (
+                  <tr key={report.id} className="transition hover:bg-secondary/30">
+                    <td className="py-3 text-xs text-muted-foreground">{report.date}</td>
+                    <td className="py-3 font-medium">{report.buildingName}</td>
+                    <td className="py-3 text-muted-foreground">{report.labourName}</td>
+                    <td className="py-3">{report.completedTasks}/{report.totalTasks}</td>
+                    <td className="min-w-[120px] py-3">
+                      <ProgressBar value={report.completedTasks} max={report.totalTasks || 1} color={report.completedTasks === report.totalTasks ? "emerald" : "amber"} />
                     </td>
-                    <td className="py-3 min-w-[100px]">
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1">
-                          <ProgressBar value={r.completedTasks} max={r.totalTasks}
-                            color={r.completedTasks === r.totalTasks ? "emerald" : r.completedTasks > 0 ? "amber" : "rose"}
-                          />
-                        </div>
-                        <span className="text-xs font-medium">{Math.round((r.completedTasks / r.totalTasks) * 100)}%</span>
-                      </div>
-                    </td>
-                    <td className="py-3 text-xs text-muted-foreground whitespace-nowrap">{r.submittedAt}</td>
-                    <td className="py-3"><StatusPill status={r.status} /></td>
-                    <td className="py-3">
-                      <Btn size="sm" variant="ghost" onClick={() => setSelected(r)}>
-                        <Eye className="h-3.5 w-3.5" /> {t("common.view", { fallback: "View" })}
-                      </Btn>
-                    </td>
+                    <td className="py-3"><StatusPill status={report.status} /></td>
                   </tr>
                 ))}
               </tbody>
@@ -138,83 +105,6 @@ function AdminReports() {
           </div>
         </Card>
       )}
-
-      {/* Report Detail Modal */}
-      <Modal open={!!selected} onClose={() => setSelected(null)} title={`Report — ${selected?.buildingName}`}>
-        {selected && (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="rounded-xl bg-secondary px-3 py-2.5">
-                <div className="text-xs text-muted-foreground">{t("common.date", { fallback: "Date" })}</div>
-                <div className="font-medium">{selected.date}</div>
-              </div>
-              <div className="rounded-xl bg-secondary px-3 py-2.5">
-                <div className="text-xs text-muted-foreground">{t("common.submitted_at", { fallback: "Submitted At" })}</div>
-                <div className="font-medium">{selected.submittedAt}</div>
-              </div>
-              <div className="rounded-xl bg-secondary px-3 py-2.5">
-                <div className="text-xs text-muted-foreground">{t("common.labour", { fallback: "Labour" })}</div>
-                <div className="font-medium">{selected.labourName}</div>
-              </div>
-              <div className="rounded-xl bg-secondary px-3 py-2.5">
-                <div className="text-xs text-muted-foreground">{t("common.status", { fallback: "Status" })}</div>
-                <StatusPill status={selected.status} />
-              </div>
-            </div>
-
-            <div className="rounded-xl border border-border p-3">
-              <div className="mb-2 flex items-center justify-between text-sm">
-                <span className="font-semibold">{t("admin.reports.task_completion", { fallback: "Task Completion" })}</span>
-                <span className="text-muted-foreground">{selected.completedTasks}/{selected.totalTasks} {t("common.tasks", { fallback: "tasks" })}</span>
-              </div>
-              <ProgressBar value={selected.completedTasks} max={selected.totalTasks} color="emerald" />
-            </div>
-
-            <div>
-              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">✅ {t("admin.reports.completed_tasks", { fallback: "Completed Tasks" })}</div>
-              <div className="space-y-1.5">
-                {completedTasks.slice(0, selected.completedTasks).map(task => (
-                  <div key={task} className="flex items-center gap-2.5 rounded-xl bg-emerald-50 border border-emerald-200 px-3 py-2 text-sm text-emerald-800">
-                    <CheckCircle2 className="h-4 w-4 shrink-0" />
-                    {task}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {selected.pendingTasks > 0 && (
-              <div>
-                <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">⏳ {t("admin.reports.pending_tasks", { fallback: "Pending Tasks" })}</div>
-                <div className="space-y-1.5">
-                  {pendingTasks.slice(0, selected.pendingTasks).map(task => (
-                    <div key={task} className="flex items-center gap-2.5 rounded-xl bg-amber-50 border border-amber-200 px-3 py-2 text-sm text-amber-800">
-                      <Clock className="h-4 w-4 shrink-0" />
-                      {task}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Photo proof placeholders */}
-            <div>
-              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">📸 {t("admin.reports.photo_proof", { fallback: "Photo Proof" })}</div>
-              <div className="grid grid-cols-3 gap-2">
-                {[1, 2, 3].map(i => (
-                  <div key={i} className="aspect-square rounded-xl bg-secondary border border-border flex items-center justify-center text-xs text-muted-foreground">
-                    Photo {i}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end gap-2 pt-2">
-              <Btn variant="secondary" onClick={() => setSelected(null)}>{t("common.close", { fallback: "Close" })}</Btn>
-              <Btn onClick={() => setSelected(null)}>{t("admin.reports.approve", { fallback: "Approve Report" })}</Btn>
-            </div>
-          </div>
-        )}
-      </Modal>
     </div>
   );
 }

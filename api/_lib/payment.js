@@ -1,5 +1,6 @@
 import { connectToDatabase } from "./db.js";
-import { seedPlans } from "./plans.js";
+import { getActivePlan, seedPlans } from "./plans.js";
+import { createId } from "./security.js";
 
 const MOYASAR_API_BASE = "https://api.moyasar.com/v1";
 
@@ -26,8 +27,46 @@ export async function fetchMoyasarPayment(paymentId) {
   return response.json();
 }
 
+export async function chargeMoyasarToken({ amount, currency = "SAR", description, token, metadata }) {
+  const secretKey = process.env.MOYASAR_SECRET_KEY;
+  if (!secretKey) {
+    throw new Error("MOYASAR_SECRET_KEY is not configured.");
+  }
+  if (!token) {
+    throw new Error("No saved Moyasar payment token is available for this subscription.");
+  }
+
+  const credentials = Buffer.from(`${secretKey}:`).toString("base64");
+  const response = await fetch(`${MOYASAR_API_BASE}/payments`, {
+    method: "POST",
+    headers: {
+      Authorization: `Basic ${credentials}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      amount,
+      currency,
+      description,
+      source: { type: "token", token },
+      metadata,
+    }),
+  });
+
+  const payload = await response.json().catch(async () => ({ raw: await response.text() }));
+  if (!response.ok) {
+    const error = new Error(`Moyasar token charge failed (${response.status}).`);
+    error.response = payload;
+    throw error;
+  }
+  return payload;
+}
+
 function getPaymentMetadata(payment) {
   return payment.metadata || payment.source?.metadata || {};
+}
+
+function metadataValue(metadata, camelKey, snakeKey = camelKey) {
+  return metadata?.[camelKey] || metadata?.[snakeKey] || metadata?.[camelKey.replace(/[A-Z]/g, (m) => `_${m.toLowerCase()}`)];
 }
 
 function safePaymentSnapshot(payment) {
@@ -54,6 +93,52 @@ function safePaymentSnapshot(payment) {
   };
 }
 
+function getTokenFromSource(source = {}) {
+  return source.token || source.token_id || source.payment_token || source.payment_method_token || null;
+}
+
+async function findExistingPayment(db, paymentId) {
+  return db.collection("payments").findOne({
+    $or: [{ paymentId }, { moyasarPaymentId: paymentId }],
+  });
+}
+
+async function persistFailedPayment(db, { payment, order, invoice, status }) {
+  const now = new Date();
+  const source = payment.source || {};
+  const cardNumber = typeof source.number === "string" ? source.number : "";
+  await db.collection("payments").updateOne(
+    { moyasarPaymentId: payment.id },
+    {
+      $setOnInsert: {
+        _id: createId("pay"),
+        paymentId: payment.id,
+        moyasarPaymentId: payment.id,
+        orderId: order?.orderId || null,
+        invoiceId: invoice?.invoiceId || null,
+        userId: order?.userId || invoice?.userId || null,
+        orgId: order?.orgId || invoice?.orgId || null,
+        planId: order?.planId || invoice?.planId || null,
+        provider: "moyasar",
+        status,
+        amount: payment.amount || order?.amountHalalas || invoice?.amount || 0,
+        amountHalalas: payment.amount || order?.amountHalalas || invoice?.amount || 0,
+        currency: payment.currency || order?.currency || invoice?.currency || "SAR",
+        fee: payment.fee || null,
+        sourceType: source.type || "creditcard",
+        cardBrand: source.company || null,
+        last4: cardNumber.slice(-4) || null,
+        rawResponse: safePaymentSnapshot(payment),
+        rawProviderResponse: safePaymentSnapshot(payment),
+        processedAt: now,
+        createdAt: now,
+      },
+      $set: { status, updatedAt: now },
+    },
+    { upsert: true },
+  );
+}
+
 export async function verifyAndPersistPayment(paymentId) {
   if (!paymentId) {
     return { success: false, status: 400, message: "Missing Moyasar payment ID." };
@@ -62,15 +147,20 @@ export async function verifyAndPersistPayment(paymentId) {
   const { db } = await connectToDatabase();
   await seedPlans(db);
 
-  const existingPayment = await db.collection("payments").findOne({ paymentId });
+  const existingPayment = await findExistingPayment(db, paymentId);
   if (existingPayment) {
-    const subscription = await db.collection("subscriptions").findOne({ userId: existingPayment.userId });
+    if (existingPayment.status !== "paid") {
+      return { success: false, status: 400, message: `Payment status is "${existingPayment.status}".` };
+    }
+    const subscription = await db.collection("subscriptions").findOne({ orgId: existingPayment.orgId });
     return {
       success: true,
       alreadyVerified: true,
       paymentId,
       orderId: existingPayment.orderId,
       userId: existingPayment.userId,
+      orgId: existingPayment.orgId,
+      invoiceId: existingPayment.invoiceId,
       plan: existingPayment.planId,
       planName: subscription?.planName || existingPayment.planId,
       amount: existingPayment.amountHalalas,
@@ -81,28 +171,40 @@ export async function verifyAndPersistPayment(paymentId) {
 
   const payment = await fetchMoyasarPayment(paymentId);
   const metadata = getPaymentMetadata(payment);
-  const orderId = metadata.orderId;
-  const userId = metadata.userId;
-  const planId = metadata.planId;
+  const orderId = metadataValue(metadata, "orderId", "order_id");
+  const invoiceId = metadataValue(metadata, "invoiceId", "invoice_id");
+  const userId = metadataValue(metadata, "userId", "user_id");
+  const orgId = metadataValue(metadata, "orgId", "org_id");
+  const planId = metadataValue(metadata, "planId", "plan_id");
 
-  if (!orderId || !userId || !planId) {
-    return { success: false, status: 400, message: "Payment metadata is missing orderId, userId, or planId." };
+  if (!orderId || !invoiceId || !userId || !orgId || !planId) {
+    return { success: false, status: 400, message: "Payment metadata is missing order, invoice, user, organization, or plan details." };
   }
 
   const order = await db.collection("orders").findOne({ orderId });
   if (!order) {
     return { success: false, status: 404, message: "Order not found for this payment." };
   }
+  const invoice = await db.collection("invoices").findOne({ invoiceId: order.invoiceId || invoiceId });
+  if (!invoice) {
+    return { success: false, status: 404, message: "Invoice not found for this payment." };
+  }
+
+  if (order.userId !== userId || order.orgId !== orgId || order.planId !== planId || invoice.invoiceId !== invoiceId) {
+    return { success: false, status: 400, message: "Payment metadata does not match the checkout order." };
+  }
 
   if (order.status === "paid") {
     const paymentRecord = await db.collection("payments").findOne({ orderId });
-    const subscription = await db.collection("subscriptions").findOne({ userId: order.userId });
+    const subscription = await db.collection("subscriptions").findOne({ orgId: order.orgId });
     return {
       success: true,
       alreadyVerified: true,
       paymentId: paymentRecord?.paymentId || paymentId,
       orderId,
       userId: order.userId,
+      orgId: order.orgId,
+      invoiceId: order.invoiceId,
       plan: order.planId,
       planName: order.planName,
       amount: order.amountHalalas,
@@ -111,15 +213,21 @@ export async function verifyAndPersistPayment(paymentId) {
     };
   }
 
-  const plan = await db.collection("plans").findOne({ planId: order.planId, isActive: true });
+  const plan = await getActivePlan(db, order.planId);
   if (!plan) {
     return { success: false, status: 400, message: "The selected plan is no longer active." };
   }
 
   if (payment.status !== "paid") {
+    const status = payment.status === "failed" ? "failed" : payment.status || "pending";
+    await persistFailedPayment(db, { payment, order, invoice, status });
     await db.collection("orders").updateOne(
       { orderId },
-      { $set: { status: payment.status === "failed" ? "failed" : "pending", moyasarPaymentId: payment.id, updatedAt: new Date() } },
+      { $set: { status, moyasarPaymentId: payment.id, updatedAt: new Date() } },
+    );
+    await db.collection("invoices").updateOne(
+      { invoiceId: invoice.invoiceId },
+      { $set: { status: status === "failed" ? "failed" : "pending", moyasarPaymentId: payment.id, updatedAt: new Date() } },
     );
     return { success: false, status: 400, message: `Payment status is "${payment.status}".` };
   }
@@ -138,36 +246,85 @@ export async function verifyAndPersistPayment(paymentId) {
 
   const source = payment.source || {};
   const cardNumber = typeof source.number === "string" ? source.number : "";
+  const moyasarTokenId = getTokenFromSource(source);
 
   const paymentRecord = {
+    _id: createId("pay"),
     paymentId: payment.id,
+    moyasarPaymentId: payment.id,
     orderId,
+    invoiceId: invoice.invoiceId,
     userId: order.userId,
+    orgId: order.orgId,
     planId: order.planId,
     provider: "moyasar",
     status: "paid",
+    amount: payment.amount,
     amountHalalas: payment.amount,
     currency: payment.currency,
+    fee: payment.fee || null,
+    sourceType: source.type || "creditcard",
     paymentMethod: source.type || "creditcard",
     cardBrand: source.company || null,
+    last4: cardNumber.slice(-4) || null,
     cardLast4: cardNumber.slice(-4) || null,
+    rawResponse: safePaymentSnapshot(payment),
     rawProviderResponse: safePaymentSnapshot(payment),
+    processedAt: now,
     verifiedAt: now,
     createdAt: now,
     updatedAt: now,
   };
 
-  await db.collection("payments").insertOne(paymentRecord);
+  await db.collection("payments").updateOne(
+    { moyasarPaymentId: payment.id },
+    { $setOnInsert: paymentRecord, $set: { status: "paid", updatedAt: now } },
+    { upsert: true },
+  );
   await db.collection("orders").updateOne(
     { orderId },
-    { $set: { status: "paid", moyasarPaymentId: payment.id, updatedAt: now } },
+    { $set: { status: "paid", moyasarPaymentId: payment.id, processedAt: now, updatedAt: now } },
+  );
+  await db.collection("invoices").updateOne(
+    { invoiceId: invoice.invoiceId },
+    { $set: { status: "paid", moyasarPaymentId: payment.id, paidAt: now, updatedAt: now } },
   );
 
+  let paymentMethodId = null;
+  if (moyasarTokenId) {
+    paymentMethodId = createId("pm");
+    await db.collection("paymentMethods").updateOne(
+      { orgId: order.orgId, userId: order.userId, moyasarTokenId },
+      {
+        $set: {
+          brand: source.company || null,
+          last4: cardNumber.slice(-4) || null,
+          expiryMonth: source.month || source.expiry_month || null,
+          expiryYear: source.year || source.expiry_year || null,
+          status: "active",
+          updatedAt: now,
+        },
+        $setOnInsert: {
+          _id: paymentMethodId,
+          orgId: order.orgId,
+          userId: order.userId,
+          moyasarTokenId,
+          createdAt: now,
+        },
+      },
+      { upsert: true },
+    );
+    const saved = await db.collection("paymentMethods").findOne({ orgId: order.orgId, userId: order.userId, moyasarTokenId });
+    paymentMethodId = saved?._id || paymentMethodId;
+  }
+
   const subscription = {
+    orgId: order.orgId,
     userId: order.userId,
-    planId: plan.planId,
+    planId: plan.slug || plan.planId,
     planName: plan.name,
     status: "active",
+    billingMode: "automatic",
     amountSar: plan.priceSar,
     amountHalalas: plan.amountHalalas,
     currency: "SAR",
@@ -175,22 +332,42 @@ export async function verifyAndPersistPayment(paymentId) {
     startsAt: now,
     currentPeriodStart: now,
     currentPeriodEnd: periodEnd,
+    nextBillingDate: periodEnd,
+    cancelAtPeriodEnd: false,
+    gracePeriodEndsAt: null,
+    retryCount: 0,
+    lastPaymentStatus: "paid",
     paymentId: payment.id,
+    paymentMethodId,
     orderId,
-    buildingLimit: plan.buildingLimit,
-    labourLimit: plan.labourLimit,
+    maxBuildings: plan.maxBuildings,
+    maxLabourUsers: plan.maxLabourUsers,
+    buildingLimit: plan.maxBuildings,
+    labourLimit: plan.maxLabourUsers,
     updatedAt: now,
   };
 
   await db.collection("subscriptions").updateOne(
-    { userId: order.userId },
+    { orgId: order.orgId },
     { $set: subscription, $setOnInsert: { createdAt: now } },
     { upsert: true },
   );
 
   await db.collection("users").updateOne(
     { _id: order.userId },
-    { $set: { status: "active", updatedAt: now } },
+    { $set: { status: "active", orgId: order.orgId, updatedAt: now } },
+  );
+  await db.collection("organizations").updateOne(
+    { _id: order.orgId },
+    {
+      $set: {
+        ownerUserId: order.userId,
+        planId: plan.slug || plan.planId,
+        subscriptionStatus: "active",
+        status: "active",
+        updatedAt: now,
+      },
+    },
   );
 
   return {
@@ -198,8 +375,10 @@ export async function verifyAndPersistPayment(paymentId) {
     alreadyVerified: false,
     paymentId: payment.id,
     orderId,
+    invoiceId: invoice.invoiceId,
     userId: order.userId,
-    plan: plan.planId,
+    orgId: order.orgId,
+    plan: plan.slug || plan.planId,
     planName: plan.name,
     amount: payment.amount,
     currency: payment.currency,

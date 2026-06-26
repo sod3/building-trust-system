@@ -63,12 +63,15 @@ interface MoyasarConfig {
 
 type CheckoutOrder = {
   orderId: string;
+  invoiceId: string;
   userId: string;
+  orgId: string;
   planId: string;
   planName: string;
   amountHalalas: number;
   currency: string;
   description: string;
+  metadata?: Record<string, string>;
 };
 
 function Checkout() {
@@ -82,6 +85,8 @@ function Checkout() {
     ownerName: user?.name || "",
     email: user?.email || "",
     phone: "",
+    companyName: "",
+    password: "",
   });
   const [order, setOrder] = useState<CheckoutOrder | null>(null);
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
@@ -132,10 +137,17 @@ function Checkout() {
 
         // Moyasar redirects here after payment, appending ?id=&status=&message=
         callback_url: callbackUrl,
-        metadata: {
+        metadata: activeOrder.metadata || {
           orderId: activeOrder.orderId,
+          order_id: activeOrder.orderId,
+          invoiceId: activeOrder.invoiceId,
+          invoice_id: activeOrder.invoiceId,
           userId: activeOrder.userId,
+          user_id: activeOrder.userId,
+          orgId: activeOrder.orgId,
+          org_id: activeOrder.orgId,
           planId: activeOrder.planId,
+          plan_id: activeOrder.planId,
         },
 
         // creditcard covers mada, Visa, and Mastercard
@@ -177,7 +189,7 @@ function Checkout() {
     setIsCreatingOrder(true);
 
     try {
-      const result = await apiFetch<CheckoutOrder>("/api/checkout/create-order", {
+      const result = await apiFetch<CheckoutOrder>("/api/checkout/initiate", {
         method: "POST",
         body: JSON.stringify({ planId: planKey, ...ownerInfo }),
       });
@@ -334,6 +346,27 @@ function Checkout() {
                   required
                 />
               </label>
+              <label className="text-sm sm:col-span-2">
+                <span className="mb-1 block text-xs font-medium text-muted-foreground">Company / Building Group</span>
+                <input
+                  value={ownerInfo.companyName}
+                  onChange={(event) => setOwnerInfo((current) => ({ ...current, companyName: event.target.value }))}
+                  className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+                  placeholder="Riyadh Tower Group"
+                  required
+                />
+              </label>
+              <label className="text-sm sm:col-span-2">
+                <span className="mb-1 block text-xs font-medium text-muted-foreground">Password</span>
+                <input
+                  type="password"
+                  value={ownerInfo.password}
+                  onChange={(event) => setOwnerInfo((current) => ({ ...current, password: event.target.value }))}
+                  className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+                  minLength={8}
+                  required
+                />
+              </label>
             </div>
             {checkoutError && (
               <div className="mt-3 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
@@ -342,7 +375,7 @@ function Checkout() {
             )}
             <button
               type="submit"
-              disabled={isCreatingOrder || !ownerInfo.ownerName || !ownerInfo.email}
+              disabled={isCreatingOrder || !ownerInfo.ownerName || !ownerInfo.email || !ownerInfo.phone || !ownerInfo.companyName || ownerInfo.password.length < 8}
               className="mt-4 h-11 w-full rounded-xl bg-navy text-sm font-semibold text-white transition hover:bg-navy/90 disabled:opacity-60"
             >
               {order ? "Refresh Payment Form" : isCreatingOrder ? "Preparing Secure Checkout..." : "Prepare Secure Checkout"}

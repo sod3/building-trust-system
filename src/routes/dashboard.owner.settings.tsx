@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Save, User, Bell, Globe } from "lucide-react";
 import { PageHeader, Card } from "@/components/dashboard/ui";
 import { useAuth } from "@/lib/auth-context";
-import { mockOwners } from "@/lib/mock-data";
+import { apiFetch } from "@/lib/api-client";
 import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard/owner/settings")({
@@ -14,14 +14,26 @@ export const Route = createFileRoute("/dashboard/owner/settings")({
 function OwnerSettings() {
   const { user } = useAuth();
   const { t } = useLang();
-  const owner = mockOwners.find(o => o.id === user?.ownerId) || mockOwners[0];
-  const [name, setName] = useState(owner.name);
-  const [company, setCompany] = useState(owner.company);
-  const [phone, setPhone] = useState(owner.phone);
-  const [email, setEmail] = useState(owner.email);
+  const [name, setName] = useState(user?.name || "");
+  const [company, setCompany] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState(user?.email || "");
+  const [planName, setPlanName] = useState("Owner");
   const [language, setLanguage] = useState("English");
   const [notifications, setNotifications] = useState({ email: true, reports: true, overdue: true });
   const [toast, setToast] = useState(false);
+
+  useEffect(() => {
+    apiFetch<{ user: any; organization?: any; subscription?: any; plan?: any }>("/api/auth/me")
+      .then((result) => {
+        setName(result.user?.name || "");
+        setEmail(result.user?.email || "");
+        setPhone(result.user?.phone || "");
+        setCompany(result.organization?.name || "");
+        setPlanName(result.plan?.name || result.subscription?.planName || "Owner");
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -35,7 +47,7 @@ function OwnerSettings() {
           </div>
           <div>
             <div className="font-semibold">{name}</div>
-            <div className="text-xs text-muted-foreground">{owner.plan} {t("common.owner", { fallback: "Owner" })}</div>
+            <div className="text-xs text-muted-foreground">{planName} {t("common.owner", { fallback: "Owner" })}</div>
           </div>
         </div>
         <div className="space-y-4">
@@ -112,7 +124,7 @@ function OwnerSettings() {
         >
           <Save className="h-4 w-4" /> {t("common.save", { fallback: "Save Changes" })}
         </button>
-        <span className="text-xs text-muted-foreground">Frontend demo — not persisted across sessions.</span>
+        <span className="text-xs text-muted-foreground">Profile editing can be connected to a settings API when needed.</span>
       </div>
 
       {toast && (

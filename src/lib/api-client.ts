@@ -40,7 +40,7 @@ export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise
     headers.set("Authorization", `Bearer ${token}`);
   }
 
-  const response = await fetch(path, { ...init, headers });
+  const response = await fetch(path, { credentials: "same-origin", ...init, headers });
   const payload = await response.json().catch(() => ({}));
 
   if (!response.ok || payload.success === false) {

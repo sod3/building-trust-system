@@ -1,7 +1,7 @@
 // Simplified role context — now wraps AuthContext for backward compat
 // The real auth state lives in AuthContext (auth-context.tsx)
 import { useAuth } from "./auth-context";
-export type { AppRole as Role } from "./mock-data";
+export type { AppRole as Role } from "./auth-context";
 
 export function useRole() {
   const { user } = useAuth();

@@ -1,8 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Building2, Eye, EyeOff, ArrowRight, ShieldCheck, Lock, CheckCircle2, X } from "lucide-react";
-import { useAuth, demoCredentials } from "@/lib/auth-context";
-import type { AppRole } from "@/lib/mock-data";
+import { useAuth, demoCredentials, type AppRole } from "@/lib/auth-context";
 import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/login")({

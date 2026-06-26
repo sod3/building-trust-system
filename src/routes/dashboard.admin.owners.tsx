@@ -5,7 +5,6 @@ import {
   PageHeader, StatusPill, Card, Modal, FormInput, FormSelect, Btn, Toast, EmptyState,
 } from "@/components/dashboard/ui";
 import { apiFetch, getAuthToken } from "@/lib/api-client";
-import { mockOwners, mockBuildings, pricingPlans, type MockOwner, type PlanType, type OwnerStatus } from "@/lib/mock-data";
 import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard/admin/owners")({
@@ -13,13 +12,29 @@ export const Route = createFileRoute("/dashboard/admin/owners")({
   component: AdminOwners,
 });
 
+type PlanType = "Starter" | "Professional" | "Enterprise";
+type OwnerStatus = "Active" | "Trial" | "Suspended";
+type AdminOwner = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  plan: PlanType;
+  status: OwnerStatus;
+  buildingCount: number;
+  monthlyPayment: number;
+  joinedDate: string;
+  nextBilling: string;
+};
+
 function AdminOwners() {
   const { t, lang } = useLang();
-  const [owners, setOwners] = useState<MockOwner[]>(mockOwners);
+  const [owners, setOwners] = useState<AdminOwner[]>([]);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<"All" | OwnerStatus>("All");
   const [showAdd, setShowAdd] = useState(false);
-  const [editOwner, setEditOwner] = useState<MockOwner | null>(null);
+  const [editOwner, setEditOwner] = useState<AdminOwner | null>(null);
   const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
 
   // Form state
@@ -35,17 +50,17 @@ function AdminOwners() {
           name: owner.name,
           email: owner.email,
           phone: owner.phone || "",
-          company: owner.name,
+          company: owner.organization?.name || owner.name,
           plan: (owner.plan === "No Plan" ? "Starter" : owner.plan) as PlanType,
           status: owner.subscriptionStatus === "active" ? "Active" : owner.status === "suspended" ? "Suspended" : "Trial",
-          buildingIds: Array.from({ length: owner.buildingCount || 0 }, (_, index) => `BLD-${index}`),
+          buildingCount: owner.buildingCount || 0,
           monthlyPayment: owner.totalPaidSar || 0,
           joinedDate: owner.createdAt ? new Date(owner.createdAt).toLocaleDateString() : "",
           nextBilling: owner.currentPeriodEnd ? new Date(owner.currentPeriodEnd).toLocaleDateString() : "",
         })));
       })
       .catch(() => {
-        showToast("Could not load MongoDB owners. Showing demo data.", "error");
+        showToast("Could not load owners.", "error");
       });
   }, []);
 
@@ -63,7 +78,7 @@ function AdminOwners() {
   function handleAdd() {
     if (!form.name || !form.email) return;
     const planPriceMap: Record<PlanType, number> = { Starter: 299, Professional: 899, Enterprise: 1999 };
-    const newOwner: MockOwner = {
+    const newOwner: AdminOwner = {
       id: `OWN-${Date.now()}`,
       name: form.name,
       email: form.email,
@@ -71,7 +86,7 @@ function AdminOwners() {
       company: form.company,
       plan: form.plan,
       status: form.status,
-      buildingIds: [],
+      buildingCount: 0,
       monthlyPayment: planPriceMap[form.plan],
       joinedDate: "Jun 2026",
       nextBilling: "Jul 2026",
@@ -82,7 +97,7 @@ function AdminOwners() {
     showToast(`Owner ${form.name} added successfully`);
   }
 
-  function handleEdit(o: MockOwner) {
+  function handleEdit(o: AdminOwner) {
     setEditOwner(o);
     setForm({ name: o.name, email: o.email, phone: o.phone, company: o.company, plan: o.plan, status: o.status });
   }
@@ -104,8 +119,6 @@ function AdminOwners() {
     Professional: "bg-indigo-50 text-indigo-700 ring-indigo-200",
     Enterprise: "bg-navy/10 text-navy ring-navy/20",
   };
-
-  const ownerBuildings = (ownerId: string) => mockBuildings.filter(b => b.ownerId === ownerId);
 
   return (
     <div className="space-y-6">
@@ -188,7 +201,7 @@ function AdminOwners() {
                     <td className="py-3.5">
                       <div className="flex items-center gap-1.5">
                         <Building2 className="h-3.5 w-3.5 text-muted-foreground" />
-                        <span>{ownerBuildings(o.id).length}</span>
+                        <span>{o.buildingCount}</span>
                       </div>
                     </td>
                     <td className="py-3.5 font-semibold">SAR {o.monthlyPayment.toLocaleString()}</td>

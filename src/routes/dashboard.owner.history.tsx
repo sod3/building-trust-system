@@ -1,29 +1,34 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { PageHeader, Card, StatusPill, ProgressBar } from "@/components/dashboard/ui";
-import { useAuth } from "@/lib/auth-context";
-import { mockOwners, mockReports, mockBuildings, mockLabour } from "@/lib/mock-data";
+import { useEffect, useState } from "react";
+import { PageHeader, Card, StatusPill, ProgressBar, EmptyState } from "@/components/dashboard/ui";
+import { apiFetch } from "@/lib/api-client";
 import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard/owner/history")({
-  head: () => ({ meta: [{ title: "Report History — Owner Dashboard" }] }),
+  head: () => ({ meta: [{ title: "Report History - Owner Dashboard" }] }),
   component: OwnerHistory,
 });
 
 function OwnerHistory() {
-  const { user } = useAuth();
   const { t } = useLang();
-  const owner = mockOwners.find(o => o.id === user?.ownerId) || mockOwners[0];
-  const myBuildings = mockBuildings.filter(b => owner.buildingIds.includes(b.id));
-  const allReports = mockReports.filter(r => r.ownerId === owner.id);
-
+  const [reports, setReports] = useState<any[]>([]);
+  const [buildings, setBuildings] = useState<any[]>([]);
   const [filterBuilding, setFilterBuilding] = useState("All");
   const [filterStatus, setFilterStatus] = useState("All");
 
-  const filtered = allReports.filter(r => {
-    const matchB = filterBuilding === "All" || r.buildingId === filterBuilding;
-    const matchS = filterStatus === "All" || r.status === filterStatus;
-    return matchB && matchS;
+  useEffect(() => {
+    apiFetch<{ reports: any[] }>("/api/daily-reports/history")
+      .then((result) => setReports(result.reports || []))
+      .catch(() => setReports([]));
+    apiFetch<{ buildings: any[] }>("/api/buildings")
+      .then((result) => setBuildings(result.buildings || []))
+      .catch(() => setBuildings([]));
+  }, []);
+
+  const filtered = reports.filter((report) => {
+    const matchBuilding = filterBuilding === "All" || report.buildingId === filterBuilding;
+    const matchStatus = filterStatus === "All" || report.status === filterStatus;
+    return matchBuilding && matchStatus;
   });
 
   return (
@@ -33,50 +38,46 @@ function OwnerHistory() {
         subtitle={t("owner.history.subtitle", { fallback: "All past daily reports from your buildings and labour." })}
       />
 
-      {/* Filters */}
       <Card>
         <div className="flex flex-wrap items-center gap-3">
           <div>
-            <label className="block text-xs text-muted-foreground mb-1">{t("common.building", { fallback: "Building" })}</label>
+            <label className="mb-1 block text-xs text-muted-foreground">{t("common.building", { fallback: "Building" })}</label>
             <select
               value={filterBuilding}
-              onChange={e => setFilterBuilding(e.target.value)}
-              className="h-9 rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-accent transition"
+              onChange={(event) => setFilterBuilding(event.target.value)}
+              className="h-9 rounded-xl border border-border bg-background px-3 text-sm outline-none transition focus:border-accent"
             >
               <option value="All">{t("owner.history.all_buildings", { fallback: "All Buildings" })}</option>
-              {myBuildings.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+              {buildings.map((building) => <option key={building.id} value={building.id}>{building.name}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-xs text-muted-foreground mb-1">{t("common.status", { fallback: "Status" })}</label>
-            <div className="flex items-center gap-2">
-              {["All", "Submitted", "Approved", "Pending", "Missed"].map(s => (
+            <label className="mb-1 block text-xs text-muted-foreground">{t("common.status", { fallback: "Status" })}</label>
+            <div className="flex flex-wrap items-center gap-2">
+              {["All", "Submitted", "Approved", "Pending", "Missed"].map((status) => (
                 <button
-                  key={s}
-                  onClick={() => setFilterStatus(s)}
-                  className={`rounded-xl px-3 py-1.5 text-xs font-medium transition ${filterStatus === s ? "bg-navy text-white" : "border border-border text-muted-foreground hover:bg-secondary"}`}
+                  key={status}
+                  onClick={() => setFilterStatus(status)}
+                  className={`rounded-xl px-3 py-1.5 text-xs font-medium transition ${filterStatus === status ? "bg-navy text-white" : "border border-border text-muted-foreground hover:bg-secondary"}`}
                 >
-                  {s === "All" ? t("common.all", { fallback: "All" }) : t(`owner.reports.${s.toLowerCase()}`, { fallback: s })}
+                  {status}
                 </button>
               ))}
             </div>
           </div>
-          <div className="ml-auto text-xs text-muted-foreground self-end pb-0.5">{filtered.length} {t("common.records", { fallback: "records" })}</div>
+          <div className="ml-auto self-end pb-0.5 text-xs text-muted-foreground">{filtered.length} {t("common.records", { fallback: "records" })}</div>
         </div>
       </Card>
 
-      {/* Table */}
       {filtered.length === 0 ? (
         <Card>
-          <div className="py-12 text-center text-sm text-muted-foreground">
-            {t("owner.history.no_match", { fallback: "No reports match your filters." })}
-          </div>
+          <EmptyState title={t("owner.history.no_match", { fallback: "No reports match your filters." })} />
         </Card>
       ) : (
         <Card>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="text-start text-[11px] uppercase tracking-wider text-muted-foreground border-b border-border">
+              <thead className="border-b border-border text-start text-[11px] uppercase tracking-wider text-muted-foreground">
                 <tr>
                   <th className="pb-3">{t("common.date", { fallback: "Date" })}</th>
                   <th className="pb-3">{t("common.building", { fallback: "Building" })}</th>
@@ -88,29 +89,25 @@ function OwnerHistory() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {filtered.map(r => (
-                  <tr key={r.id} className="hover:bg-secondary/30 transition">
-                    <td className="py-3 text-xs text-muted-foreground whitespace-nowrap">{r.date}</td>
-                    <td className="py-3 font-medium">{r.buildingName}</td>
-                    <td className="py-3 text-muted-foreground">{r.labourName}</td>
+                {filtered.map((report) => (
+                  <tr key={report.id} className="transition hover:bg-secondary/30">
+                    <td className="whitespace-nowrap py-3 text-xs text-muted-foreground">{report.date}</td>
+                    <td className="py-3 font-medium">{report.buildingName}</td>
+                    <td className="py-3 text-muted-foreground">{report.labourName}</td>
                     <td className="py-3">
-                      <span className="text-emerald-700 font-semibold">{r.completedTasks}</span>
-                      <span className="text-muted-foreground">/{r.totalTasks}</span>
+                      <span className="font-semibold text-emerald-700">{report.completedTasks}</span>
+                      <span className="text-muted-foreground">/{report.totalTasks}</span>
                     </td>
-                    <td className="py-3 min-w-[120px]">
+                    <td className="min-w-[120px] py-3">
                       <div className="flex items-center gap-2">
                         <div className="flex-1">
-                          <ProgressBar
-                            value={r.completedTasks}
-                            max={r.totalTasks}
-                            color={r.completedTasks === r.totalTasks ? "emerald" : r.completedTasks > 0 ? "amber" : "rose"}
-                          />
+                          <ProgressBar value={report.completedTasks} max={report.totalTasks || 1} color={report.completedTasks === report.totalTasks ? "emerald" : report.completedTasks > 0 ? "amber" : "rose"} />
                         </div>
-                        <span className="text-xs font-medium">{Math.round((r.completedTasks / r.totalTasks) * 100)}%</span>
+                        <span className="text-xs font-medium">{report.totalTasks ? Math.round((report.completedTasks / report.totalTasks) * 100) : 0}%</span>
                       </div>
                     </td>
-                    <td className="py-3 text-xs text-muted-foreground whitespace-nowrap">{r.submittedAt}</td>
-                    <td className="py-3"><StatusPill status={r.status} /></td>
+                    <td className="whitespace-nowrap py-3 text-xs text-muted-foreground">{report.submittedAt ? new Date(report.submittedAt).toLocaleString() : "-"}</td>
+                    <td className="py-3"><StatusPill status={report.status} /></td>
                   </tr>
                 ))}
               </tbody>

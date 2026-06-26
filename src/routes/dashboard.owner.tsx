@@ -7,7 +7,6 @@ import {
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
 import { apiFetch, getAuthToken } from "@/lib/api-client";
-import { mockOwners } from "@/lib/mock-data";
 import { useState, useEffect } from "react";
 import { useLang } from "@/lib/i18n";
 
@@ -34,6 +33,8 @@ function OwnerLayout() {
   const pathname = useRouterState({ select: s => s.location.pathname });
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const [subscription, setSubscription] = useState<any | null>(null);
+  const [organization, setOrganization] = useState<any | null>(null);
+  const [usage, setUsage] = useState<any | null>(null);
   
   const navItems = getNavItems(t);
 
@@ -42,33 +43,41 @@ function OwnerLayout() {
     setMobileMoreOpen(false);
   }, [pathname]);
 
-  const ownerData = mockOwners.find(o => o.id === user?.ownerId) || mockOwners[0];
-  const ownerPlan = subscription?.planName || ownerData.plan;
-  const ownerBuildingLimit = subscription?.buildingLimit || ownerData.buildingIds.length;
+  const ownerName = user?.name || "Owner";
+  const ownerCompany = organization?.name || "FacilityOS Organization";
+  const ownerPlan = subscription?.planName || "No Plan";
+  const ownerBuildingLimit = usage?.buildingLimit ?? subscription?.buildingLimit ?? 0;
+  const ownerBuildingCount = usage?.buildingsUsed ?? 0;
 
   useEffect(() => {
     if (!user || user.role !== "owner" || !getAuthToken()) return;
 
     let cancelled = false;
-    apiFetch<{ access: "active" | "inactive"; subscription: any | null }>("/api/owner/subscription")
+    apiFetch<{ access: "active" | "inactive"; subscription: any | null; organization?: any }>("/api/owner/subscription")
       .then((result) => {
         if (cancelled) return;
         setSubscription(result.subscription);
-        if (result.access !== "active") {
-          localStorage.removeItem("ownerAccess");
-          navigate({ to: "/pricing" });
+        setOrganization(result.organization || null);
+        if (result.subscription?.status === "suspended" && !pathname.startsWith("/dashboard/owner/subscription")) {
+          navigate({ to: "/dashboard/owner/subscription" });
         }
       })
       .catch(() => {
-        if (!cancelled && localStorage.getItem("ownerAccess") !== "active") {
+        if (!cancelled) {
           navigate({ to: "/pricing" });
         }
       });
 
+    apiFetch<{ usage: any }>("/api/owner/usage")
+      .then((result) => {
+        if (!cancelled) setUsage(result.usage);
+      })
+      .catch(() => {});
+
     return () => {
       cancelled = true;
     };
-  }, [navigate, user]);
+  }, [navigate, pathname, user]);
 
   function handleLogout() {
     logout();
@@ -108,8 +117,8 @@ function OwnerLayout() {
         {/* Owner info */}
         <div className="mx-3 mt-3 rounded-xl bg-white/5 border border-white/10 px-3 py-2.5">
           <div className="text-[11px] text-white/50 uppercase tracking-wider mb-1">{t("dashboard.owner.hub", { fallback: "Your Building Operations Hub" })}</div>
-          <div className="font-semibold text-sm text-white">{ownerData.company}</div>
-          <div className="text-xs text-white/60 mt-0.5">{t(`pricing.plan.${String(ownerPlan).toLowerCase()}`, { fallback: ownerPlan })} {t("common.plan", { fallback: "Plan" })} · {ownerData.buildingIds.length}/{ownerBuildingLimit} {t("common.buildings", { fallback: "Buildings" })}</div>
+          <div className="font-semibold text-sm text-white">{ownerCompany}</div>
+          <div className="text-xs text-white/60 mt-0.5">{t(`pricing.plan.${String(ownerPlan).toLowerCase()}`, { fallback: ownerPlan })} {t("common.plan", { fallback: "Plan" })} · {ownerBuildingCount}/{ownerBuildingLimit ?? "∞"} {t("common.buildings", { fallback: "Buildings" })}</div>
         </div>
 
         {/* Nav */}
@@ -141,10 +150,10 @@ function OwnerLayout() {
         <div className="border-t border-white/10 p-4 space-y-2">
           <div className="flex items-center gap-3 rounded-xl bg-white/5 px-3 py-2.5">
             <div className="grid h-8 w-8 place-items-center rounded-full bg-white/15 text-xs font-bold text-white">
-              {ownerData.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
+              {ownerName.split(" ").map(n => n[0]).join("").slice(0, 2)}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="truncate text-xs font-semibold text-white">{ownerData.name}</div>
+              <div className="truncate text-xs font-semibold text-white">{ownerName}</div>
               <div className="text-[10px] text-white/50">{t(`pricing.plan.${String(ownerPlan).toLowerCase()}`, { fallback: ownerPlan })} {t("common.owner", { fallback: "Owner" })}</div>
             </div>
           </div>
@@ -181,9 +190,9 @@ function OwnerLayout() {
           </button>
           <div className="hidden md:flex items-center gap-2 rounded-full border border-border bg-surface-2/50 py-1 pl-1 pr-3">
             <div className="grid h-7 w-7 place-items-center rounded-full bg-accent text-[11px] font-semibold text-white">
-              {ownerData.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
+              {ownerName.split(" ").map(n => n[0]).join("").slice(0, 2)}
             </div>
-            <span className="text-xs font-medium">{ownerData.name}</span>
+            <span className="text-xs font-medium">{ownerName}</span>
           </div>
         </header>
         

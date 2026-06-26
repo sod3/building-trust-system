@@ -1,31 +1,32 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Eye, Clock, AlertTriangle, CheckCircle2 } from "lucide-react";
-import { PageHeader, Card, StatusPill, ProgressBar, Modal, Btn } from "@/components/dashboard/ui";
-import { useAuth } from "@/lib/auth-context";
-import { mockOwners, mockReports, type MockReport } from "@/lib/mock-data";
+import { PageHeader, Card, StatusPill, ProgressBar, Modal, Btn, EmptyState } from "@/components/dashboard/ui";
+import { apiFetch } from "@/lib/api-client";
 import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard/owner/reports")({
-  head: () => ({ meta: [{ title: "Today's Reports — Owner Dashboard" }] }),
+  head: () => ({ meta: [{ title: "Today's Reports - Owner Dashboard" }] }),
   component: OwnerReports,
 });
 
 function OwnerReports() {
-  const { user } = useAuth();
   const { t } = useLang();
-  const owner = mockOwners.find(o => o.id === user?.ownerId) || mockOwners[0];
-  const todayReports = mockReports.filter(r => r.ownerId === owner.id && r.date === "Jun 24, 2026");
-  const [selected, setSelected] = useState<MockReport | null>(null);
+  const [reports, setReports] = useState<any[]>([]);
+  const [selected, setSelected] = useState<any | null>(null);
+  const [error, setError] = useState("");
 
-  const completedTasks = ["Clean Entrance", "Check Elevator", "Remove Garbage", "Check Water Tank", "Check Lights", "Clean Stairs"];
-  const pendingTasks = ["Check Parking", "Security Gate Check"];
+  useEffect(() => {
+    apiFetch<{ reports: any[] }>("/api/daily-reports/today")
+      .then((result) => setReports(result.reports || []))
+      .catch((err) => setError(err instanceof Error ? err.message : "Could not load reports."));
+  }, []);
 
   const statusCounts = {
-    submitted: todayReports.filter(r => r.status === "Submitted").length,
-    approved: todayReports.filter(r => r.status === "Approved").length,
-    pending: todayReports.filter(r => r.status === "Pending").length,
-    missed: todayReports.filter(r => r.status === "Missed").length,
+    submitted: reports.filter((report) => report.status === "Submitted").length,
+    approved: reports.filter((report) => report.status === "Approved").length,
+    pending: reports.filter((report) => report.status === "Pending").length,
+    missed: reports.filter((report) => report.status === "Missed").length,
   };
 
   const statusBorder: Record<string, string> = {
@@ -39,81 +40,68 @@ function OwnerReports() {
     <div className="space-y-6">
       <PageHeader
         title={t("dashboard.owner.nav.reports", { fallback: "Today's Reports" })}
-        subtitle={`${t("owner.reports.subtitle", { fallback: "Daily report status for all your buildings —" })} ${new Date().toLocaleDateString(t("common.locale", { fallback: "en-GB" }), { weekday: "long", year: "numeric", month: "long", day: "numeric" })}`}
+        subtitle={`${t("owner.reports.subtitle", { fallback: "Daily report status for all your buildings -" })} ${new Date().toLocaleDateString(t("common.locale", { fallback: "en-GB" }), { weekday: "long", year: "numeric", month: "long", day: "numeric" })}`}
       />
 
-      {/* Quick status row */}
+      {error && <Card className="border-rose-200 bg-rose-50 text-sm text-rose-700">{error}</Card>}
+
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[
           { label: t("owner.reports.submitted", { fallback: "Submitted" }), value: statusCounts.submitted, icon: <CheckCircle2 className="h-4 w-4" />, cls: "text-sky-700 bg-sky-50 border-sky-200" },
           { label: t("owner.reports.approved", { fallback: "Approved" }), value: statusCounts.approved, icon: <CheckCircle2 className="h-4 w-4" />, cls: "text-emerald-700 bg-emerald-50 border-emerald-200" },
           { label: t("common.pending", { fallback: "Pending" }), value: statusCounts.pending, icon: <Clock className="h-4 w-4" />, cls: "text-amber-700 bg-amber-50 border-amber-200" },
           { label: t("owner.reports.missed", { fallback: "Missed" }), value: statusCounts.missed, icon: <AlertTriangle className="h-4 w-4" />, cls: "text-rose-700 bg-rose-50 border-rose-200" },
-        ].map(s => (
-          <div key={s.label} className={`flex items-center gap-3 rounded-2xl border px-4 py-3 ${s.cls}`}>
-            {s.icon}
+        ].map((status) => (
+          <div key={status.label} className={`flex items-center gap-3 rounded-2xl border px-4 py-3 ${status.cls}`}>
+            {status.icon}
             <div>
-              <div className="font-display text-2xl font-semibold">{s.value}</div>
-              <div className="text-xs font-medium">{s.label}</div>
+              <div className="font-display text-2xl font-semibold">{status.value}</div>
+              <div className="text-xs font-medium">{status.label}</div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Report cards */}
-      {todayReports.length === 0 ? (
+      {reports.length === 0 ? (
         <Card>
-          <div className="py-16 text-center">
-            <Clock className="h-12 w-12 mx-auto text-muted-foreground/40 mb-4" />
-            <h3 className="font-display text-lg font-semibold">{t("owner.overview.no_reports", { fallback: "No reports submitted yet today." })}</h3>
-          </div>
+          <EmptyState icon={<Clock className="h-6 w-6" />} title="No reports submitted yet today" body="Reports will appear as soon as labour users submit their checklist." />
         </Card>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {todayReports.map(r => (
-            <div
-              key={r.id}
-              className={`rounded-2xl border-2 bg-card p-5 hover:shadow-elevated transition-all ${statusBorder[r.status] || "border-border"}`}
-            >
-              {/* Header */}
-              <div className="flex items-start justify-between gap-2 mb-3">
+          {reports.map((report) => (
+            <div key={report.id} className={`rounded-2xl border-2 bg-card p-5 transition-all hover:shadow-elevated ${statusBorder[report.status] || "border-border"}`}>
+              <div className="mb-3 flex items-start justify-between gap-2">
                 <div>
-                  <div className="font-semibold">{r.buildingName}</div>
-                  <div className="text-xs text-muted-foreground mt-0.5">{r.labourName}</div>
+                  <div className="font-semibold">{report.buildingName}</div>
+                  <div className="mt-0.5 text-xs text-muted-foreground">{report.labourName}</div>
                 </div>
-                <StatusPill status={r.status} />
+                <StatusPill status={report.status} />
               </div>
 
-              {/* Progress */}
               <div className="mb-3">
-                <div className="flex items-center justify-between text-xs mb-1.5">
+                <div className="mb-1.5 flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">{t("owner.reports.task_completion", { fallback: "Task completion" })}</span>
-                  <span className="font-bold">{Math.round((r.completedTasks / r.totalTasks) * 100)}%</span>
+                  <span className="font-bold">{report.totalTasks ? Math.round((report.completedTasks / report.totalTasks) * 100) : 0}%</span>
                 </div>
-                <ProgressBar
-                  value={r.completedTasks}
-                  max={r.totalTasks}
-                  color={r.completedTasks === r.totalTasks ? "emerald" : r.completedTasks > 0 ? "amber" : "rose"}
-                />
+                <ProgressBar value={report.completedTasks} max={report.totalTasks || 1} color={report.completedTasks === report.totalTasks ? "emerald" : report.completedTasks > 0 ? "amber" : "rose"} />
               </div>
 
-              {/* Stats */}
-              <div className="grid grid-cols-2 gap-2 text-xs mb-4">
+              <div className="mb-4 grid grid-cols-2 gap-2 text-xs">
                 <div className="rounded-lg bg-secondary px-2.5 py-2">
                   <div className="text-muted-foreground">Completed</div>
-                  <div className="font-bold text-emerald-700">{r.completedTasks} tasks</div>
+                  <div className="font-bold text-emerald-700">{report.completedTasks} tasks</div>
                 </div>
                 <div className="rounded-lg bg-secondary px-2.5 py-2">
                   <div className="text-muted-foreground">Pending</div>
-                  <div className={`font-bold ${r.pendingTasks > 0 ? "text-amber-700" : "text-muted-foreground"}`}>{r.pendingTasks} tasks</div>
+                  <div className={`font-bold ${report.pendingTasks > 0 ? "text-amber-700" : "text-muted-foreground"}`}>{report.pendingTasks} tasks</div>
                 </div>
               </div>
 
-              <div className="text-xs text-muted-foreground mb-4">
-                Submitted: <span className="text-foreground font-medium">{r.submittedAt}</span>
+              <div className="mb-4 text-xs text-muted-foreground">
+                Submitted: <span className="font-medium text-foreground">{report.submittedAt ? new Date(report.submittedAt).toLocaleString() : "Pending"}</span>
               </div>
 
-              <Btn size="sm" variant="outline" className="w-full" onClick={() => setSelected(r)}>
+              <Btn size="sm" variant="outline" className="w-full" onClick={() => setSelected(report)}>
                 <Eye className="h-3.5 w-3.5" /> {t("owner.reports.view_full", { fallback: "View Full Report" })}
               </Btn>
             </div>
@@ -121,8 +109,7 @@ function OwnerReports() {
         </div>
       )}
 
-      {/* Detail Modal */}
-      <Modal open={!!selected} onClose={() => setSelected(null)} title={`Report — ${selected?.buildingName}`}>
+      <Modal open={!!selected} onClose={() => setSelected(null)} title={`Report - ${selected?.buildingName || ""}`}>
         {selected && (
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3 text-sm">
@@ -132,7 +119,7 @@ function OwnerReports() {
               </div>
               <div className="rounded-xl bg-secondary px-3 py-2.5">
                 <div className="text-xs text-muted-foreground">Submitted At</div>
-                <div className="font-medium">{selected.submittedAt}</div>
+                <div className="font-medium">{selected.submittedAt ? new Date(selected.submittedAt).toLocaleString() : "Pending"}</div>
               </div>
             </div>
 
@@ -141,33 +128,21 @@ function OwnerReports() {
                 <span className="font-semibold">{t("owner.reports.task_completion", { fallback: "Task completion" })}</span>
                 <StatusPill status={selected.status} />
               </div>
-              <ProgressBar value={selected.completedTasks} max={selected.totalTasks} color="emerald" />
-              <div className="mt-1 text-xs text-muted-foreground text-end">{selected.completedTasks}/{selected.totalTasks} tasks</div>
+              <ProgressBar value={selected.completedTasks} max={selected.totalTasks || 1} color="emerald" />
+              <div className="mt-1 text-end text-xs text-muted-foreground">{selected.completedTasks}/{selected.totalTasks} tasks</div>
             </div>
 
-            <div>
-              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">✅ Completed</div>
-              <div className="space-y-1.5">
-                {completedTasks.slice(0, selected.completedTasks).map(t => (
-                  <div key={t} className="flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200 px-3 py-2 text-sm text-emerald-800">
-                    <CheckCircle2 className="h-4 w-4 shrink-0" /> {t}
+            <div className="space-y-2">
+              {(selected.items || []).map((item: any, index: number) => (
+                <div key={`${item.title}-${index}`} className="rounded-xl border border-border px-3 py-2 text-sm">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="font-medium">{item.title}</span>
+                    <StatusPill status={item.status === "done" ? "Done" : item.status === "issue" ? "Issue" : "Not Done"} />
                   </div>
-                ))}
-              </div>
-            </div>
-
-            {selected.pendingTasks > 0 && (
-              <div>
-                <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">⏳ Pending</div>
-                <div className="space-y-1.5">
-                  {pendingTasks.slice(0, selected.pendingTasks).map(t => (
-                    <div key={t} className="flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-200 px-3 py-2 text-sm text-amber-800">
-                      <Clock className="h-4 w-4 shrink-0" /> {t}
-                    </div>
-                  ))}
+                  {item.note && <div className="mt-1 text-xs text-muted-foreground">{item.note}</div>}
                 </div>
-              </div>
-            )}
+              ))}
+            </div>
 
             <div className="flex justify-end gap-2">
               <Btn variant="secondary" onClick={() => setSelected(null)}>{t("common.close", { fallback: "Close" })}</Btn>

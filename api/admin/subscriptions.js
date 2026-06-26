@@ -15,6 +15,14 @@ export default async function handler(req, res) {
       .aggregate([
         {
           $lookup: {
+            from: "organizations",
+            localField: "orgId",
+            foreignField: "_id",
+            as: "orgRows",
+          },
+        },
+        {
+          $lookup: {
             from: "users",
             localField: "userId",
             foreignField: "_id",
@@ -34,6 +42,7 @@ export default async function handler(req, res) {
       success: true,
       subscriptions: subscriptions.map((subscription) => ({
         ...subscription,
+        organization: subscription.orgRows?.[0] || null,
         owner: subscription.ownerRows?.[0] || null,
       })),
     });

@@ -10,11 +10,9 @@
 //   1. Page loads → reads id, status, message from URL
 //   2. Calls verifyPayment(id) server function (uses MOYASAR_SECRET_KEY server-side)
 //   3. Server verifies: status, currency, and amount against allowed plans
-//   4. On success: stores access in localStorage, shows success UI
+//   4. On success: backend activates the account, sets a secure cookie, and shows success UI
 //   5. On failure: shows retry UI with link back to checkout
 //
-// localStorage keys set on success (temporary — replace with DB in Phase 2):
-//   ownerAccess: "active"
 //   paymentStatus: "paid"
 //   selectedPlan: "{planKey}"
 //   paymentId: "{moyasarPaymentId}"
@@ -92,11 +90,6 @@ function PaymentResult() {
             storeAuthSession(result.user, result.token, true);
           }
           // Store access state in localStorage (temporary — Phase 2 will use DB)
-          localStorage.setItem("ownerAccess", "active");
-          localStorage.setItem("paymentStatus", "paid");
-          localStorage.setItem("selectedPlan", result.plan);
-          localStorage.setItem("paymentId", result.paymentId);
-
           setState({ phase: "success", result });
         } else {
           setState({ phase: "failed", message: result.message || "Unable to verify payment." });

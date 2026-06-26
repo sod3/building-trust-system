@@ -1,5 +1,5 @@
 import { getQueryParam, requireMethod, sendError, sendJson } from "./_lib/http.js";
-import { publicUser, signJwt } from "./_lib/security.js";
+import { publicUser, setAuthCookie, signJwt } from "./_lib/security.js";
 import { connectToDatabase } from "./_lib/db.js";
 import { verifyAndPersistPayment } from "./_lib/payment.js";
 
@@ -16,7 +16,8 @@ export default async function handler(req, res) {
 
     const { db } = await connectToDatabase();
     const user = await db.collection("users").findOne({ _id: result.userId });
-    const token = user ? signJwt({ sub: user._id, role: user.role }) : null;
+    const token = user ? signJwt({ sub: user._id, role: user.role, orgId: user.orgId || result.orgId || null }) : null;
+    if (token) setAuthCookie(res, token);
 
     sendJson(res, 200, {
       success: true,
@@ -30,6 +31,8 @@ export default async function handler(req, res) {
       currency: result.currency,
       paymentId: result.paymentId,
       orderId: result.orderId,
+      invoiceId: result.invoiceId,
+      orgId: result.orgId,
       subscription: result.subscription,
     });
   } catch (error) {

@@ -1,6 +1,6 @@
 import { connectToDatabase } from "../_lib/db.js";
 import { readJsonBody, requireMethod, sendError, sendJson } from "../_lib/http.js";
-import { ensureSeedAdmin, publicUser, signJwt, verifyPassword } from "../_lib/security.js";
+import { ensureSeedAdmin, publicUser, signJwt, setAuthCookie, verifyPassword } from "../_lib/security.js";
 
 export default async function handler(req, res) {
   if (!requireMethod(req, res, ["POST"])) return;
@@ -26,7 +26,11 @@ export default async function handler(req, res) {
       return sendError(res, 403, "This account is suspended.");
     }
 
-    const token = signJwt({ sub: user._id, role: user.role });
+    const now = new Date();
+    await db.collection("users").updateOne({ _id: user._id }, { $set: { lastLogin: now, updatedAt: now } });
+
+    const token = signJwt({ sub: user._id, role: user.role, orgId: user.orgId || null });
+    setAuthCookie(res, token);
     sendJson(res, 200, { success: true, token, user: publicUser(user) });
   } catch (error) {
     console.error("[login]", error.message);

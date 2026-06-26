@@ -1,6 +1,6 @@
 import { connectToDatabase } from "../_lib/db.js";
 import { readJsonBody, requireMethod, sendError, sendJson } from "../_lib/http.js";
-import { createId, hashPassword, publicUser, signJwt } from "../_lib/security.js";
+import { createId, hashPassword, publicUser, ROLES, setAuthCookie, signJwt } from "../_lib/security.js";
 
 export default async function handler(req, res) {
   if (!requireMethod(req, res, ["POST"])) return;
@@ -24,14 +24,16 @@ export default async function handler(req, res) {
       email,
       phone,
       passwordHash: hashPassword(password),
-      role: "owner",
+      role: ROLES.OWNER,
+      orgId: null,
       status: "pending_payment",
       createdAt: now,
       updatedAt: now,
     };
 
     await db.collection("users").insertOne(user);
-    const token = signJwt({ sub: user._id, role: user.role });
+    const token = signJwt({ sub: user._id, role: user.role, orgId: null });
+    setAuthCookie(res, token);
 
     sendJson(res, 201, { success: true, token, user: publicUser(user) });
   } catch (error) {

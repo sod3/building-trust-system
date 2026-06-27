@@ -1,5 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, LayoutDashboard, BarChart3, ClipboardCheck, Building2, Users, FileBarChart2, Smartphone, CheckSquare } from "lucide-react";
+import {
+  ArrowRight,
+  LayoutDashboard,
+  BarChart3,
+  ClipboardCheck,
+  Building2,
+  Users,
+  FileBarChart2,
+  Smartphone,
+  CheckSquare,
+} from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { Button } from "@/components/ui/button";
@@ -21,7 +31,9 @@ function Product() {
       <section className="relative overflow-hidden bg-navy-gradient py-24 sm:py-32">
         <div className="absolute inset-0 bg-mesh opacity-40 mix-blend-overlay" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center text-primary-foreground">
-          <p className="text-sm font-semibold uppercase tracking-widest text-gold mb-6">{t("product.hero.overview", { fallback: "Platform Overview" })}</p>
+          <p className="text-sm font-semibold uppercase tracking-widest text-gold mb-6">
+            {t("product.hero.overview", { fallback: "Platform Overview" })}
+          </p>
           <h1 className="mx-auto max-w-4xl text-balance font-display text-4xl font-semibold tracking-tight sm:text-6xl drop-shadow-lg">
             {t("product.hero.title")}
           </h1>
@@ -34,21 +46,24 @@ function Product() {
       {/* DASHBOARDS DETAIL */}
       <section className="py-24 sm:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-32">
-
           {/* Admin Dashboard */}
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div className="order-2 lg:order-1">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-navy text-white mb-6">
                 <LayoutDashboard className="h-6 w-6" />
               </div>
-              <h2 className="text-3xl font-display font-semibold tracking-tight sm:text-4xl">{t("product.admin.title")}</h2>
-              <p className="mt-4 text-lg text-muted-foreground">
-                {t("dashboard.admin.desc")}
-              </p>
+              <h2 className="text-3xl font-display font-semibold tracking-tight sm:text-4xl">
+                {t("product.admin.title")}
+              </h2>
+              <p className="mt-4 text-lg text-muted-foreground">{t("dashboard.admin.desc")}</p>
               <ul className="mt-8 grid gap-4 sm:grid-cols-2">
                 {[
-                  "Owner management", "Building management", "Labour management",
-                  "Checklist templates", "Daily report monitoring", "Earnings overview"
+                  "Owner management",
+                  "Building management",
+                  "Labour management",
+                  "Checklist templates",
+                  "Daily report monitoring",
+                  "Earnings overview",
                 ].map((feature) => (
                   <li key={feature} className="flex items-center gap-3 text-sm font-medium">
                     <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent/10 text-accent">
@@ -141,14 +156,18 @@ function Product() {
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-navy text-white mb-6">
                 <BarChart3 className="h-6 w-6" />
               </div>
-              <h2 className="text-3xl font-display font-semibold tracking-tight sm:text-4xl">{t("product.owner.title")}</h2>
-              <p className="mt-4 text-lg text-muted-foreground">
-                {t("dashboard.owner.desc")}
-              </p>
+              <h2 className="text-3xl font-display font-semibold tracking-tight sm:text-4xl">
+                {t("product.owner.title")}
+              </h2>
+              <p className="mt-4 text-lg text-muted-foreground">{t("dashboard.owner.desc")}</p>
               <ul className="mt-8 grid gap-4 sm:grid-cols-2">
                 {[
-                  "My buildings", "Labour accounts", "Assign tasks",
-                  "Today's reports", "Report history", "Subscription overview"
+                  "My buildings",
+                  "Labour accounts",
+                  "Assign tasks",
+                  "Today's reports",
+                  "Report history",
+                  "Subscription overview",
                 ].map((feature) => (
                   <li key={feature} className="flex items-center gap-3 text-sm font-medium">
                     <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent/10 text-accent">
@@ -167,14 +186,23 @@ function Product() {
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent text-white mb-6">
                 <ClipboardCheck className="h-6 w-6" />
               </div>
-              <h2 className="text-3xl font-display font-semibold tracking-tight sm:text-4xl">{t("product.labour.title")}</h2>
+              <h2 className="text-3xl font-display font-semibold tracking-tight sm:text-4xl">
+                {t("product.labour.title")}
+              </h2>
               <p className="mt-4 text-lg text-muted-foreground">
-                {t("dashboard.labour.desc", { fallback: "Labour users get a very simple visual dashboard with large task cards, icons, check buttons, and one submit button. No complex menus or technical knowledge required." })}
+                {t("dashboard.labour.desc", {
+                  fallback:
+                    "Labour users get a very simple visual dashboard with large task cards, icons, check buttons, and one submit button. No complex menus or technical knowledge required.",
+                })}
               </p>
               <ul className="mt-8 grid gap-4 sm:grid-cols-2">
                 {[
-                  "Big visual checklist", "Simple mark-done buttons", "Daily task progress",
-                  "Mobile-first layout", "Submit work report", "Easy for non-technical workers"
+                  "Big visual checklist",
+                  "Simple mark-done buttons",
+                  "Daily task progress",
+                  "Mobile-first layout",
+                  "Submit work report",
+                  "Easy for non-technical workers",
                 ].map((feature) => (
                   <li key={feature} className="flex items-center gap-3 text-sm font-medium">
                     <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent/10 text-accent">
@@ -189,7 +217,9 @@ function Product() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-6">
                   <h4 className="font-semibold">Today's Tasks</h4>
-                  <span className="text-xs bg-accent/20 text-accent px-3 py-1 rounded-full font-medium">4 of 6 done</span>
+                  <span className="text-xs bg-accent/20 text-accent px-3 py-1 rounded-full font-medium">
+                    4 of 6 done
+                  </span>
                 </div>
                 {[
                   { task: "Clean lobby floor", done: true },
@@ -200,10 +230,18 @@ function Product() {
                   { task: "Sweep parking area", done: false },
                 ].map((item) => (
                   <div key={item.task} className="flex items-center gap-3">
-                    <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${item.done ? 'bg-accent text-white' : 'bg-muted text-muted-foreground'}`}>
-                      {item.done ? <CheckSquare className="h-5 w-5" /> : <div className="h-5 w-5 rounded border-2 border-current" />}
+                    <div
+                      className={`h-10 w-10 rounded-xl flex items-center justify-center ${item.done ? "bg-accent text-white" : "bg-muted text-muted-foreground"}`}
+                    >
+                      {item.done ? (
+                        <CheckSquare className="h-5 w-5" />
+                      ) : (
+                        <div className="h-5 w-5 rounded border-2 border-current" />
+                      )}
                     </div>
-                    <span className={`text-sm ${item.done ? 'font-medium' : 'text-muted-foreground'}`}>
+                    <span
+                      className={`text-sm ${item.done ? "font-medium" : "text-muted-foreground"}`}
+                    >
                       {item.task}
                     </span>
                   </div>
@@ -214,16 +252,20 @@ function Product() {
               </div>
             </div>
           </div>
-
         </div>
       </section>
 
       {/* BUILT FOR DAILY PROOF */}
       <section className="bg-secondary/50 border-y border-border py-24">
         <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-          <h2 className="font-display text-3xl font-semibold sm:text-4xl">{t("product.built_for_proof")}</h2>
+          <h2 className="font-display text-3xl font-semibold sm:text-4xl">
+            {t("product.built_for_proof")}
+          </h2>
           <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
-            {t("product.built_for_proof_desc", { fallback: "Building owners no longer need to call repeatedly or guess if work was completed. The platform is designed for one simple loop: Labour submits the daily checklist, and the owner instantly receives a verifiable daily report." })}
+            {t("product.built_for_proof_desc", {
+              fallback:
+                "Building owners no longer need to call repeatedly or guess if work was completed. The platform is designed for one simple loop: Labour submits the daily checklist, and the owner instantly receives a verifiable daily report.",
+            })}
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-4">
             <Button asChild size="lg" className="h-14 px-8 text-base">
@@ -232,9 +274,7 @@ function Product() {
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="h-14 px-8 text-base">
-              <Link to="/demo">
-                {t("product.btn.demo")}
-              </Link>
+              <Link to="/demo">{t("product.btn.demo")}</Link>
             </Button>
           </div>
         </div>

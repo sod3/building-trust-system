@@ -16,27 +16,51 @@ export const Route = createFileRoute("/checkout")({
   component: Checkout,
 });
 
-const planDetails: Record<string, { name: string; price: number; halalas: number; description: string; features: string[] }> = {
+const planDetails: Record<
+  string,
+  { name: string; price: number; halalas: number; description: string; features: string[] }
+> = {
   starter: {
     name: "Starter",
     price: 299,
     halalas: 29900, // SAR 299 × 100 — Moyasar requires amounts in halalas
     description: "Perfect for single-building owners getting started.",
-    features: ["1 building", "Owner dashboard access", "Labour checklist dashboard", "Daily reports", "Basic report history", "Email support"],
+    features: [
+      "1 building",
+      "Owner dashboard access",
+      "Labour checklist dashboard",
+      "Daily reports",
+      "Basic report history",
+      "Email support",
+    ],
   },
   professional: {
     name: "Professional",
     price: 899,
     halalas: 89900, // SAR 899 × 100
     description: "Ideal for multi-building operations and growing portfolios.",
-    features: ["Up to 5 buildings", "Multiple labour accounts", "Checklist templates", "Today's reports", "Full report history", "Priority support"],
+    features: [
+      "Up to 5 buildings",
+      "Multiple labour accounts",
+      "Checklist templates",
+      "Today's reports",
+      "Full report history",
+      "Priority support",
+    ],
   },
   enterprise: {
     name: "Enterprise",
     price: 1999,
     halalas: 199900, // SAR 1999 × 100
     description: "Full-scale solution for large property management operations.",
-    features: ["Multiple buildings", "Custom setup", "Multiple user accounts", "Advanced report history", "Priority support", "Dedicated onboarding"],
+    features: [
+      "Multiple buildings",
+      "Custom setup",
+      "Multiple user accounts",
+      "Advanced report history",
+      "Priority support",
+      "Dedicated onboarding",
+    ],
   },
 };
 
@@ -78,7 +102,7 @@ function Checkout() {
   const { t } = useLang();
   const { user } = useAuth();
   const search = Route.useSearch();
-  const planKey = (search.plan && planDetails[search.plan]) ? search.plan : "starter";
+  const planKey = search.plan && planDetails[search.plan] ? search.plan : "starter";
   const plan = planDetails[planKey];
   const formRef = useRef<HTMLDivElement>(null);
   const [ownerInfo, setOwnerInfo] = useState({
@@ -171,7 +195,9 @@ function Checkout() {
       const script = document.createElement("script");
       script.src = MOYASAR_SRC;
       script.async = true;
-      script.onload = () => { if (!cancelled) initMoyasar(); };
+      script.onload = () => {
+        if (!cancelled) initMoyasar();
+      };
       script.onerror = () => console.error("[Moyasar] Failed to load payment script from CDN.");
       document.head.appendChild(script);
     }
@@ -204,7 +230,6 @@ function Checkout() {
 
   return (
     <div className="min-h-screen bg-surface-2 flex flex-col lg:flex-row">
-
       {/* ===== LEFT PANEL — ORDER SUMMARY ===== */}
       <div className="bg-navy text-primary-foreground p-8 md:p-12 lg:p-16 lg:w-[420px] xl:w-[480px] flex flex-col justify-between shrink-0">
         <div>
@@ -252,15 +277,19 @@ function Checkout() {
 
         {/* Footer trust copy */}
         <div className="mt-10 pt-7 border-t border-white/10 text-xs text-white/40 leading-relaxed">
-          <p>You can cancel your subscription at any time. By continuing, you agree to our Terms of Service and Privacy Policy.</p>
-          <p className="mt-2">© {new Date().getFullYear()} FacilityOS Arabia. All rights reserved.</p>
+          <p>
+            You can cancel your subscription at any time. By continuing, you agree to our Terms of
+            Service and Privacy Policy.
+          </p>
+          <p className="mt-2">
+            © {new Date().getFullYear()} FacilityOS Arabia. All rights reserved.
+          </p>
         </div>
       </div>
 
       {/* ===== RIGHT PANEL — MOYASAR PAYMENT FORM ===== */}
       <div className="flex-1 p-8 md:p-12 lg:p-16 flex items-start justify-center overflow-y-auto bg-background">
         <div className="w-full max-w-lg">
-
           {/* Header */}
           <div className="mb-8">
             <h1 className="font-display text-3xl font-semibold text-foreground tracking-tight">
@@ -295,7 +324,9 @@ function Checkout() {
             <div className="flex flex-wrap items-center gap-2">
               {/* mada */}
               <span className="flex items-center gap-1.5 rounded-xl bg-background border border-border px-3 py-2 text-sm font-bold text-[#0a5c2f]">
-                <span className="h-4 w-4 rounded bg-[#0a5c2f] grid place-items-center text-white text-[9px] font-black">m</span>
+                <span className="h-4 w-4 rounded bg-[#0a5c2f] grid place-items-center text-white text-[9px] font-black">
+                  m
+                </span>
                 mada
               </span>
               {/* Visa */}
@@ -313,16 +344,23 @@ function Checkout() {
             </div>
           </div>
 
-          <form onSubmit={handleCreateOrder} className="mb-6 rounded-2xl border border-border bg-secondary/20 p-4">
+          <form
+            onSubmit={handleCreateOrder}
+            className="mb-6 rounded-2xl border border-border bg-secondary/20 p-4"
+          >
             <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">
               Owner Details
             </p>
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="text-sm">
-                <span className="mb-1 block text-xs font-medium text-muted-foreground">Full Name</span>
+                <span className="mb-1 block text-xs font-medium text-muted-foreground">
+                  Full Name
+                </span>
                 <input
                   value={ownerInfo.ownerName}
-                  onChange={(event) => setOwnerInfo((current) => ({ ...current, ownerName: event.target.value }))}
+                  onChange={(event) =>
+                    setOwnerInfo((current) => ({ ...current, ownerName: event.target.value }))
+                  }
                   className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
                   required
                 />
@@ -331,7 +369,9 @@ function Checkout() {
                 <span className="mb-1 block text-xs font-medium text-muted-foreground">Phone</span>
                 <input
                   value={ownerInfo.phone}
-                  onChange={(event) => setOwnerInfo((current) => ({ ...current, phone: event.target.value }))}
+                  onChange={(event) =>
+                    setOwnerInfo((current) => ({ ...current, phone: event.target.value }))
+                  }
                   className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
                   placeholder="+966 55 000 0000"
                 />
@@ -341,27 +381,37 @@ function Checkout() {
                 <input
                   type="email"
                   value={ownerInfo.email}
-                  onChange={(event) => setOwnerInfo((current) => ({ ...current, email: event.target.value }))}
+                  onChange={(event) =>
+                    setOwnerInfo((current) => ({ ...current, email: event.target.value }))
+                  }
                   className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
                   required
                 />
               </label>
               <label className="text-sm sm:col-span-2">
-                <span className="mb-1 block text-xs font-medium text-muted-foreground">Company / Building Group</span>
+                <span className="mb-1 block text-xs font-medium text-muted-foreground">
+                  Company / Building Group
+                </span>
                 <input
                   value={ownerInfo.companyName}
-                  onChange={(event) => setOwnerInfo((current) => ({ ...current, companyName: event.target.value }))}
+                  onChange={(event) =>
+                    setOwnerInfo((current) => ({ ...current, companyName: event.target.value }))
+                  }
                   className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
                   placeholder="Riyadh Tower Group"
                   required
                 />
               </label>
               <label className="text-sm sm:col-span-2">
-                <span className="mb-1 block text-xs font-medium text-muted-foreground">Password</span>
+                <span className="mb-1 block text-xs font-medium text-muted-foreground">
+                  Password
+                </span>
                 <input
                   type="password"
                   value={ownerInfo.password}
-                  onChange={(event) => setOwnerInfo((current) => ({ ...current, password: event.target.value }))}
+                  onChange={(event) =>
+                    setOwnerInfo((current) => ({ ...current, password: event.target.value }))
+                  }
                   className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
                   minLength={8}
                   required
@@ -375,10 +425,21 @@ function Checkout() {
             )}
             <button
               type="submit"
-              disabled={isCreatingOrder || !ownerInfo.ownerName || !ownerInfo.email || !ownerInfo.phone || !ownerInfo.companyName || ownerInfo.password.length < 8}
+              disabled={
+                isCreatingOrder ||
+                !ownerInfo.ownerName ||
+                !ownerInfo.email ||
+                !ownerInfo.phone ||
+                !ownerInfo.companyName ||
+                ownerInfo.password.length < 8
+              }
               className="mt-4 h-11 w-full rounded-xl bg-navy text-sm font-semibold text-white transition hover:bg-navy/90 disabled:opacity-60"
             >
-              {order ? "Refresh Payment Form" : isCreatingOrder ? "Preparing Secure Checkout..." : "Prepare Secure Checkout"}
+              {order
+                ? "Refresh Payment Form"
+                : isCreatingOrder
+                  ? "Preparing Secure Checkout..."
+                  : "Prepare Secure Checkout"}
             </button>
           </form>
 
@@ -389,11 +450,7 @@ function Checkout() {
           )}
 
           {/* Moyasar injects card fields into this div via Moyasar.init() */}
-          <div
-            id="moyasar-form"
-            ref={formRef}
-            className="moyasar-form-wrapper min-h-[200px]"
-          />
+          <div id="moyasar-form" ref={formRef} className="moyasar-form-wrapper min-h-[200px]" />
 
           {/* Bottom trust copy */}
           <p className="mt-6 text-center text-xs text-muted-foreground">
@@ -405,12 +462,15 @@ function Checkout() {
               className="font-semibold text-foreground hover:underline"
             >
               Moyasar
-            </a>
-            {" "}— Saudi Arabia's trusted payment gateway
+            </a>{" "}
+            — Saudi Arabia's trusted payment gateway
           </p>
 
           <div className="mt-3 text-center">
-            <Link to="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition">
+            <Link
+              to="/pricing"
+              className="text-sm text-muted-foreground hover:text-foreground transition"
+            >
               ← Back to pricing
             </Link>
           </div>

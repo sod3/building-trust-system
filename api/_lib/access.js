@@ -9,7 +9,11 @@ export function isActiveOrGrace(subscription) {
   if (subscription.status === "past_due" && subscription.gracePeriodEndsAt) {
     return new Date(subscription.gracePeriodEndsAt) > now;
   }
-  if (subscription.status === "cancelled" && subscription.cancelAtPeriodEnd && subscription.currentPeriodEnd) {
+  if (
+    subscription.status === "cancelled" &&
+    subscription.cancelAtPeriodEnd &&
+    subscription.currentPeriodEnd
+  ) {
     return new Date(subscription.currentPeriodEnd) > now;
   }
   return false;
@@ -20,11 +24,10 @@ export async function getUserContext(user) {
   const role = normalizeRole(user?.role);
 
   if (!user) return null;
-  if (role === ROLES.SUPER_ADMIN) return { db, user, role, org: null, subscription: null, plan: null };
+  if (role === ROLES.SUPER_ADMIN)
+    return { db, user, role, org: null, subscription: null, plan: null };
 
-  const org = user.orgId
-    ? await db.collection("organizations").findOne({ _id: user.orgId })
-    : null;
+  const org = user.orgId ? await db.collection("organizations").findOne({ _id: user.orgId }) : null;
   const subscription = org
     ? await db.collection("subscriptions").findOne({ orgId: org._id })
     : null;
@@ -71,7 +74,9 @@ export function requireFeature(plan, featureKey) {
 export async function enforceBuildingLimit(db, orgId, plan) {
   const max = plan?.maxBuildings ?? plan?.buildingLimit;
   if (isUnlimited(max)) return;
-  const count = await db.collection("buildings").countDocuments({ orgId, status: { $ne: "deleted" } });
+  const count = await db
+    .collection("buildings")
+    .countDocuments({ orgId, status: { $ne: "deleted" } });
   if (count >= max) {
     const error = new Error(
       plan?.slug === "starter"

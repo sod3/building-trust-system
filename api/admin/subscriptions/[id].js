@@ -33,14 +33,21 @@ export default async function handler(req, res) {
         buildingLimit: plan.maxBuildings,
         labourLimit: plan.maxLabourUsers,
       });
-      await db.collection("organizations").updateOne(
-        { _id: subscription.orgId },
-        { $set: { planId: plan.slug || plan.planId, updatedAt: new Date() } },
-      );
+      await db
+        .collection("organizations")
+        .updateOne(
+          { _id: subscription.orgId },
+          { $set: { planId: plan.slug || plan.planId, updatedAt: new Date() } },
+        );
     }
 
     await db.collection("subscriptions").updateOne({ _id: id }, { $set: update });
-    await writeAuditLog(db, { orgId: subscription.orgId, userId: admin._id, action: "admin.subscription.updated", details: update });
+    await writeAuditLog(db, {
+      orgId: subscription.orgId,
+      userId: admin._id,
+      action: "admin.subscription.updated",
+      details: update,
+    });
     const updated = await db.collection("subscriptions").findOne({ _id: id });
     sendJson(res, 200, { success: true, subscription: updated });
   } catch (error) {

@@ -111,7 +111,13 @@ function AboutPage() {
         : "Manage owners, buildings, labour accounts, subscriptions, checklist templates, reports, and earnings from one control center.",
       features: isAr
         ? ["إدارة الملاك", "إدارة المباني", "إدارة العمال", "تقارير يومية", "الأرباح والاشتراكات"]
-        : ["Owner management", "Building management", "Labour management", "Daily reports", "Earnings and subscriptions"],
+        : [
+            "Owner management",
+            "Building management",
+            "Labour management",
+            "Daily reports",
+            "Earnings and subscriptions",
+          ],
     },
     {
       icon: Building2,
@@ -133,7 +139,13 @@ function AboutPage() {
         : "A very simple mobile-first checklist screen with large visual cards, mark-done buttons, and one submit button.",
       features: isAr
         ? ["بطاقات مرئية", "زر تم", "تقدم المهام", "إرسال التقرير", "مناسب للجوال"]
-        : ["Visual task cards", "Mark Done button", "Task progress", "Submit report", "Mobile-first layout"],
+        : [
+            "Visual task cards",
+            "Mark Done button",
+            "Task progress",
+            "Submit report",
+            "Mobile-first layout",
+          ],
     },
   ];
 
@@ -228,8 +240,22 @@ function AboutPage() {
   ];
 
   const roadmap = isAr
-    ? ["إثبات بالصور", "تنبيهات واتساب", "دعم عربي كامل", "موافقات المالك", "تطبيق جوال مستقبلي", "تقارير PDF شهرية"]
-    : ["Photo proof", "WhatsApp alerts", "Full Arabic support", "Owner approvals", "Future mobile app", "Monthly PDF reports"];
+    ? [
+        "إثبات بالصور",
+        "تنبيهات واتساب",
+        "دعم عربي كامل",
+        "موافقات المالك",
+        "تطبيق جوال مستقبلي",
+        "تقارير PDF شهرية",
+      ]
+    : [
+        "Photo proof",
+        "WhatsApp alerts",
+        "Full Arabic support",
+        "Owner approvals",
+        "Future mobile app",
+        "Monthly PDF reports",
+      ];
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-background" dir={isAr ? "rtl" : "ltr"}>
@@ -261,11 +287,18 @@ function AboutPage() {
                 <Button asChild size="lg" className="group">
                   <Link to="/pricing">
                     {copy.primaryCta}
-                    <ArrowRight className={`h-4 w-4 transition-transform group-hover:translate-x-1 ${isAr ? "rotate-180" : ""}`} />
+                    <ArrowRight
+                      className={`h-4 w-4 transition-transform group-hover:translate-x-1 ${isAr ? "rotate-180" : ""}`}
+                    />
                   </Link>
                 </Button>
 
-                <Button asChild size="lg" variant="secondary" className="bg-white/10 text-white hover:bg-white/20">
+                <Button
+                  asChild
+                  size="lg"
+                  variant="secondary"
+                  className="bg-white/10 text-white hover:bg-white/20"
+                >
                   <a href="#how-it-works">{copy.secondaryCta}</a>
                 </Button>
               </div>
@@ -294,7 +327,10 @@ function AboutPage() {
                     isAr ? "إزالة النفايات" : "Garbage removal",
                     isAr ? "فحص الإضاءة" : "Lights check",
                   ].map((item) => (
-                    <div key={item} className="flex items-center justify-between rounded-2xl border border-border bg-muted/40 p-4">
+                    <div
+                      key={item}
+                      className="flex items-center justify-between rounded-2xl border border-border bg-muted/40 p-4"
+                    >
                       <div className="flex items-center gap-3">
                         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-500/10 text-green-700">
                           <CheckCircle2 className="h-5 w-5" />
@@ -308,7 +344,9 @@ function AboutPage() {
 
                 <div className="mt-5 rounded-2xl bg-navy p-4 text-primary-foreground">
                   <p className="text-sm text-white/70">
-                    {isAr ? "تم إرسال التقرير إلى الإدارة والمالك" : "Report sent to Admin and Owner"}
+                    {isAr
+                      ? "تم إرسال التقرير إلى الإدارة والمالك"
+                      : "Report sent to Admin and Owner"}
                   </p>
                   <p className="mt-1 text-lg font-semibold">
                     {isAr ? "اليوم، 5:14 مساءً" : "Today, 5:14 PM"}
@@ -341,7 +379,9 @@ function AboutPage() {
               {isAr ? "المشكلة" : "The problem"}
             </p>
             <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-navy sm:text-4xl">
-              {isAr ? "إدارة العمل اليومي لا يجب أن تعتمد على التخمين." : "Daily building work should not depend on guessing."}
+              {isAr
+                ? "إدارة العمل اليومي لا يجب أن تعتمد على التخمين."
+                : "Daily building work should not depend on guessing."}
             </h2>
             <p className="mt-4 text-muted-foreground">
               {isAr
@@ -352,7 +392,10 @@ function AboutPage() {
 
           <div className="mt-12 grid gap-6 md:grid-cols-3">
             {problems.map((item) => (
-              <div key={item.title} className="rounded-3xl border border-border bg-background p-6 shadow-sm">
+              <div
+                key={item.title}
+                className="rounded-3xl border border-border bg-background p-6 shadow-sm"
+              >
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                   <item.icon className="h-6 w-6" />
                 </div>
@@ -371,7 +414,9 @@ function AboutPage() {
             {isAr ? "المنصة" : "The platform"}
           </p>
           <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-navy sm:text-4xl">
-            {isAr ? "ثلاث لوحات تحكم فقط. بدون تعقيد." : "Only three dashboards. No unnecessary complexity."}
+            {isAr
+              ? "ثلاث لوحات تحكم فقط. بدون تعقيد."
+              : "Only three dashboards. No unnecessary complexity."}
           </h2>
           <p className="mt-4 text-muted-foreground">
             {isAr
@@ -382,7 +427,10 @@ function AboutPage() {
 
         <div className="mt-12 grid gap-6 lg:grid-cols-3">
           {dashboards.map((dash) => (
-            <div key={dash.title} className="group rounded-3xl border border-border bg-card p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+            <div
+              key={dash.title}
+              className="group rounded-3xl border border-border bg-card p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+            >
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-navy text-primary-foreground">
                 <dash.icon className="h-7 w-7" />
               </div>
@@ -412,7 +460,9 @@ function AboutPage() {
               {isAr ? "طريقة العمل" : "How it works"}
             </p>
             <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
-              {isAr ? "من الاشتراك إلى تقرير الإنجاز اليومي." : "From subscription to daily work report."}
+              {isAr
+                ? "من الاشتراك إلى تقرير الإنجاز اليومي."
+                : "From subscription to daily work report."}
             </h2>
             <p className="mt-4 text-white/70">
               {isAr
@@ -423,7 +473,10 @@ function AboutPage() {
 
           <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {workflow.map((step, index) => (
-              <div key={step.title} className="rounded-3xl border border-white/10 bg-white/10 p-6 backdrop-blur">
+              <div
+                key={step.title}
+                className="rounded-3xl border border-white/10 bg-white/10 p-6 backdrop-blur"
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-navy">
                     <step.icon className="h-6 w-6" />
@@ -462,7 +515,10 @@ function AboutPage() {
               </h3>
               <div className="mt-4 flex flex-wrap gap-2">
                 {roadmap.map((item) => (
-                  <span key={item} className="rounded-full border border-border bg-background px-3 py-2 text-sm text-muted-foreground">
+                  <span
+                    key={item}
+                    className="rounded-full border border-border bg-background px-3 py-2 text-sm text-muted-foreground"
+                  >
                     {item}
                   </span>
                 ))}
@@ -472,11 +528,16 @@ function AboutPage() {
 
           <div className="grid gap-5 sm:grid-cols-2">
             {features.map((feature) => (
-              <div key={feature.title} className="rounded-3xl border border-border bg-card p-6 shadow-sm">
+              <div
+                key={feature.title}
+                className="rounded-3xl border border-border bg-card p-6 shadow-sm"
+              >
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                   <feature.icon className="h-6 w-6" />
                 </div>
-                <h3 className="mt-5 font-display text-lg font-semibold text-navy">{feature.title}</h3>
+                <h3 className="mt-5 font-display text-lg font-semibold text-navy">
+                  {feature.title}
+                </h3>
                 <p className="mt-3 text-sm leading-6 text-muted-foreground">{feature.text}</p>
               </div>
             ))}
@@ -508,7 +569,10 @@ function AboutPage() {
                 isAr ? "واضحة للمالك" : "Clear for owners",
                 isAr ? "قابلة للتوسع" : "Ready to scale",
               ].map((item) => (
-                <div key={item} className="rounded-2xl bg-muted/50 p-4 text-sm font-medium text-navy">
+                <div
+                  key={item}
+                  className="rounded-2xl bg-muted/50 p-4 text-sm font-medium text-navy"
+                >
                   {item}
                 </div>
               ))}
@@ -544,11 +608,18 @@ function AboutPage() {
               <Button asChild size="lg" className="group bg-white text-navy hover:bg-white/90">
                 <Link to="/pricing">
                   {copy.primaryCta}
-                  <ArrowRight className={`h-4 w-4 transition-transform group-hover:translate-x-1 ${isAr ? "rotate-180" : ""}`} />
+                  <ArrowRight
+                    className={`h-4 w-4 transition-transform group-hover:translate-x-1 ${isAr ? "rotate-180" : ""}`}
+                  />
                 </Link>
               </Button>
 
-              <Button asChild size="lg" variant="secondary" className="bg-white/10 text-white hover:bg-white/20">
+              <Button
+                asChild
+                size="lg"
+                variant="secondary"
+                className="bg-white/10 text-white hover:bg-white/20"
+              >
                 <Link to="/login">{isAr ? "شاهد العرض التجريبي" : "View Dashboard Demo"}</Link>
               </Button>
             </div>

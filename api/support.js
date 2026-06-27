@@ -14,7 +14,11 @@ export default async function handler(req, res) {
 
     if (req.method === "GET") {
       const filter = context.role === ROLES.SUPER_ADMIN ? {} : { orgId: user.orgId };
-      const tickets = await context.db.collection("supportTickets").find(filter).sort({ createdAt: -1 }).toArray();
+      const tickets = await context.db
+        .collection("supportTickets")
+        .find(filter)
+        .sort({ createdAt: -1 })
+        .toArray();
       return sendJson(res, 200, { success: true, tickets });
     }
 
@@ -30,7 +34,9 @@ export default async function handler(req, res) {
       userId: user._id,
       subject,
       message,
-      priority: asString(body.priority || (context.plan?.supportLevel === "dedicated" ? "high" : "normal")),
+      priority: asString(
+        body.priority || (context.plan?.supportLevel === "dedicated" ? "high" : "normal"),
+      ),
       status: "open",
       planSupportLevel: context.plan?.supportLevel || "platform",
       createdAt: now,
@@ -41,6 +47,10 @@ export default async function handler(req, res) {
     sendJson(res, 201, { success: true, ticket });
   } catch (error) {
     console.error("[support]", error.message);
-    sendError(res, error.status || 500, error.status ? error.message : "Could not process support request.");
+    sendError(
+      res,
+      error.status || 500,
+      error.status ? error.message : "Could not process support request.",
+    );
   }
 }

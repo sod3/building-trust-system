@@ -9,7 +9,9 @@ export function asEmail(value) {
 export function requireFields(body, fields) {
   const missing = fields.filter((field) => !asString(body[field]));
   if (missing.length) {
-    const error = new Error(`${missing.join(", ")} ${missing.length === 1 ? "is" : "are"} required.`);
+    const error = new Error(
+      `${missing.join(", ")} ${missing.length === 1 ? "is" : "are"} required.`,
+    );
     error.status = 400;
     throw error;
   }

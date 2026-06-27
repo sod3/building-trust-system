@@ -15,7 +15,11 @@ export default async function handler(req, res) {
 
     if (req.method === "GET") {
       const filter = context.role === ROLES.SUPER_ADMIN ? {} : { orgId: user.orgId };
-      const templates = await context.db.collection("checklistTemplates").find(filter).sort({ createdAt: -1 }).toArray();
+      const templates = await context.db
+        .collection("checklistTemplates")
+        .find(filter)
+        .sort({ createdAt: -1 })
+        .toArray();
       return sendJson(res, 200, { success: true, templates });
     }
 
@@ -27,12 +31,15 @@ export default async function handler(req, res) {
     const body = await readJsonBody(req);
     const name = asString(body.name);
     if (!name) return sendError(res, 400, "Template name is required.");
-    const items = [].concat(body.items || []).map((item, index) => ({
-      title: asString(item.title),
-      icon: asString(item.icon || "CheckCircle2"),
-      required: item.required !== false,
-      order: Number(item.order ?? index),
-    })).filter((item) => item.title);
+    const items = []
+      .concat(body.items || [])
+      .map((item, index) => ({
+        title: asString(item.title),
+        icon: asString(item.icon || "CheckCircle2"),
+        required: item.required !== false,
+        order: Number(item.order ?? index),
+      }))
+      .filter((item) => item.title);
     if (!items.length) return sendError(res, 400, "At least one checklist item is required.");
 
     const now = new Date();
@@ -47,10 +54,19 @@ export default async function handler(req, res) {
       updatedAt: now,
     };
     await context.db.collection("checklistTemplates").insertOne(template);
-    await writeAuditLog(context.db, { orgId: template.orgId, userId: user._id, action: "checklist_template.created", details: { templateId: template._id } });
+    await writeAuditLog(context.db, {
+      orgId: template.orgId,
+      userId: user._id,
+      action: "checklist_template.created",
+      details: { templateId: template._id },
+    });
     sendJson(res, 201, { success: true, template });
   } catch (error) {
     console.error("[checklist-templates]", error.message);
-    sendError(res, error.status || 500, error.status ? error.message : "Could not process checklist templates.");
+    sendError(
+      res,
+      error.status || 500,
+      error.status ? error.message : "Could not process checklist templates.",
+    );
   }
 }

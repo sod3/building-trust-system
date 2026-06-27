@@ -73,7 +73,9 @@ export default async function handler(req, res) {
         planId: subscription?.planId || null,
         subscriptionStatus: subscription?.status || "inactive",
         currentPeriodEnd: subscription?.currentPeriodEnd || null,
-        buildingCount: (owner.buildingRows || []).filter((building) => building.status !== "deleted").length,
+        buildingCount: (owner.buildingRows || []).filter(
+          (building) => building.status !== "deleted",
+        ).length,
         totalPaidSar: totalPaidHalalas / 100,
         createdAt: owner.createdAt,
       };

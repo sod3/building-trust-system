@@ -14,26 +14,35 @@ export default async function handler(req, res) {
     if (context.role !== ROLES.SUPER_ADMIN) requireDashboardAccess(context);
 
     const id = req.query?.id || req.url.split("/").pop();
-    const filter = context.role === ROLES.SUPER_ADMIN
-      ? { _id: id, role: { $in: [ROLES.LABOUR, "labour"] } }
-      : context.role === ROLES.LABOUR
-        ? { _id: user._id }
-        : { _id: id, orgId: context.org._id, role: { $in: [ROLES.LABOUR, "labour"] } };
-    const labourUser = await context.db.collection("users").findOne(filter, { projection: { passwordHash: 0 } });
-    if (!labourUser || labourUser.status === "deleted") return sendError(res, 404, "Labour account not found.");
+    const filter =
+      context.role === ROLES.SUPER_ADMIN
+        ? { _id: id, role: { $in: [ROLES.LABOUR, "labour"] } }
+        : context.role === ROLES.LABOUR
+          ? { _id: user._id }
+          : { _id: id, orgId: context.org._id, role: { $in: [ROLES.LABOUR, "labour"] } };
+    const labourUser = await context.db
+      .collection("users")
+      .findOne(filter, { projection: { passwordHash: 0 } });
+    if (!labourUser || labourUser.status === "deleted")
+      return sendError(res, 404, "Labour account not found.");
 
-    if (req.method === "GET") return sendJson(res, 200, { success: true, labour: { id: labourUser._id, ...labourUser } });
+    if (req.method === "GET")
+      return sendJson(res, 200, { success: true, labour: { id: labourUser._id, ...labourUser } });
 
     if (![ROLES.OWNER, ROLES.SUPER_ADMIN].includes(context.role)) {
       return sendError(res, 403, "Only owners can update labour accounts.");
     }
 
     if (req.method === "DELETE") {
-      await context.db.collection("users").updateOne(
-        { _id: labourUser._id },
-        { $set: { status: "deleted", updatedAt: new Date() } },
-      );
-      await writeAuditLog(context.db, { orgId: labourUser.orgId, userId: user._id, action: "labour.deleted", details: { labourUserId: labourUser._id } });
+      await context.db
+        .collection("users")
+        .updateOne({ _id: labourUser._id }, { $set: { status: "deleted", updatedAt: new Date() } });
+      await writeAuditLog(context.db, {
+        orgId: labourUser.orgId,
+        userId: user._id,
+        action: "labour.deleted",
+        details: { labourUserId: labourUser._id },
+      });
       return sendJson(res, 200, { success: true });
     }
 
@@ -52,12 +61,23 @@ export default async function handler(req, res) {
     if (body.password) update.passwordHash = hashPassword(String(body.password));
 
     await context.db.collection("users").updateOne({ _id: labourUser._id }, { $set: update });
-    const updated = await context.db.collection("users").findOne({ _id: labourUser._id }, { projection: { passwordHash: 0 } });
-    await writeAuditLog(context.db, { orgId: labourUser.orgId, userId: user._id, action: "labour.updated", details: { labourUserId: labourUser._id } });
+    const updated = await context.db
+      .collection("users")
+      .findOne({ _id: labourUser._id }, { projection: { passwordHash: 0 } });
+    await writeAuditLog(context.db, {
+      orgId: labourUser.orgId,
+      userId: user._id,
+      action: "labour.updated",
+      details: { labourUserId: labourUser._id },
+    });
     sendJson(res, 200, { success: true, labour: { id: updated._id, ...updated } });
   } catch (error) {
     if (error?.code === 11000) return sendError(res, 409, "A user with this email already exists.");
     console.error("[labour-id]", error.message);
-    sendError(res, error.status || 500, error.status ? error.message : "Could not process labour account.");
+    sendError(
+      res,
+      error.status || 500,
+      error.status ? error.message : "Could not process labour account.",
+    );
   }
 }

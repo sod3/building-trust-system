@@ -31,26 +31,52 @@ export default async function handler(req, res) {
       db.collection("organizations").countDocuments({}),
       db.collection("organizations").countDocuments({ status: "active" }),
       db.collection("subscriptions").countDocuments({ status: "active" }),
-      db.collection("subscriptions").aggregate([
-        { $match: { status: "active" } },
-        { $group: { _id: null, amount: { $sum: "$amountHalalas" } } },
-      ]).toArray(),
+      db
+        .collection("subscriptions")
+        .aggregate([
+          { $match: { status: "active" } },
+          { $group: { _id: null, amount: { $sum: "$amountHalalas" } } },
+        ])
+        .toArray(),
       db.collection("invoices").countDocuments({ status: "paid" }),
       db.collection("payments").countDocuments({ status: { $in: ["failed", "declined"] } }),
-      db.collection("subscriptions").aggregate([
-        { $group: { _id: "$planId", count: { $sum: 1 }, mrrHalalas: { $sum: { $cond: [{ $eq: ["$status", "active"] }, "$amountHalalas", 0] } } } },
-        { $sort: { _id: 1 } },
-      ]).toArray(),
-      db.collection("payments").aggregate([
-        { $sort: { createdAt: -1 } },
-        { $limit: 10 },
-        { $lookup: { from: "organizations", localField: "orgId", foreignField: "_id", as: "orgRows" } },
-        { $lookup: { from: "users", localField: "userId", foreignField: "_id", as: "userRows" } },
-        { $project: { rawResponse: 0, rawProviderResponse: 0, "userRows.passwordHash": 0 } },
-      ]).toArray(),
+      db
+        .collection("subscriptions")
+        .aggregate([
+          {
+            $group: {
+              _id: "$planId",
+              count: { $sum: 1 },
+              mrrHalalas: {
+                $sum: { $cond: [{ $eq: ["$status", "active"] }, "$amountHalalas", 0] },
+              },
+            },
+          },
+          { $sort: { _id: 1 } },
+        ])
+        .toArray(),
+      db
+        .collection("payments")
+        .aggregate([
+          { $sort: { createdAt: -1 } },
+          { $limit: 10 },
+          {
+            $lookup: {
+              from: "organizations",
+              localField: "orgId",
+              foreignField: "_id",
+              as: "orgRows",
+            },
+          },
+          { $lookup: { from: "users", localField: "userId", foreignField: "_id", as: "userRows" } },
+          { $project: { rawResponse: 0, rawProviderResponse: 0, "userRows.passwordHash": 0 } },
+        ])
+        .toArray(),
       db.collection("organizations").countDocuments({ status: "suspended" }),
       db.collection("buildings").countDocuments({ status: { $ne: "deleted" } }),
-      db.collection("users").countDocuments({ role: { $in: ["LABOUR", "labour"] }, status: { $ne: "deleted" } }),
+      db
+        .collection("users")
+        .countDocuments({ role: { $in: ["LABOUR", "labour"] }, status: { $ne: "deleted" } }),
       db.collection("dailyReports").countDocuments({ date: new Date().toISOString().slice(0, 10) }),
     ]);
 

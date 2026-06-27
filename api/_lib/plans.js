@@ -98,7 +98,9 @@ export const DEFAULT_PLANS = [
 }));
 
 export function normalizePlanSlug(planId) {
-  return String(planId || "").trim().toLowerCase();
+  return String(planId || "")
+    .trim()
+    .toLowerCase();
 }
 
 export function getPlanConfig(planId) {
@@ -126,16 +128,28 @@ export function publicPlan(plan) {
 export async function seedPlans(db) {
   const now = new Date();
   await Promise.all(
-    DEFAULT_PLANS.map((plan) =>
-      db.collection("plans").updateOne(
-        { slug: plan.slug },
-        {
-          $set: { ...plan, updatedAt: now },
-          $setOnInsert: { createdAt: now },
-        },
-        { upsert: true },
-      ),
-    ),
+    DEFAULT_PLANS.map(async (plan) => {
+      const existingPlan = await db.collection("plans").findOne({
+        $or: [{ slug: plan.slug }, { planId: plan.slug }],
+      });
+
+      if (existingPlan) {
+        await db.collection("plans").updateOne(
+          { _id: existingPlan._id },
+          {
+            $set: { ...plan, updatedAt: now },
+            $setOnInsert: { createdAt: now },
+          },
+        );
+        return;
+      }
+
+      await db.collection("plans").insertOne({
+        ...plan,
+        createdAt: now,
+        updatedAt: now,
+      });
+    }),
   );
 }
 

@@ -136,7 +136,10 @@ export function parseCookies(req) {
       .map((entry) => {
         const index = entry.indexOf("=");
         if (index === -1) return [entry, ""];
-        return [decodeURIComponent(entry.slice(0, index)), decodeURIComponent(entry.slice(index + 1))];
+        return [
+          decodeURIComponent(entry.slice(0, index)),
+          decodeURIComponent(entry.slice(index + 1)),
+        ];
       }),
   );
 }
@@ -168,10 +171,9 @@ export async function getAuthUser(req) {
   if (!payload?.sub) return null;
 
   const { db } = await connectToDatabase();
-  const user = await db.collection("users").findOne(
-    { _id: payload.sub },
-    { projection: { passwordHash: 0 } },
-  );
+  const user = await db
+    .collection("users")
+    .findOne({ _id: payload.sub }, { projection: { passwordHash: 0 } });
 
   return user ? { ...user, role: normalizeRole(user.role) } : null;
 }

@@ -19,20 +19,26 @@ export default async function handler(req, res) {
     }
 
     const { db } = await connectToDatabase();
-    const subscriptionStatus = status === "active" ? "active" : status === "suspended" ? "suspended" : "pending";
-    await db.collection("organizations").updateOne(
-      { _id: id },
-      { $set: { status, subscriptionStatus, updatedAt: new Date() } },
-    );
-    await db.collection("subscriptions").updateOne(
-      { orgId: id },
-      { $set: { status: subscriptionStatus, updatedAt: new Date() } },
-    );
+    const subscriptionStatus =
+      status === "active" ? "active" : status === "suspended" ? "suspended" : "pending";
+    await db
+      .collection("organizations")
+      .updateOne({ _id: id }, { $set: { status, subscriptionStatus, updatedAt: new Date() } });
+    await db
+      .collection("subscriptions")
+      .updateOne({ orgId: id }, { $set: { status: subscriptionStatus, updatedAt: new Date() } });
     await db.collection("users").updateMany(
       { orgId: id, role: { $in: ["OWNER", "owner"] } },
-      { $set: { status: status === "suspended" ? "suspended" : "active", updatedAt: new Date() } },
+      {
+        $set: { status: status === "suspended" ? "suspended" : "active", updatedAt: new Date() },
+      },
     );
-    await writeAuditLog(db, { orgId: id, userId: admin._id, action: "admin.organization.status_updated", details: { status } });
+    await writeAuditLog(db, {
+      orgId: id,
+      userId: admin._id,
+      action: "admin.organization.status_updated",
+      details: { status },
+    });
     sendJson(res, 200, { success: true });
   } catch (error) {
     console.error("[admin-org-status]", error.message);

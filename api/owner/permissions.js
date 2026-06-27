@@ -31,6 +31,10 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error("[owner-permissions]", error.message);
-    sendError(res, error.status || 500, error.status ? error.message : "Could not load permissions.");
+    sendError(
+      res,
+      error.status || 500,
+      error.status ? error.message : "Could not load permissions.",
+    );
   }
 }

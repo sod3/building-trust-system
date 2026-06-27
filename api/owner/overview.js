@@ -15,6 +15,10 @@ export default async function handler(req, res) {
     sendJson(res, 200, { success: true, ...dashboard });
   } catch (error) {
     console.error("[owner-overview]", error.message);
-    sendError(res, error.status || 500, error.status ? error.message : "Could not load owner dashboard.");
+    sendError(
+      res,
+      error.status || 500,
+      error.status ? error.message : "Could not load owner dashboard.",
+    );
   }
 }

@@ -20,7 +20,15 @@
 
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { CheckCircle2, XCircle, Loader2, Building2, ArrowRight, RotateCcw, MessageCircle } from "lucide-react";
+import {
+  CheckCircle2,
+  XCircle,
+  Loader2,
+  Building2,
+  ArrowRight,
+  RotateCcw,
+  MessageCircle,
+} from "lucide-react";
 import { z } from "zod";
 import { apiFetch, storeAuthSession } from "@/lib/api-client";
 import type { AuthUser } from "@/lib/auth-context";
@@ -83,7 +91,9 @@ function PaymentResult() {
 
       try {
         // Call server function — verifies payment using MOYASAR_SECRET_KEY (server-side only)
-        const result = await apiFetch<PaymentVerificationSuccess>(`/api/verify-payment?id=${encodeURIComponent(paymentId)}`);
+        const result = await apiFetch<PaymentVerificationSuccess>(
+          `/api/verify-payment?id=${encodeURIComponent(paymentId)}`,
+        );
 
         if (result.success) {
           if (result.token && result.user) {
@@ -98,9 +108,10 @@ function PaymentResult() {
         console.error("[PaymentResult] Verification error:", err);
         setState({
           phase: "failed",
-          message: err instanceof Error
-            ? err.message
-            : "Unable to verify payment. Please contact support if you were charged.",
+          message:
+            err instanceof Error
+              ? err.message
+              : "Unable to verify payment. Please contact support if you were charged.",
         });
       }
     }
@@ -116,14 +127,15 @@ function PaymentResult() {
           <span className="grid h-8 w-8 place-items-center rounded-lg bg-navy/10 group-hover:bg-navy/15 transition">
             <Building2 className="h-4 w-4 text-navy" />
           </span>
-          <span className="font-display font-semibold text-base tracking-tight text-foreground">FacilityOS</span>
+          <span className="font-display font-semibold text-base tracking-tight text-foreground">
+            FacilityOS
+          </span>
         </Link>
       </header>
 
       {/* Main content */}
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-md">
-
           {/* ===== LOADING STATE ===== */}
           {state.phase === "loading" && (
             <div className="text-center">
@@ -137,7 +149,8 @@ function PaymentResult() {
                 Verifying your payment…
               </h1>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Please wait while we confirm your payment with Moyasar.<br />
+                Please wait while we confirm your payment with Moyasar.
+                <br />
                 This usually takes just a few seconds.
               </p>
             </div>
@@ -194,7 +207,8 @@ function PaymentResult() {
               <div className="rounded-2xl bg-emerald-50 border border-emerald-200 p-4 mb-8 text-sm text-emerald-800 text-left">
                 <p className="font-semibold mb-1">✓ Owner Dashboard Access Activated</p>
                 <p className="text-emerald-700 leading-relaxed">
-                  Your account is ready. Head to the owner dashboard to set up your buildings, assign labour, and start managing operations.
+                  Your account is ready. Head to the owner dashboard to set up your buildings,
+                  assign labour, and start managing operations.
                 </p>
               </div>
 

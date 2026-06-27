@@ -16,7 +16,9 @@ export default async function handler(req, res) {
 
     const { db } = await connectToDatabase();
     const user = await db.collection("users").findOne({ _id: result.userId });
-    const token = user ? signJwt({ sub: user._id, role: user.role, orgId: user.orgId || result.orgId || null }) : null;
+    const token = user
+      ? signJwt({ sub: user._id, role: user.role, orgId: user.orgId || result.orgId || null })
+      : null;
     if (token) setAuthCookie(res, token);
 
     sendJson(res, 200, {

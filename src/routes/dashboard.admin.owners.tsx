@@ -2,7 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Plus, Search, Edit, Building2, Eye, RotateCcw } from "lucide-react";
 import {
-  PageHeader, StatusPill, Card, Modal, FormInput, FormSelect, Btn, Toast, EmptyState,
+  PageHeader,
+  StatusPill,
+  Card,
+  Modal,
+  FormInput,
+  FormSelect,
+  Btn,
+  Toast,
+  EmptyState,
 } from "@/components/dashboard/ui";
 import { apiFetch, getAuthToken } from "@/lib/api-client";
 import { useLang } from "@/lib/i18n";
@@ -38,34 +46,52 @@ function AdminOwners() {
   const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
 
   // Form state
-  const [form, setForm] = useState({ name: "", email: "", phone: "", company: "", plan: "Starter" as PlanType, status: "Active" as OwnerStatus });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    plan: "Starter" as PlanType,
+    status: "Active" as OwnerStatus,
+  });
 
   useEffect(() => {
     if (!getAuthToken()) return;
 
     apiFetch<{ owners: any[] }>("/api/admin/owners")
       .then((result) => {
-        setOwners(result.owners.map((owner) => ({
-          id: owner.id,
-          name: owner.name,
-          email: owner.email,
-          phone: owner.phone || "",
-          company: owner.organization?.name || owner.name,
-          plan: (owner.plan === "No Plan" ? "Starter" : owner.plan) as PlanType,
-          status: owner.subscriptionStatus === "active" ? "Active" : owner.status === "suspended" ? "Suspended" : "Trial",
-          buildingCount: owner.buildingCount || 0,
-          monthlyPayment: owner.totalPaidSar || 0,
-          joinedDate: owner.createdAt ? new Date(owner.createdAt).toLocaleDateString() : "",
-          nextBilling: owner.currentPeriodEnd ? new Date(owner.currentPeriodEnd).toLocaleDateString() : "",
-        })));
+        setOwners(
+          result.owners.map((owner) => ({
+            id: owner.id,
+            name: owner.name,
+            email: owner.email,
+            phone: owner.phone || "",
+            company: owner.organization?.name || owner.name,
+            plan: (owner.plan === "No Plan" ? "Starter" : owner.plan) as PlanType,
+            status:
+              owner.subscriptionStatus === "active"
+                ? "Active"
+                : owner.status === "suspended"
+                  ? "Suspended"
+                  : "Trial",
+            buildingCount: owner.buildingCount || 0,
+            monthlyPayment: owner.totalPaidSar || 0,
+            joinedDate: owner.createdAt ? new Date(owner.createdAt).toLocaleDateString() : "",
+            nextBilling: owner.currentPeriodEnd
+              ? new Date(owner.currentPeriodEnd).toLocaleDateString()
+              : "",
+          })),
+        );
       })
       .catch(() => {
         showToast("Could not load owners.", "error");
       });
   }, []);
 
-  const filtered = owners.filter(o => {
-    const matchSearch = o.name.toLowerCase().includes(search.toLowerCase()) || o.email.toLowerCase().includes(search.toLowerCase());
+  const filtered = owners.filter((o) => {
+    const matchSearch =
+      o.name.toLowerCase().includes(search.toLowerCase()) ||
+      o.email.toLowerCase().includes(search.toLowerCase());
     const matchStatus = filterStatus === "All" || o.status === filterStatus;
     return matchSearch && matchStatus;
   });
@@ -77,7 +103,11 @@ function AdminOwners() {
 
   function handleAdd() {
     if (!form.name || !form.email) return;
-    const planPriceMap: Record<PlanType, number> = { Starter: 299, Professional: 899, Enterprise: 1999 };
+    const planPriceMap: Record<PlanType, number> = {
+      Starter: 299,
+      Professional: 899,
+      Enterprise: 1999,
+    };
     const newOwner: AdminOwner = {
       id: `OWN-${Date.now()}`,
       name: form.name,
@@ -91,7 +121,7 @@ function AdminOwners() {
       joinedDate: "Jun 2026",
       nextBilling: "Jul 2026",
     };
-    setOwners(prev => [newOwner, ...prev]);
+    setOwners((prev) => [newOwner, ...prev]);
     setShowAdd(false);
     setForm({ name: "", email: "", phone: "", company: "", plan: "Starter", status: "Active" });
     showToast(`Owner ${form.name} added successfully`);
@@ -99,17 +129,39 @@ function AdminOwners() {
 
   function handleEdit(o: AdminOwner) {
     setEditOwner(o);
-    setForm({ name: o.name, email: o.email, phone: o.phone, company: o.company, plan: o.plan, status: o.status });
+    setForm({
+      name: o.name,
+      email: o.email,
+      phone: o.phone,
+      company: o.company,
+      plan: o.plan,
+      status: o.status,
+    });
   }
 
   function handleSaveEdit() {
     if (!editOwner) return;
-    const planPriceMap: Record<PlanType, number> = { Starter: 299, Professional: 899, Enterprise: 1999 };
-    setOwners(prev => prev.map(o => o.id === editOwner.id ? {
-      ...o, name: form.name, email: form.email, phone: form.phone,
-      company: form.company, plan: form.plan, status: form.status,
-      monthlyPayment: planPriceMap[form.plan],
-    } : o));
+    const planPriceMap: Record<PlanType, number> = {
+      Starter: 299,
+      Professional: 899,
+      Enterprise: 1999,
+    };
+    setOwners((prev) =>
+      prev.map((o) =>
+        o.id === editOwner.id
+          ? {
+              ...o,
+              name: form.name,
+              email: form.email,
+              phone: form.phone,
+              company: form.company,
+              plan: form.plan,
+              status: form.status,
+              monthlyPayment: planPriceMap[form.plan],
+            }
+          : o,
+      ),
+    );
     setEditOwner(null);
     showToast("Owner updated successfully");
   }
@@ -124,9 +176,23 @@ function AdminOwners() {
     <div className="space-y-6">
       <PageHeader
         title={t("admin.owners.title", { fallback: "Owners" })}
-        subtitle={t("admin.owners.subtitle", { fallback: "Manage all building owner accounts and their subscriptions." })}
+        subtitle={t("admin.owners.subtitle", {
+          fallback: "Manage all building owner accounts and their subscriptions.",
+        })}
         actions={
-          <Btn onClick={() => { setShowAdd(true); setForm({ name: "", email: "", phone: "", company: "", plan: "Starter", status: "Active" }); }}>
+          <Btn
+            onClick={() => {
+              setShowAdd(true);
+              setForm({
+                name: "",
+                email: "",
+                phone: "",
+                company: "",
+                plan: "Starter",
+                status: "Active",
+              });
+            }}
+          >
             <Plus className="h-4 w-4" /> {t("admin.owners.add", { fallback: "Add Owner" })}
           </Btn>
         }
@@ -138,14 +204,16 @@ function AdminOwners() {
           <div className="relative flex-1 min-w-48">
             <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
-              placeholder={t("admin.owners.search", { fallback: "Search owners by name or email…" })}
+              placeholder={t("admin.owners.search", {
+                fallback: "Search owners by name or email…",
+              })}
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={(e) => setSearch(e.target.value)}
               className="h-9 w-full rounded-xl border border-border bg-background px-9 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition"
             />
           </div>
           <div className="flex items-center gap-2">
-            {(["All", "Active", "Trial", "Suspended"] as const).map(s => (
+            {(["All", "Active", "Trial", "Suspended"] as const).map((s) => (
               <button
                 key={s}
                 onClick={() => setFilterStatus(s)}
@@ -155,13 +223,21 @@ function AdminOwners() {
               </button>
             ))}
           </div>
-          <div className="text-xs text-muted-foreground ml-auto">{filtered.length} {t("common.owners", { fallback: "owners" })}</div>
+          <div className="text-xs text-muted-foreground ml-auto">
+            {filtered.length} {t("common.owners", { fallback: "owners" })}
+          </div>
         </div>
       </Card>
 
       {/* Owners table */}
       {filtered.length === 0 ? (
-        <Card><EmptyState icon={<Search className="h-5 w-5" />} title={t("common.no_records", { fallback: "No matching records found" })} body={t("common.no_records_body", { fallback: "Try adjusting your search or filter." })} /></Card>
+        <Card>
+          <EmptyState
+            icon={<Search className="h-5 w-5" />}
+            title={t("common.no_records", { fallback: "No matching records found" })}
+            body={t("common.no_records_body", { fallback: "Try adjusting your search or filter." })}
+          />
+        </Card>
       ) : (
         <Card>
           <div className="overflow-x-auto">
@@ -178,12 +254,16 @@ function AdminOwners() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {filtered.map(o => (
+                {filtered.map((o) => (
                   <tr key={o.id} className="hover:bg-secondary/30 transition">
                     <td className="py-3.5">
                       <div className="flex items-center gap-3">
                         <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-navy/10 text-xs font-bold text-navy">
-                          {o.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
+                          {o.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")
+                            .slice(0, 2)}
                         </div>
                         <div>
                           <div className="font-semibold">{o.name}</div>
@@ -193,24 +273,40 @@ function AdminOwners() {
                     </td>
                     <td className="py-3.5 text-muted-foreground">{o.phone}</td>
                     <td className="py-3.5">
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium ring-1 ring-inset ${planColors[o.plan]}`}>
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium ring-1 ring-inset ${planColors[o.plan]}`}
+                      >
                         {o.plan}
                       </span>
                     </td>
-                    <td className="py-3.5"><StatusPill status={o.status} /></td>
+                    <td className="py-3.5">
+                      <StatusPill status={o.status} />
+                    </td>
                     <td className="py-3.5">
                       <div className="flex items-center gap-1.5">
                         <Building2 className="h-3.5 w-3.5 text-muted-foreground" />
                         <span>{o.buildingCount}</span>
                       </div>
                     </td>
-                    <td className="py-3.5 font-semibold">SAR {o.monthlyPayment.toLocaleString()}</td>
+                    <td className="py-3.5 font-semibold">
+                      SAR {o.monthlyPayment.toLocaleString()}
+                    </td>
                     <td className="py-3.5">
                       <div className="flex items-center gap-1.5">
                         <Btn size="sm" variant="outline" onClick={() => handleEdit(o)}>
                           <Edit className="h-3.5 w-3.5" /> {t("common.edit", { fallback: "Edit" })}
                         </Btn>
-                        <Btn size="sm" variant="ghost" onClick={() => showToast(t("admin.owners.reset_sent", { fallback: "Password reset email sent" }))}>
+                        <Btn
+                          size="sm"
+                          variant="ghost"
+                          onClick={() =>
+                            showToast(
+                              t("admin.owners.reset_sent", {
+                                fallback: "Password reset email sent",
+                              }),
+                            )
+                          }
+                        >
                           <RotateCcw className="h-3.5 w-3.5" />
                         </Btn>
                       </div>
@@ -224,56 +320,136 @@ function AdminOwners() {
       )}
 
       {/* Add Owner Modal */}
-      <Modal open={showAdd} onClose={() => setShowAdd(false)} title={t("admin.owners.add", { fallback: "Add New Owner" })}>
+      <Modal
+        open={showAdd}
+        onClose={() => setShowAdd(false)}
+        title={t("admin.owners.add", { fallback: "Add New Owner" })}
+      >
         <div className="space-y-4">
-          <FormInput label={t("common.full_name", { fallback: "Full Name" })} value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Ahmed Al-Farsi" required />
-          <FormInput label={t("common.email", { fallback: "Email" })} value={form.email} onChange={v => setForm(f => ({ ...f, email: v }))} placeholder="owner@example.com" type="email" required />
-          <FormInput label={t("common.phone", { fallback: "Phone" })} value={form.phone} onChange={v => setForm(f => ({ ...f, phone: v }))} placeholder="+966 55 000 0000" />
-          <FormInput label={t("common.company", { fallback: "Company" })} value={form.company} onChange={v => setForm(f => ({ ...f, company: v }))} placeholder="Tower Group Ltd" />
-          <FormSelect label={t("common.plan", { fallback: "Plan" })} value={form.plan} onChange={v => setForm(f => ({ ...f, plan: v as PlanType }))}
+          <FormInput
+            label={t("common.full_name", { fallback: "Full Name" })}
+            value={form.name}
+            onChange={(v) => setForm((f) => ({ ...f, name: v }))}
+            placeholder="Ahmed Al-Farsi"
+            required
+          />
+          <FormInput
+            label={t("common.email", { fallback: "Email" })}
+            value={form.email}
+            onChange={(v) => setForm((f) => ({ ...f, email: v }))}
+            placeholder="owner@example.com"
+            type="email"
+            required
+          />
+          <FormInput
+            label={t("common.phone", { fallback: "Phone" })}
+            value={form.phone}
+            onChange={(v) => setForm((f) => ({ ...f, phone: v }))}
+            placeholder="+966 55 000 0000"
+          />
+          <FormInput
+            label={t("common.company", { fallback: "Company" })}
+            value={form.company}
+            onChange={(v) => setForm((f) => ({ ...f, company: v }))}
+            placeholder="Tower Group Ltd"
+          />
+          <FormSelect
+            label={t("common.plan", { fallback: "Plan" })}
+            value={form.plan}
+            onChange={(v) => setForm((f) => ({ ...f, plan: v as PlanType }))}
             options={[
               { value: "Starter", label: t("plan.starter", { fallback: "Starter — SAR 299/mo" }) },
-              { value: "Professional", label: t("plan.professional", { fallback: "Professional — SAR 899/mo" }) },
-              { value: "Enterprise", label: t("plan.enterprise", { fallback: "Enterprise — SAR 1,999/mo" }) }
+              {
+                value: "Professional",
+                label: t("plan.professional", { fallback: "Professional — SAR 899/mo" }),
+              },
+              {
+                value: "Enterprise",
+                label: t("plan.enterprise", { fallback: "Enterprise — SAR 1,999/mo" }),
+              },
             ]}
           />
-          <FormSelect label={t("common.status", { fallback: "Status" })} value={form.status} onChange={v => setForm(f => ({ ...f, status: v as OwnerStatus }))}
+          <FormSelect
+            label={t("common.status", { fallback: "Status" })}
+            value={form.status}
+            onChange={(v) => setForm((f) => ({ ...f, status: v as OwnerStatus }))}
             options={[
               { value: "Active", label: t("status.active", { fallback: "Active" }) },
               { value: "Trial", label: t("status.trial", { fallback: "Trial" }) },
-              { value: "Suspended", label: t("status.suspended", { fallback: "Suspended" }) }
+              { value: "Suspended", label: t("status.suspended", { fallback: "Suspended" }) },
             ]}
           />
           <div className="flex items-center justify-end gap-2 pt-2">
-            <Btn variant="secondary" onClick={() => setShowAdd(false)}>{t("common.cancel", { fallback: "Cancel" })}</Btn>
-            <Btn onClick={handleAdd} disabled={!form.name || !form.email}>{t("admin.owners.add", { fallback: "Add Owner" })}</Btn>
+            <Btn variant="secondary" onClick={() => setShowAdd(false)}>
+              {t("common.cancel", { fallback: "Cancel" })}
+            </Btn>
+            <Btn onClick={handleAdd} disabled={!form.name || !form.email}>
+              {t("admin.owners.add", { fallback: "Add Owner" })}
+            </Btn>
           </div>
         </div>
       </Modal>
 
       {/* Edit Owner Modal */}
-      <Modal open={!!editOwner} onClose={() => setEditOwner(null)} title={t("admin.owners.edit", { fallback: "Edit Owner" })}>
+      <Modal
+        open={!!editOwner}
+        onClose={() => setEditOwner(null)}
+        title={t("admin.owners.edit", { fallback: "Edit Owner" })}
+      >
         <div className="space-y-4">
-          <FormInput label={t("common.full_name", { fallback: "Full Name" })} value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} required />
-          <FormInput label={t("common.email", { fallback: "Email" })} value={form.email} onChange={v => setForm(f => ({ ...f, email: v }))} type="email" required />
-          <FormInput label={t("common.phone", { fallback: "Phone" })} value={form.phone} onChange={v => setForm(f => ({ ...f, phone: v }))} />
-          <FormInput label={t("common.company", { fallback: "Company" })} value={form.company} onChange={v => setForm(f => ({ ...f, company: v }))} />
-          <FormSelect label={t("common.plan", { fallback: "Plan" })} value={form.plan} onChange={v => setForm(f => ({ ...f, plan: v as PlanType }))}
+          <FormInput
+            label={t("common.full_name", { fallback: "Full Name" })}
+            value={form.name}
+            onChange={(v) => setForm((f) => ({ ...f, name: v }))}
+            required
+          />
+          <FormInput
+            label={t("common.email", { fallback: "Email" })}
+            value={form.email}
+            onChange={(v) => setForm((f) => ({ ...f, email: v }))}
+            type="email"
+            required
+          />
+          <FormInput
+            label={t("common.phone", { fallback: "Phone" })}
+            value={form.phone}
+            onChange={(v) => setForm((f) => ({ ...f, phone: v }))}
+          />
+          <FormInput
+            label={t("common.company", { fallback: "Company" })}
+            value={form.company}
+            onChange={(v) => setForm((f) => ({ ...f, company: v }))}
+          />
+          <FormSelect
+            label={t("common.plan", { fallback: "Plan" })}
+            value={form.plan}
+            onChange={(v) => setForm((f) => ({ ...f, plan: v as PlanType }))}
             options={[
               { value: "Starter", label: t("plan.starter", { fallback: "Starter — SAR 299/mo" }) },
-              { value: "Professional", label: t("plan.professional", { fallback: "Professional — SAR 899/mo" }) },
-              { value: "Enterprise", label: t("plan.enterprise", { fallback: "Enterprise — SAR 1,999/mo" }) }
+              {
+                value: "Professional",
+                label: t("plan.professional", { fallback: "Professional — SAR 899/mo" }),
+              },
+              {
+                value: "Enterprise",
+                label: t("plan.enterprise", { fallback: "Enterprise — SAR 1,999/mo" }),
+              },
             ]}
           />
-          <FormSelect label={t("common.status", { fallback: "Status" })} value={form.status} onChange={v => setForm(f => ({ ...f, status: v as OwnerStatus }))}
+          <FormSelect
+            label={t("common.status", { fallback: "Status" })}
+            value={form.status}
+            onChange={(v) => setForm((f) => ({ ...f, status: v as OwnerStatus }))}
             options={[
               { value: "Active", label: t("status.active", { fallback: "Active" }) },
               { value: "Trial", label: t("status.trial", { fallback: "Trial" }) },
-              { value: "Suspended", label: t("status.suspended", { fallback: "Suspended" }) }
+              { value: "Suspended", label: t("status.suspended", { fallback: "Suspended" }) },
             ]}
           />
           <div className="flex items-center justify-end gap-2 pt-2">
-            <Btn variant="secondary" onClick={() => setEditOwner(null)}>{t("common.cancel", { fallback: "Cancel" })}</Btn>
+            <Btn variant="secondary" onClick={() => setEditOwner(null)}>
+              {t("common.cancel", { fallback: "Cancel" })}
+            </Btn>
             <Btn onClick={handleSaveEdit}>{t("common.save", { fallback: "Save Changes" })}</Btn>
           </div>
         </div>

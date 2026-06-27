@@ -10,13 +10,23 @@ export default async function handler(req, res) {
     if (!admin) return sendError(res, 401, "Admin access required.");
 
     const { db } = await connectToDatabase();
-    const invoices = await db.collection("invoices").aggregate([
-      { $lookup: { from: "organizations", localField: "orgId", foreignField: "_id", as: "orgRows" } },
-      { $lookup: { from: "users", localField: "userId", foreignField: "_id", as: "userRows" } },
-      { $project: { "userRows.passwordHash": 0 } },
-      { $sort: { createdAt: -1 } },
-      { $limit: 200 },
-    ]).toArray();
+    const invoices = await db
+      .collection("invoices")
+      .aggregate([
+        {
+          $lookup: {
+            from: "organizations",
+            localField: "orgId",
+            foreignField: "_id",
+            as: "orgRows",
+          },
+        },
+        { $lookup: { from: "users", localField: "userId", foreignField: "_id", as: "userRows" } },
+        { $project: { "userRows.passwordHash": 0 } },
+        { $sort: { createdAt: -1 } },
+        { $limit: 200 },
+      ])
+      .toArray();
 
     sendJson(res, 200, {
       success: true,

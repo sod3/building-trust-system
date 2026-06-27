@@ -27,16 +27,17 @@ export default async function handler(req, res) {
       .sort({ createdAt: -1 })
       .limit(10)
       .toArray();
-    const paymentMethod = await db.collection("paymentMethods").findOne(
-      { orgId: context.org._id, status: "active" },
-      { projection: { moyasarTokenId: 0 } },
-    );
+    const paymentMethod = await db
+      .collection("paymentMethods")
+      .findOne({ orgId: context.org._id, status: "active" }, { projection: { moyasarTokenId: 0 } });
     const dashboard = await buildOwnerDashboard(db, context);
 
     const now = new Date();
     const isActive =
       subscription?.status === "active" ||
-      (subscription?.status === "past_due" && subscription?.gracePeriodEndsAt && new Date(subscription.gracePeriodEndsAt) > now);
+      (subscription?.status === "past_due" &&
+        subscription?.gracePeriodEndsAt &&
+        new Date(subscription.gracePeriodEndsAt) > now);
 
     sendJson(res, 200, {
       success: true,

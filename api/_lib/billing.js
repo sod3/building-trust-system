@@ -11,7 +11,10 @@ export function addDays(date, days) {
   return next;
 }
 
-export async function createInvoiceAndOrder(db, { orgId, userId, subscriptionId, plan, billingReason }) {
+export async function createInvoiceAndOrder(
+  db,
+  { orgId, userId, subscriptionId, plan, billingReason },
+) {
   const now = new Date();
   const invoiceId = createId("inv");
   const orderId = createId("order");
@@ -65,14 +68,18 @@ async function markRenewalFailed(db, { subscription, invoice, order, reason }) {
   const shouldSuspend = now >= new Date(gracePeriodEndsAt) || retryCount > retryDelays.length;
   const nextRetryDelay = retryDelays[Math.min(retryCount - 1, retryDelays.length - 1)];
 
-  await db.collection("invoices").updateOne(
-    { invoiceId: invoice.invoiceId },
-    { $set: { status: "failed", failureReason: reason, updatedAt: now } },
-  );
-  await db.collection("orders").updateOne(
-    { orderId: order.orderId },
-    { $set: { status: "failed", failureReason: reason, updatedAt: now } },
-  );
+  await db
+    .collection("invoices")
+    .updateOne(
+      { invoiceId: invoice.invoiceId },
+      { $set: { status: "failed", failureReason: reason, updatedAt: now } },
+    );
+  await db
+    .collection("orders")
+    .updateOne(
+      { orderId: order.orderId },
+      { $set: { status: "failed", failureReason: reason, updatedAt: now } },
+    );
   await db.collection("subscriptions").updateOne(
     { _id: subscription._id },
     {
@@ -81,7 +88,9 @@ async function markRenewalFailed(db, { subscription, invoice, order, reason }) {
         lastPaymentStatus: "failed",
         retryCount,
         gracePeriodEndsAt,
-        nextBillingDate: shouldSuspend ? subscription.nextBillingDate : addDays(now, nextRetryDelay),
+        nextBillingDate: shouldSuspend
+          ? subscription.nextBillingDate
+          : addDays(now, nextRetryDelay),
         updatedAt: now,
       },
     },
@@ -96,10 +105,12 @@ async function markRenewalFailed(db, { subscription, invoice, order, reason }) {
       },
     },
   );
-  await db.collection("users").updateMany(
-    { orgId: subscription.orgId, role: { $in: ["OWNER", "owner"] } },
-    { $set: { status: shouldSuspend ? "suspended" : "active", updatedAt: now } },
-  );
+  await db
+    .collection("users")
+    .updateMany(
+      { orgId: subscription.orgId, role: { $in: ["OWNER", "owner"] } },
+      { $set: { status: shouldSuspend ? "suspended" : "active", updatedAt: now } },
+    );
 
   return { status: shouldSuspend ? "suspended" : "past_due", reason };
 }
@@ -122,13 +133,21 @@ export async function processDueSubscriptions({ limit = 50 } = {}) {
   for (const subscription of subscriptions) {
     const plan = await getActivePlan(db, subscription.planId);
     if (!plan) {
-      results.push({ subscriptionId: subscription._id, success: false, message: "Plan is not active." });
+      results.push({
+        subscriptionId: subscription._id,
+        success: false,
+        message: "Plan is not active.",
+      });
       continue;
     }
 
     const paymentMethod = subscription.paymentMethodId
-      ? await db.collection("paymentMethods").findOne({ _id: subscription.paymentMethodId, status: "active" })
-      : await db.collection("paymentMethods").findOne({ orgId: subscription.orgId, status: "active" });
+      ? await db
+          .collection("paymentMethods")
+          .findOne({ _id: subscription.paymentMethodId, status: "active" })
+      : await db
+          .collection("paymentMethods")
+          .findOne({ orgId: subscription.orgId, status: "active" });
 
     const { invoice, order } = await createInvoiceAndOrder(db, {
       orgId: subscription.orgId,
@@ -171,7 +190,11 @@ export async function processDueSubscriptions({ limit = 50 } = {}) {
       });
 
       const verified = await verifyAndPersistPayment(payment.id);
-      results.push({ subscriptionId: subscription._id, success: verified.success, paymentId: payment.id });
+      results.push({
+        subscriptionId: subscription._id,
+        success: verified.success,
+        paymentId: payment.id,
+      });
     } catch (error) {
       const failed = await markRenewalFailed(db, {
         subscription,

@@ -15,12 +15,18 @@ export default async function handler(req, res) {
     const name = asString(body.fullName || body.ownerName || body.name);
     const email = asEmail(body.email);
     const phone = asString(body.phone);
-    const companyName = asString(body.companyName || body.company || body.organizationName || body.buildingGroupName);
+    const companyName = asString(
+      body.companyName || body.company || body.organizationName || body.buildingGroupName,
+    );
     const password = String(body.password || "");
 
     if (!planId) return sendError(res, 400, "Please select a plan.");
     if (!name || !email || !phone || !companyName) {
-      return sendError(res, 400, "Full name, email, phone, and company/building group name are required.");
+      return sendError(
+        res,
+        400,
+        "Full name, email, phone, and company/building group name are required.",
+      );
     }
     assertEmail(email);
     if (!password || password.length < 8) {
@@ -33,10 +39,15 @@ export default async function handler(req, res) {
 
     const authUser = await getAuthUser(req).catch(() => null);
     const now = new Date();
-    let user = authUser?.role === ROLES.OWNER ? authUser : await db.collection("users").findOne({ email });
+    let user =
+      authUser?.role === ROLES.OWNER ? authUser : await db.collection("users").findOne({ email });
 
     if (user?.status === "active" && user.email === email && !authUser) {
-      return sendError(res, 409, "An account with this email already exists. Please sign in to manage billing.");
+      return sendError(
+        res,
+        409,
+        "An account with this email already exists. Please sign in to manage billing.",
+      );
     }
 
     if (!user) {
@@ -83,7 +94,9 @@ export default async function handler(req, res) {
         updatedAt: now,
       };
       await db.collection("organizations").insertOne(org);
-      await db.collection("users").updateOne({ _id: user._id }, { $set: { orgId: org._id, updatedAt: now } });
+      await db
+        .collection("users")
+        .updateOne({ _id: user._id }, { $set: { orgId: org._id, updatedAt: now } });
       user.orgId = org._id;
     } else {
       await db.collection("organizations").updateOne(
@@ -93,7 +106,8 @@ export default async function handler(req, res) {
             name: companyName || org.name,
             ownerUserId: user._id,
             planId: plan.slug || plan.planId,
-            subscriptionStatus: org.subscriptionStatus === "active" ? org.subscriptionStatus : "pending",
+            subscriptionStatus:
+              org.subscriptionStatus === "active" ? org.subscriptionStatus : "pending",
             status: org.status === "active" ? org.status : "pending_payment",
             updatedAt: now,
           },
@@ -145,7 +159,11 @@ export default async function handler(req, res) {
       orgId: org._id,
       userId: user._id,
       action: "checkout.initiated",
-      details: { planId: plan.slug || plan.planId, orderId: order.orderId, invoiceId: invoice.invoiceId },
+      details: {
+        planId: plan.slug || plan.planId,
+        orderId: order.orderId,
+        invoiceId: invoice.invoiceId,
+      },
     });
 
     sendJson(res, 201, {
@@ -177,6 +195,10 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error("[checkout-initiate]", error.message);
-    sendError(res, error.status || 500, error.status ? error.message : "Could not initiate checkout.");
+    sendError(
+      res,
+      error.status || 500,
+      error.status ? error.message : "Could not initiate checkout.",
+    );
   }
 }

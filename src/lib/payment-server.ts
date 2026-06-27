@@ -24,9 +24,9 @@ import { createServerFn } from "@tanstack/react-start";
 // These must match the prices in pricing.tsx and checkout.tsx exactly.
 // ---------------------------------------------------------------------------
 const ALLOWED_PLANS: Record<number, string> = {
-  29900: "starter",    // SAR 299
+  29900: "starter", // SAR 299
   89900: "professional", // SAR 899
-  199900: "enterprise",  // SAR 1999
+  199900: "enterprise", // SAR 1999
 };
 
 // ---------------------------------------------------------------------------
@@ -72,7 +72,7 @@ export const verifyPayment = createServerFn({ method: "GET" })
         return { success: false, message: "Could not fetch payment details from Moyasar." };
       }
 
-      const payment = await response.json() as MoyasarPayment;
+      const payment = (await response.json()) as MoyasarPayment;
 
       // --- Security checks ---
 

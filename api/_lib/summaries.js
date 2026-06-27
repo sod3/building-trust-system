@@ -56,7 +56,12 @@ export function publicReport(report, buildingMap = new Map(), labourMap = new Ma
     completedTasks,
     totalTasks: items.length,
     pendingTasks,
-    status: report.overallStatus === "done" ? "Submitted" : report.overallStatus === "issue" ? "Pending" : "Missed",
+    status:
+      report.overallStatus === "done"
+        ? "Submitted"
+        : report.overallStatus === "issue"
+          ? "Pending"
+          : "Missed",
     submittedAt: report.submittedAt || report.createdAt,
   };
 }
@@ -66,10 +71,25 @@ export async function buildOwnerDashboard(db, context) {
   const date = todayKey();
 
   const [buildings, labourUsers, templates, reports, invoices, payments] = await Promise.all([
-    db.collection("buildings").find({ orgId, status: { $ne: "deleted" } }).sort({ createdAt: -1 }).toArray(),
-    db.collection("users").find({ orgId, role: { $in: [ROLES.LABOUR, "labour"] }, status: { $ne: "deleted" } }, { projection: { passwordHash: 0 } }).toArray(),
+    db
+      .collection("buildings")
+      .find({ orgId, status: { $ne: "deleted" } })
+      .sort({ createdAt: -1 })
+      .toArray(),
+    db
+      .collection("users")
+      .find(
+        { orgId, role: { $in: [ROLES.LABOUR, "labour"] }, status: { $ne: "deleted" } },
+        { projection: { passwordHash: 0 } },
+      )
+      .toArray(),
     db.collection("checklistTemplates").find({ orgId }).sort({ createdAt: -1 }).toArray(),
-    db.collection("dailyReports").find({ orgId }).sort({ submittedAt: -1, createdAt: -1 }).limit(200).toArray(),
+    db
+      .collection("dailyReports")
+      .find({ orgId })
+      .sort({ submittedAt: -1, createdAt: -1 })
+      .limit(200)
+      .toArray(),
     db.collection("invoices").find({ orgId }).sort({ createdAt: -1 }).limit(20).toArray(),
     db.collection("payments").find({ orgId }).sort({ createdAt: -1 }).limit(20).toArray(),
   ]);
@@ -80,8 +100,10 @@ export async function buildOwnerDashboard(db, context) {
   const latestReportByBuilding = new Map();
   const latestReportByLabour = new Map();
   for (const report of reports) {
-    if (!latestReportByBuilding.has(report.buildingId)) latestReportByBuilding.set(report.buildingId, report);
-    if (!latestReportByLabour.has(report.labourUserId)) latestReportByLabour.set(report.labourUserId, report);
+    if (!latestReportByBuilding.has(report.buildingId))
+      latestReportByBuilding.set(report.buildingId, report);
+    if (!latestReportByLabour.has(report.labourUserId))
+      latestReportByLabour.set(report.labourUserId, report);
   }
 
   const buildingRows = buildings.map((building) => {
@@ -93,13 +115,17 @@ export async function buildOwnerDashboard(db, context) {
     return {
       ...publicBuilding(building),
       ownerName: context.user.name,
-      assignedLabourIds: labourUsers.filter((user) => (user.assignedBuildingIds || []).includes(building._id)).map((user) => user._id),
+      assignedLabourIds: labourUsers
+        .filter((user) => (user.assignedBuildingIds || []).includes(building._id))
+        .map((user) => user._id),
       completionToday,
       totalTasksToday: total,
       doneTasksToday: done,
       lastReportTime: latest?.submittedAt || "No report yet",
-      status: completionToday >= 80 ? "Healthy" : completionToday > 0 ? "Pending" : "Attention Needed",
-      cover: building.cover || "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&q=70",
+      status:
+        completionToday >= 80 ? "Healthy" : completionToday > 0 ? "Pending" : "Attention Needed",
+      cover:
+        building.cover || "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&q=70",
     };
   });
 
@@ -108,7 +134,9 @@ export async function buildOwnerDashboard(db, context) {
   const tasksTotalToday = todayRows.reduce((sum, report) => sum + report.totalTasks, 0);
   const tasksCompletedToday = todayRows.reduce((sum, report) => sum + report.completedTasks, 0);
   const pendingTasks = Math.max(tasksTotalToday - tasksCompletedToday, 0);
-  const completionRate = tasksTotalToday ? Math.round((tasksCompletedToday / tasksTotalToday) * 100) : 0;
+  const completionRate = tasksTotalToday
+    ? Math.round((tasksCompletedToday / tasksTotalToday) * 100)
+    : 0;
 
   const plan = publicPlan(context.plan);
   return {

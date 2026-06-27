@@ -13,7 +13,10 @@ export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
       { title: "Book a Demo - FacilityOS Arabia" },
-      { name: "description", content: "Request a demo of FacilityOS Arabia. We respond within one business day." },
+      {
+        name: "description",
+        content: "Request a demo of FacilityOS Arabia. We respond within one business day.",
+      },
       { property: "og:title", content: "Book a Demo - FacilityOS Arabia" },
       { property: "og:description", content: "Tell us about your portfolio." },
     ],
@@ -30,7 +33,9 @@ function ContactPage() {
       <Header />
       <section className="bg-navy bg-mesh py-20 text-primary-foreground sm:py-24">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <h1 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">{t("contact.title")}</h1>
+          <h1 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+            {t("contact.title")}
+          </h1>
           <p className="mt-4 text-white/75">{t("contact.sub")}</p>
         </div>
       </section>
@@ -60,7 +65,11 @@ function ContactPage() {
                 <Label htmlFor="msg">{t("contact.message")}</Label>
                 <Textarea id="msg" rows={5} className="mt-1.5" maxLength={1000} />
               </div>
-              <Button type="submit" size="lg" className="bg-navy text-primary-foreground hover:bg-navy/90 sm:w-fit">
+              <Button
+                type="submit"
+                size="lg"
+                className="bg-navy text-primary-foreground hover:bg-navy/90 sm:w-fit"
+              >
                 {t("contact.submit")}
               </Button>
             </form>
@@ -69,16 +78,30 @@ function ContactPage() {
 
         <aside className="space-y-4 text-sm">
           <div className="rounded-2xl border border-border bg-secondary/40 p-6">
-            <h3 className="font-display text-base font-semibold">{t("contact.direct", { fallback: "Direct contact" })}</h3>
+            <h3 className="font-display text-base font-semibold">
+              {t("contact.direct", { fallback: "Direct contact" })}
+            </h3>
             <ul className="mt-4 space-y-3 text-muted-foreground">
-              <li className="flex items-center gap-2"><Mail className="h-4 w-4 text-accent" /> info@saturnlynk.sa</li>
-              <li className="flex items-center gap-2"><Phone className="h-4 w-4 text-accent rtl:-scale-x-100" /> +966 55 125 4121</li>
-              <li className="flex items-center gap-2"><MapPin className="h-4 w-4 text-accent" /> {t("common.city", { fallback: "Jeddah" })}, {t("contact.country", { fallback: "Saudi Arabia" })}</li>
+              <li className="flex items-center gap-2">
+                <Mail className="h-4 w-4 text-accent" /> info@saturnlynk.sa
+              </li>
+              <li className="flex items-center gap-2">
+                <Phone className="h-4 w-4 text-accent rtl:-scale-x-100" /> +966 55 125 4121
+              </li>
+              <li className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-accent" />{" "}
+                {t("common.city", { fallback: "Jeddah" })},{" "}
+                {t("contact.country", { fallback: "Saudi Arabia" })}
+              </li>
             </ul>
           </div>
           <div className="rounded-2xl border border-border bg-background p-6">
-            <h3 className="font-display text-base font-semibold">{t("contact.support", { fallback: "Need support?" })}</h3>
-            <p className="mt-2 text-muted-foreground">{t("contact.existing", { fallback: "Existing customers: info@saturnlynk.sa" })}</p>
+            <h3 className="font-display text-base font-semibold">
+              {t("contact.support", { fallback: "Need support?" })}
+            </h3>
+            <p className="mt-2 text-muted-foreground">
+              {t("contact.existing", { fallback: "Existing customers: info@saturnlynk.sa" })}
+            </p>
           </div>
         </aside>
       </section>
@@ -87,10 +110,25 @@ function ContactPage() {
   );
 }
 
-function Field({ id, label, type = "text", required, min }: { id: string; label: string; type?: string; required?: boolean; min?: number }) {
+function Field({
+  id,
+  label,
+  type = "text",
+  required,
+  min,
+}: {
+  id: string;
+  label: string;
+  type?: string;
+  required?: boolean;
+  min?: number;
+}) {
   return (
     <div>
-      <Label htmlFor={id}>{label}{required && <span className="ms-1 text-destructive">*</span>}</Label>
+      <Label htmlFor={id}>
+        {label}
+        {required && <span className="ms-1 text-destructive">*</span>}
+      </Label>
       <Input id={id} type={type} required={required} min={min} maxLength={200} className="mt-1.5" />
     </div>
   );

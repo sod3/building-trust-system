@@ -17,23 +17,44 @@ function Pricing() {
       name: t("pricing.plan.starter"),
       price: 299,
       scope: t("pricing.desc.starter"),
-      features: [t("pricing.feat.1building"), t("pricing.feat.owner_access"), t("pricing.feat.labour_access"), t("pricing.feat.daily_reports"), t("pricing.feat.basic_history"), t("pricing.feat.email_support")],
-      query: "starter"
+      features: [
+        t("pricing.feat.1building"),
+        t("pricing.feat.owner_access"),
+        t("pricing.feat.labour_access"),
+        t("pricing.feat.daily_reports"),
+        t("pricing.feat.basic_history"),
+        t("pricing.feat.email_support"),
+      ],
+      query: "starter",
     },
     {
       name: t("pricing.plan.professional"),
       price: 899,
       scope: t("pricing.desc.professional"),
-      features: [t("pricing.feat.up_to_5"), t("pricing.feat.multiple_labour"), t("pricing.feat.templates"), t("pricing.feat.today_reports"), t("pricing.feat.report_history"), t("pricing.feat.priority_support")],
+      features: [
+        t("pricing.feat.up_to_5"),
+        t("pricing.feat.multiple_labour"),
+        t("pricing.feat.templates"),
+        t("pricing.feat.today_reports"),
+        t("pricing.feat.report_history"),
+        t("pricing.feat.priority_support"),
+      ],
       popular: true,
-      query: "professional"
+      query: "professional",
     },
     {
       name: t("pricing.plan.enterprise"),
       price: 1999,
       scope: t("pricing.desc.enterprise"),
-      features: [t("pricing.feat.multiple_buildings"), t("pricing.feat.custom_setup"), t("pricing.feat.multiple_users"), t("pricing.feat.advanced_history"), t("pricing.feat.priority_support"), t("pricing.feat.dedicated_support")],
-      query: "enterprise"
+      features: [
+        t("pricing.feat.multiple_buildings"),
+        t("pricing.feat.custom_setup"),
+        t("pricing.feat.multiple_users"),
+        t("pricing.feat.advanced_history"),
+        t("pricing.feat.priority_support"),
+        t("pricing.feat.dedicated_support"),
+      ],
+      query: "enterprise",
     },
   ];
 
@@ -73,23 +94,36 @@ function Pricing() {
       <section className="-mt-16 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-24">
         <div className="grid gap-8 sm:grid-cols-3">
           {plans.map((p) => (
-            <div key={p.name} className={`relative flex flex-col rounded-3xl border p-8 ${p.popular ? "border-accent bg-background shadow-2xl scale-105 z-10" : "border-border bg-background shadow-lg mt-8 sm:mt-0"}`}>
-              {p.popular && <span className="absolute -top-4 start-1/2 -translate-x-1/2 rounded-full bg-accent px-4 py-1 text-sm font-semibold text-white">{t("pricing.popular")}</span>}
+            <div
+              key={p.name}
+              className={`relative flex flex-col rounded-3xl border p-8 ${p.popular ? "border-accent bg-background shadow-2xl scale-105 z-10" : "border-border bg-background shadow-lg mt-8 sm:mt-0"}`}
+            >
+              {p.popular && (
+                <span className="absolute -top-4 start-1/2 -translate-x-1/2 rounded-full bg-accent px-4 py-1 text-sm font-semibold text-white">
+                  {t("pricing.popular")}
+                </span>
+              )}
               <h3 className="font-display text-2xl font-semibold">{p.name}</h3>
               <p className="mt-2 text-sm text-muted-foreground min-h-[40px]">{p.scope}</p>
               <div className="mt-6 flex items-baseline gap-1 border-b border-border pb-6">
                 <span className="font-display text-5xl font-bold">{p.price}</span>
-                <span className="text-sm font-medium text-muted-foreground">{t("pricing.sar_mo")}</span>
+                <span className="text-sm font-medium text-muted-foreground">
+                  {t("pricing.sar_mo")}
+                </span>
               </div>
               <ul className="mt-8 flex-1 space-y-4">
-                {p.features.map(f => (
+                {p.features.map((f) => (
                   <li key={f} className="flex items-start gap-3 text-sm text-foreground">
                     <CheckCircle2 className="h-5 w-5 text-accent shrink-0" />
                     <span className="leading-tight">{f}</span>
                   </li>
                 ))}
               </ul>
-              <Button asChild size="lg" className={`mt-8 w-full h-12 text-base ${p.popular ? "bg-accent text-white hover:bg-accent/90" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}>
+              <Button
+                asChild
+                size="lg"
+                className={`mt-8 w-full h-12 text-base ${p.popular ? "bg-accent text-white hover:bg-accent/90" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}
+              >
                 <Link to="/checkout" search={{ plan: p.query }}>
                   {t("pricing.btn.get_owner")}
                 </Link>
@@ -103,14 +137,21 @@ function Pricing() {
       <section className="border-t border-border bg-secondary/30 py-24">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="font-display text-3xl font-semibold sm:text-4xl">{t("sec.faq.title")}</h2>
+            <h2 className="font-display text-3xl font-semibold sm:text-4xl">
+              {t("sec.faq.title")}
+            </h2>
           </div>
           <div className="space-y-4">
             {faqs.map((faq, i) => (
-              <details key={i} className="group rounded-2xl border border-border bg-background p-6 [&_summary::-webkit-details-marker]:hidden shadow-sm">
+              <details
+                key={i}
+                className="group rounded-2xl border border-border bg-background p-6 [&_summary::-webkit-details-marker]:hidden shadow-sm"
+              >
                 <summary className="flex cursor-pointer items-center justify-between gap-4 font-semibold text-lg">
                   {faq.q}
-                  <span className="grid h-8 w-8 place-items-center rounded-full bg-secondary text-lg transition-transform group-open:rotate-45">+</span>
+                  <span className="grid h-8 w-8 place-items-center rounded-full bg-secondary text-lg transition-transform group-open:rotate-45">
+                    +
+                  </span>
                 </summary>
                 <p className="mt-4 text-muted-foreground leading-relaxed">{faq.a}</p>
               </details>

@@ -12,10 +12,9 @@ export default async function handler(req, res) {
     requireDashboardAccess(context, { allowBilling: true });
 
     const now = new Date();
-    await context.db.collection("subscriptions").updateOne(
-      { orgId: context.org._id },
-      { $set: { cancelAtPeriodEnd: true, updatedAt: now } },
-    );
+    await context.db
+      .collection("subscriptions")
+      .updateOne({ orgId: context.org._id }, { $set: { cancelAtPeriodEnd: true, updatedAt: now } });
 
     sendJson(res, 200, {
       success: true,
@@ -23,6 +22,10 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error("[billing-cancel]", error.message);
-    sendError(res, error.status || 500, error.status ? error.message : "Could not cancel subscription.");
+    sendError(
+      res,
+      error.status || 500,
+      error.status ? error.message : "Could not cancel subscription.",
+    );
   }
 }

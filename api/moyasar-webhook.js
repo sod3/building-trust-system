@@ -39,19 +39,27 @@ export default async function handler(req, res) {
     const paymentId = payment.id || event.id;
     const eventType = event.type || event.event || payment.status;
 
-    if (paymentId && ["payment_paid", "payment.paid", "paid", "payment_captured"].includes(eventType)) {
+    if (
+      paymentId &&
+      ["payment_paid", "payment.paid", "paid", "payment_captured"].includes(eventType)
+    ) {
       await verifyAndPersistPayment(paymentId);
     }
 
-    if (paymentId && ["payment_failed", "payment_faild", "payment.failed", "failed"].includes(eventType)) {
+    if (
+      paymentId &&
+      ["payment_failed", "payment_faild", "payment.failed", "failed"].includes(eventType)
+    ) {
       await verifyAndPersistPayment(paymentId).catch(() => null);
     }
 
     if (event.id) {
-      await db.collection("webhookEvents").updateOne(
-        { eventId: event.id },
-        { $set: { processedAt: new Date(), updatedAt: new Date() } },
-      );
+      await db
+        .collection("webhookEvents")
+        .updateOne(
+          { eventId: event.id },
+          { $set: { processedAt: new Date(), updatedAt: new Date() } },
+        );
     }
 
     sendJson(res, 200, { received: true });

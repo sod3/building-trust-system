@@ -17,10 +17,12 @@ export default async function handler(req, res) {
     if (!moyasarTokenId) return sendError(res, 400, "A Moyasar payment method token is required.");
 
     const now = new Date();
-    await context.db.collection("paymentMethods").updateMany(
-      { orgId: context.org._id, status: "active" },
-      { $set: { status: "replaced", updatedAt: now } },
-    );
+    await context.db
+      .collection("paymentMethods")
+      .updateMany(
+        { orgId: context.org._id, status: "active" },
+        { $set: { status: "replaced", updatedAt: now } },
+      );
 
     const paymentMethod = {
       _id: createId("pm"),
@@ -37,15 +39,21 @@ export default async function handler(req, res) {
     };
 
     await context.db.collection("paymentMethods").insertOne(paymentMethod);
-    await context.db.collection("subscriptions").updateOne(
-      { orgId: context.org._id },
-      { $set: { paymentMethodId: paymentMethod._id, updatedAt: now } },
-    );
+    await context.db
+      .collection("subscriptions")
+      .updateOne(
+        { orgId: context.org._id },
+        { $set: { paymentMethodId: paymentMethod._id, updatedAt: now } },
+      );
 
     const { moyasarTokenId: _hidden, ...safePaymentMethod } = paymentMethod;
     sendJson(res, 200, { success: true, paymentMethod: safePaymentMethod });
   } catch (error) {
     console.error("[billing-update-payment-method]", error.message);
-    sendError(res, error.status || 500, error.status ? error.message : "Could not update payment method.");
+    sendError(
+      res,
+      error.status || 500,
+      error.status ? error.message : "Could not update payment method.",
+    );
   }
 }

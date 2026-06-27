@@ -22,8 +22,14 @@ export default async function handler(req, res) {
     }
 
     const [buildingCount, labourCount] = await Promise.all([
-      context.db.collection("buildings").countDocuments({ orgId: context.org._id, status: { $ne: "deleted" } }),
-      context.db.collection("users").countDocuments({ orgId: context.org._id, role: { $in: [ROLES.LABOUR, "labour"] }, status: { $ne: "deleted" } }),
+      context.db
+        .collection("buildings")
+        .countDocuments({ orgId: context.org._id, status: { $ne: "deleted" } }),
+      context.db.collection("users").countDocuments({
+        orgId: context.org._id,
+        role: { $in: [ROLES.LABOUR, "labour"] },
+        status: { $ne: "deleted" },
+      }),
     ]);
 
     if (!isUnlimited(plan.maxBuildings) && buildingCount > plan.maxBuildings) {
@@ -37,7 +43,11 @@ export default async function handler(req, res) {
     }
 
     if (!isUnlimited(plan.maxLabourUsers) && labourCount > plan.maxLabourUsers) {
-      return sendError(res, 400, `${plan.name} allows ${plan.maxLabourUsers} labour account(s). Please remove extra labour users before downgrading.`);
+      return sendError(
+        res,
+        400,
+        `${plan.name} allows ${plan.maxLabourUsers} labour account(s). Please remove extra labour users before downgrading.`,
+      );
     }
 
     await context.db.collection("subscriptions").updateOne(
@@ -60,6 +70,10 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error("[billing-downgrade]", error.message);
-    sendError(res, error.status || 500, error.status ? error.message : "Could not schedule downgrade.");
+    sendError(
+      res,
+      error.status || 500,
+      error.status ? error.message : "Could not schedule downgrade.",
+    );
   }
 }

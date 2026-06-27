@@ -15,12 +15,21 @@ export default async function handler(req, res) {
 
     if (req.method === "GET") {
       if (context.role !== ROLES.SUPER_ADMIN) requireDashboardAccess(context);
-      const filter = context.role === ROLES.SUPER_ADMIN
-        ? { status: { $ne: "deleted" } }
-        : context.role === ROLES.LABOUR
-          ? { orgId: user.orgId, _id: { $in: user.assignedBuildingIds || [] }, status: { $ne: "deleted" } }
-          : { orgId: context.org._id, status: { $ne: "deleted" } };
-      const buildings = await context.db.collection("buildings").find(filter).sort({ createdAt: -1 }).toArray();
+      const filter =
+        context.role === ROLES.SUPER_ADMIN
+          ? { status: { $ne: "deleted" } }
+          : context.role === ROLES.LABOUR
+            ? {
+                orgId: user.orgId,
+                _id: { $in: user.assignedBuildingIds || [] },
+                status: { $ne: "deleted" },
+              }
+            : { orgId: context.org._id, status: { $ne: "deleted" } };
+      const buildings = await context.db
+        .collection("buildings")
+        .find(filter)
+        .sort({ createdAt: -1 })
+        .toArray();
       return sendJson(res, 200, { success: true, buildings: buildings.map(publicBuilding) });
     }
 
@@ -31,11 +40,15 @@ export default async function handler(req, res) {
     const body = await readJsonBody(req);
     const orgId = context.role === ROLES.SUPER_ADMIN ? asString(body.orgId) : context.org?._id;
     if (!orgId) return sendError(res, 400, "Organization is required.");
-    const org = context.role === ROLES.SUPER_ADMIN
-      ? await context.db.collection("organizations").findOne({ _id: orgId })
-      : context.org;
+    const org =
+      context.role === ROLES.SUPER_ADMIN
+        ? await context.db.collection("organizations").findOne({ _id: orgId })
+        : context.org;
     if (!org) return sendError(res, 404, "Organization not found.");
-    const plan = context.role === ROLES.SUPER_ADMIN ? await context.db.collection("plans").findOne({ slug: org.planId }) : context.plan;
+    const plan =
+      context.role === ROLES.SUPER_ADMIN
+        ? await context.db.collection("plans").findOne({ slug: org.planId })
+        : context.plan;
 
     await enforceBuildingLimit(context.db, orgId, plan);
 
@@ -68,6 +81,10 @@ export default async function handler(req, res) {
     sendJson(res, 201, { success: true, building: publicBuilding(building) });
   } catch (error) {
     console.error("[buildings]", error.message);
-    sendError(res, error.status || 500, error.status ? error.message : "Could not process buildings request.");
+    sendError(
+      res,
+      error.status || 500,
+      error.status ? error.message : "Could not process buildings request.",
+    );
   }
 }

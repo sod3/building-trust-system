@@ -16,7 +16,11 @@ export default async function handler(req, res) {
       return sendJson(res, 200, { success: true, plan: publicPlan(plan) });
     }
 
-    const plans = await db.collection("plans").find({ isActive: true }).sort({ amountHalalas: 1 }).toArray();
+    const plans = await db
+      .collection("plans")
+      .find({ isActive: true })
+      .sort({ amountHalalas: 1 })
+      .toArray();
     sendJson(res, 200, { success: true, plans: plans.map(publicPlan) });
   } catch (error) {
     console.error("[plans]", error.message);

@@ -1,10 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import {
-  AUTH_USER_KEY,
-  apiFetch,
-  clearAuthSession,
-  storeAuthSession,
-} from "./api-client";
+import { AUTH_USER_KEY, apiFetch, clearAuthSession, storeAuthSession } from "./api-client";
 
 export type AppRole = "admin" | "owner" | "labour" | "supervisor";
 
@@ -21,7 +16,11 @@ export interface AuthUser {
 
 interface AuthCtx {
   user: AuthUser | null;
-  login: (email: string, password: string, remember?: boolean) => Promise<{ success: boolean; error?: string }>;
+  login: (
+    email: string,
+    password: string,
+    remember?: boolean,
+  ) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -65,7 +64,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  async function login(email: string, password: string, remember = false): Promise<{ success: boolean; error?: string }> {
+  async function login(
+    email: string,
+    password: string,
+    remember = false,
+  ): Promise<{ success: boolean; error?: string }> {
     try {
       const result = await apiFetch<{ token: string; user: AuthUser }>("/api/auth/login", {
         method: "POST",
@@ -78,7 +81,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Invalid email or password. Please check your credentials.",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Invalid email or password. Please check your credentials.",
       };
     }
   }
@@ -102,7 +108,10 @@ export function useAuth() {
   return ctx;
 }
 
-export const demoCredentials: Record<AppRole, { email: string; password: string; label: string; description: string }> = {
+export const demoCredentials: Record<
+  AppRole,
+  { email: string; password: string; label: string; description: string }
+> = {
   admin: {
     email: "admin@facilityos.com",
     password: "admin123",

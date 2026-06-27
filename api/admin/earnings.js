@@ -14,42 +14,52 @@ export default async function handler(req, res) {
     monthStart.setDate(1);
     monthStart.setHours(0, 0, 0, 0);
 
-    const [allPaid, monthlyPaid, activeSubscriptions, paidOwners, recentPayments] = await Promise.all([
-      db.collection("payments").aggregate([
-        { $match: { status: "paid" } },
-        { $group: { _id: null, amount: { $sum: "$amountHalalas" } } },
-      ]).toArray(),
-      db.collection("payments").aggregate([
-        { $match: { status: "paid", createdAt: { $gte: monthStart } } },
-        { $group: { _id: null, amount: { $sum: "$amountHalalas" } } },
-      ]).toArray(),
-      db.collection("subscriptions").countDocuments({
-        status: "active",
-        currentPeriodEnd: { $gt: new Date() },
-      }),
-      db.collection("subscriptions").distinct("userId", {
-        status: "active",
-        currentPeriodEnd: { $gt: new Date() },
-      }),
-      db.collection("payments").aggregate([
-        { $sort: { createdAt: -1 } },
-        { $limit: 8 },
-        {
-          $lookup: {
-            from: "users",
-            localField: "userId",
-            foreignField: "_id",
-            as: "ownerRows",
-          },
-        },
-        {
-          $project: {
-            rawProviderResponse: 0,
-            "ownerRows.passwordHash": 0,
-          },
-        },
-      ]).toArray(),
-    ]);
+    const [allPaid, monthlyPaid, activeSubscriptions, paidOwners, recentPayments] =
+      await Promise.all([
+        db
+          .collection("payments")
+          .aggregate([
+            { $match: { status: "paid" } },
+            { $group: { _id: null, amount: { $sum: "$amountHalalas" } } },
+          ])
+          .toArray(),
+        db
+          .collection("payments")
+          .aggregate([
+            { $match: { status: "paid", createdAt: { $gte: monthStart } } },
+            { $group: { _id: null, amount: { $sum: "$amountHalalas" } } },
+          ])
+          .toArray(),
+        db.collection("subscriptions").countDocuments({
+          status: "active",
+          currentPeriodEnd: { $gt: new Date() },
+        }),
+        db.collection("subscriptions").distinct("userId", {
+          status: "active",
+          currentPeriodEnd: { $gt: new Date() },
+        }),
+        db
+          .collection("payments")
+          .aggregate([
+            { $sort: { createdAt: -1 } },
+            { $limit: 8 },
+            {
+              $lookup: {
+                from: "users",
+                localField: "userId",
+                foreignField: "_id",
+                as: "ownerRows",
+              },
+            },
+            {
+              $project: {
+                rawProviderResponse: 0,
+                "ownerRows.passwordHash": 0,
+              },
+            },
+          ])
+          .toArray(),
+      ]);
 
     sendJson(res, 200, {
       success: true,

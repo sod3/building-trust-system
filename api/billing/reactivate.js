@@ -15,14 +15,19 @@ export default async function handler(req, res) {
 
     const now = new Date();
     if (context.subscription?.status === "active" || context.subscription?.cancelAtPeriodEnd) {
-      await context.db.collection("subscriptions").updateOne(
-        { orgId: context.org._id },
-        { $set: { cancelAtPeriodEnd: false, updatedAt: now } },
-      );
+      await context.db
+        .collection("subscriptions")
+        .updateOne(
+          { orgId: context.org._id },
+          { $set: { cancelAtPeriodEnd: false, updatedAt: now } },
+        );
       return sendJson(res, 200, { success: true, message: "Subscription reactivated." });
     }
 
-    const plan = await getActivePlan(context.db, context.subscription?.planId || context.org.planId);
+    const plan = await getActivePlan(
+      context.db,
+      context.subscription?.planId || context.org.planId,
+    );
     if (!plan) return sendError(res, 400, "Current plan is not active.");
     const { invoice, order } = await createInvoiceAndOrder(context.db, {
       orgId: context.org._id,
@@ -59,6 +64,10 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error("[billing-reactivate]", error.message);
-    sendError(res, error.status || 500, error.status ? error.message : "Could not reactivate subscription.");
+    sendError(
+      res,
+      error.status || 500,
+      error.status ? error.message : "Could not reactivate subscription.",
+    );
   }
 }

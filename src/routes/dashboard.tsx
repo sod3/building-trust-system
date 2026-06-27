@@ -4,8 +4,8 @@ export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
       { title: "Dashboard — FacilityOS Arabia" },
-      { name: "robots", content: "noindex, nofollow" }
-    ]
+      { name: "robots", content: "noindex, nofollow" },
+    ],
   }),
   component: DashboardLayout,
 });

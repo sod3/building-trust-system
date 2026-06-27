@@ -1,30 +1,93 @@
 import { connectToDatabase } from "./db.js";
 import { getActivePlan, seedPlans } from "./plans.js";
 import { createId } from "./security.js";
+import https from "node:https";
 
 const MOYASAR_API_BASE = "https://api.moyasar.com/v1";
 
-export async function fetchMoyasarPayment(paymentId) {
+function isEnabled(value) {
+  return ["1", "true", "yes"].includes(
+    String(value || "")
+      .trim()
+      .toLowerCase(),
+  );
+}
+
+function allowInvalidMoyasarTls() {
+  return (
+    process.env.NODE_ENV !== "production" ||
+    isEnabled(process.env.MOYASAR_TLS_ALLOW_INVALID_CERTIFICATES)
+  );
+}
+
+function moyasarAuthHeaders() {
   const secretKey = process.env.MOYASAR_SECRET_KEY;
   if (!secretKey) {
     throw new Error("MOYASAR_SECRET_KEY is not configured.");
   }
 
-  const credentials = Buffer.from(`${secretKey}:`).toString("base64");
-  const response = await fetch(`${MOYASAR_API_BASE}/payments/${paymentId}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Basic ${credentials}`,
-      "Content-Type": "application/json",
-    },
+  const credentials = Buffer.from(`${String(secretKey).trim()}:`).toString("base64");
+  return {
+    Authorization: `Basic ${credentials}`,
+    "Content-Type": "application/json",
+  };
+}
+
+async function requestMoyasar(path, { method = "GET", body } = {}) {
+  const requestBody = body ? JSON.stringify(body) : null;
+  const url = new URL(`${MOYASAR_API_BASE}${path}`);
+
+  return new Promise((resolve, reject) => {
+    const req = https.request(
+      url,
+      {
+        method,
+        headers: {
+          ...moyasarAuthHeaders(),
+          ...(requestBody ? { "Content-Length": Buffer.byteLength(requestBody) } : {}),
+        },
+        rejectUnauthorized: !allowInvalidMoyasarTls(),
+      },
+      (response) => {
+        const chunks = [];
+
+        response.on("data", (chunk) => chunks.push(Buffer.from(chunk)));
+        response.on("end", () => {
+          const rawBody = Buffer.concat(chunks).toString("utf8");
+          let payload = rawBody;
+
+          try {
+            payload = rawBody ? JSON.parse(rawBody) : {};
+          } catch {
+            payload = { raw: rawBody };
+          }
+
+          const statusCode = response.statusCode || 500;
+          if (statusCode < 200 || statusCode >= 300) {
+            const error = new Error(
+              `Moyasar request failed (${statusCode}): ${
+                typeof payload === "string" ? payload : JSON.stringify(payload)
+              }`,
+            );
+            error.status = statusCode;
+            error.response = payload;
+            reject(error);
+            return;
+          }
+
+          resolve(payload);
+        });
+      },
+    );
+
+    req.on("error", reject);
+    if (requestBody) req.write(requestBody);
+    req.end();
   });
+}
 
-  if (!response.ok) {
-    const body = await response.text();
-    throw new Error(`Moyasar payment fetch failed (${response.status}): ${body}`);
-  }
-
-  return response.json();
+export async function fetchMoyasarPayment(paymentId) {
+  return requestMoyasar(`/payments/${encodeURIComponent(paymentId)}`);
 }
 
 export async function chargeMoyasarToken({
@@ -34,37 +97,20 @@ export async function chargeMoyasarToken({
   token,
   metadata,
 }) {
-  const secretKey = process.env.MOYASAR_SECRET_KEY;
-  if (!secretKey) {
-    throw new Error("MOYASAR_SECRET_KEY is not configured.");
-  }
   if (!token) {
     throw new Error("No saved Moyasar payment token is available for this subscription.");
   }
 
-  const credentials = Buffer.from(`${secretKey}:`).toString("base64");
-  const response = await fetch(`${MOYASAR_API_BASE}/payments`, {
+  return requestMoyasar("/payments", {
     method: "POST",
-    headers: {
-      Authorization: `Basic ${credentials}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
+    body: {
       amount,
       currency,
       description,
       source: { type: "token", token },
       metadata,
-    }),
+    },
   });
-
-  const payload = await response.json().catch(async () => ({ raw: await response.text() }));
-  if (!response.ok) {
-    const error = new Error(`Moyasar token charge failed (${response.status}).`);
-    error.response = payload;
-    throw error;
-  }
-  return payload;
 }
 
 function getPaymentMetadata(payment) {
@@ -119,32 +165,33 @@ async function persistFailedPayment(db, { payment, order, invoice, status }) {
   const now = new Date();
   const source = payment.source || {};
   const cardNumber = typeof source.number === "string" ? source.number : "";
+  const failedPaymentInsert = {
+    _id: createId("pay"),
+    paymentId: payment.id,
+    moyasarPaymentId: payment.id,
+    orderId: order?.orderId || null,
+    invoiceId: invoice?.invoiceId || null,
+    userId: order?.userId || invoice?.userId || null,
+    orgId: order?.orgId || invoice?.orgId || null,
+    planId: order?.planId || invoice?.planId || null,
+    provider: "moyasar",
+    amount: payment.amount || order?.amountHalalas || invoice?.amount || 0,
+    amountHalalas: payment.amount || order?.amountHalalas || invoice?.amount || 0,
+    currency: payment.currency || order?.currency || invoice?.currency || "SAR",
+    fee: payment.fee || null,
+    sourceType: source.type || "creditcard",
+    cardBrand: source.company || null,
+    last4: cardNumber.slice(-4) || null,
+    rawResponse: safePaymentSnapshot(payment),
+    rawProviderResponse: safePaymentSnapshot(payment),
+    processedAt: now,
+    createdAt: now,
+  };
+
   await db.collection("payments").updateOne(
     { moyasarPaymentId: payment.id },
     {
-      $setOnInsert: {
-        _id: createId("pay"),
-        paymentId: payment.id,
-        moyasarPaymentId: payment.id,
-        orderId: order?.orderId || null,
-        invoiceId: invoice?.invoiceId || null,
-        userId: order?.userId || invoice?.userId || null,
-        orgId: order?.orgId || invoice?.orgId || null,
-        planId: order?.planId || invoice?.planId || null,
-        provider: "moyasar",
-        status,
-        amount: payment.amount || order?.amountHalalas || invoice?.amount || 0,
-        amountHalalas: payment.amount || order?.amountHalalas || invoice?.amount || 0,
-        currency: payment.currency || order?.currency || invoice?.currency || "SAR",
-        fee: payment.fee || null,
-        sourceType: source.type || "creditcard",
-        cardBrand: source.company || null,
-        last4: cardNumber.slice(-4) || null,
-        rawResponse: safePaymentSnapshot(payment),
-        rawProviderResponse: safePaymentSnapshot(payment),
-        processedAt: now,
-        createdAt: now,
-      },
+      $setOnInsert: failedPaymentInsert,
       $set: { status, updatedAt: now },
     },
     { upsert: true },
@@ -320,12 +367,13 @@ export async function verifyAndPersistPayment(paymentId) {
     createdAt: now,
     updatedAt: now,
   };
+  const { status: _status, updatedAt: _updatedAt, ...paymentInsertRecord } = paymentRecord;
 
   await db
     .collection("payments")
     .updateOne(
       { moyasarPaymentId: payment.id },
-      { $setOnInsert: paymentRecord, $set: { status: "paid", updatedAt: now } },
+      { $setOnInsert: paymentInsertRecord, $set: { status: "paid", updatedAt: now } },
       { upsert: true },
     );
   await db

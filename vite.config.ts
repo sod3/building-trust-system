@@ -6,6 +6,7 @@ import { pathToFileURL } from "node:url";
 type ApiRoute = {
   pattern: RegExp;
   routeFile: string;
+  catchAllSegments: number;
   dynamicSegments: number;
   segmentCount: number;
 };
@@ -37,14 +38,20 @@ function discoverApiRoutes() {
         .replace(/\\/g, "/")
         .replace(/\.js$/, "");
       const segments = relativeRoute.split("/").filter(Boolean);
+      const catchAllSegments = segments.filter((segment) =>
+        /^\[\.\.\.[^\]]+\]$/.test(segment),
+      ).length;
       const dynamicSegments = segments.filter((segment) => /^\[[^\]]+\]$/.test(segment)).length;
-      const patternSegments = segments.map((segment) =>
-        /^\[[^\]]+\]$/.test(segment) ? "[^/]+" : escapeRegex(segment),
-      );
+      const patternSegments = segments.map((segment) => {
+        if (/^\[\.\.\.[^\]]+\]$/.test(segment)) return ".*";
+        if (/^\[[^\]]+\]$/.test(segment)) return "[^/]+";
+        return escapeRegex(segment);
+      });
 
       routes.push({
         pattern: new RegExp(`^/api/${patternSegments.join("/")}/?$`),
         routeFile,
+        catchAllSegments,
         dynamicSegments,
         segmentCount: segments.length,
       });
@@ -54,6 +61,7 @@ function discoverApiRoutes() {
   walk(apiRoot);
 
   return routes.sort((a, b) => {
+    if (a.catchAllSegments !== b.catchAllSegments) return a.catchAllSegments - b.catchAllSegments;
     if (a.dynamicSegments !== b.dynamicSegments) return a.dynamicSegments - b.dynamicSegments;
     return b.segmentCount - a.segmentCount;
   });

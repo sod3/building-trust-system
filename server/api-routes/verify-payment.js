@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     const result = await verifyAndPersistPayment(paymentId);
 
     if (!result.success) {
-      return sendError(res, result.status || 400, result.message);
+      return sendError(res, result.status === 404 ? 400 : result.status || 400, result.message);
     }
 
     const { db } = await connectToDatabase();
@@ -39,6 +39,12 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error("[verify-payment]", error.message);
-    sendError(res, 500, error.message || "Payment verification failed.");
+    sendError(
+      res,
+      error.status && error.status < 500 ? (error.status === 404 ? 400 : error.status) : 502,
+      error.status
+        ? "Payment could not be verified."
+        : error.message || "Payment verification failed.",
+    );
   }
 }

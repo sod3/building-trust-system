@@ -123,14 +123,11 @@ function PaymentResult() {
     <div className="min-h-screen bg-surface-2 flex flex-col">
       {/* Minimal header */}
       <header className="border-b border-border bg-background/80 backdrop-blur px-6 py-4">
-        <Link to="/" className="inline-flex items-center gap-2.5 group">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-navy/10 group-hover:bg-navy/15 transition">
-            <Building2 className="h-4 w-4 text-navy" />
-          </span>
-          <span className="font-display font-semibold text-base tracking-tight text-foreground">
-            FacilityOS
-          </span>
-        </Link>
+      <img 
+        src="/logo1.png" 
+        alt="FacilityOS Arabia Logo" 
+        className="h-15 w-auto object-contain" 
+      />
       </header>
 
       {/* Main content */}

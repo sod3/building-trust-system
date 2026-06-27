@@ -7,15 +7,15 @@ export function Footer() {
   return (
     <footer className="border-t border-border bg-secondary/40">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-4 lg:px-8">
-        <div className="lg:col-span-1">
-          <Link to="/" className="flex items-center gap-2">
-            <span className="grid h-9 w-9 place-items-center rounded-lg bg-navy text-primary-foreground">
-              <Building2 className="h-5 w-5" />
-            </span>
-            <span className="font-display text-lg font-semibold">FacilityOS Arabia</span>
-          </Link>
-          <p className="mt-3 max-w-xs text-sm text-muted-foreground">{t("footer.tag")}</p>
-        </div>
+<div className="lg:col-span-1">
+    {/* Increased logo size and set width to auto to prevent distortion */}
+    <img 
+      src="/logo.png" 
+      alt="FacilityOS Arabia Logo" 
+      className="h-20 w-auto object-contain" 
+    />
+  <p className="mt-3 max-w-xs text-sm text-muted-foreground">{t("footer.tag")}</p>
+</div>
 
         <div>
           <h4 className="text-sm font-semibold">{t("footer.product")}</h4>

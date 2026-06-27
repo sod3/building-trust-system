@@ -118,6 +118,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
     ],
     links: [
+      { rel: "icon", type: "image/png", href: "/favicon1.png" },
       { rel: "stylesheet", href: appCss },
       // Moyasar payment form CSS — loaded globally so it is available on the checkout page
       { rel: "stylesheet", href: "https://cdn.moyasar.com/mpf/1.14.0/moyasar.css" },

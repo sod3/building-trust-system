@@ -19,14 +19,14 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        <Link to="/" className="flex min-w-0 items-center gap-2">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-navy text-primary-foreground">
-            <Building2 className="h-5 w-5" />
-          </span>
-          <span className="font-display text-lg font-semibold tracking-tight">
-            FacilityOS<span className="text-accent"> Arabia</span>
-          </span>
-        </Link>
+<Link to="/" className="flex min-w-0 items-center">
+      {/* Clean logo implementation matching the header height */}
+      <img 
+        src="/logo.png" 
+        alt="FacilityOS Arabia Logo" 
+        className="h-12 w-auto object-contain" 
+      />
+    </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
           {nav.map((n) => (

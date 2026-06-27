@@ -234,13 +234,11 @@ function Checkout() {
       <div className="bg-navy text-primary-foreground p-8 md:p-12 lg:p-16 lg:w-[420px] xl:w-[480px] flex flex-col justify-between shrink-0">
         <div>
           {/* Logo */}
-          <Link to="/" className="inline-flex items-center gap-2.5 mb-12 group">
-            <span className="grid h-9 w-9 place-items-center rounded-xl bg-white/10 backdrop-blur border border-white/20 group-hover:bg-white/15 transition">
-              <Building2 className="h-5 w-5" />
-            </span>
-            <span className="font-display font-semibold tracking-tight text-lg">FacilityOS</span>
-          </Link>
-
+      <img 
+        src="/logo1.png" 
+        alt="FacilityOS Arabia Logo" 
+        className="h-10 w-auto object-contain" 
+      />
           {/* Plan badge */}
           <div className="inline-flex items-center gap-2 rounded-full bg-gold/20 border border-gold/30 px-3 py-1 text-xs font-semibold text-gold uppercase tracking-widest mb-6">
             {t("checkout.selected_plan", { fallback: "Order Summary" })}

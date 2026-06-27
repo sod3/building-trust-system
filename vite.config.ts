@@ -72,6 +72,7 @@ function vercelApiDevMiddleware() {
     name: "facilityos-vercel-api-dev",
     configureServer(server: any) {
       let apiRoutes = discoverApiRoutes();
+      const fallbackApiRoute = "api/index.js";
 
       server.watcher.on("all", (_event: string, filePath: string) => {
         if (filePath.includes(`${path.sep}api${path.sep}`)) {
@@ -81,7 +82,12 @@ function vercelApiDevMiddleware() {
 
       server.middlewares.use(async (req: any, res: any, next: () => void) => {
         const pathname = new URL(req.url || "/", "http://localhost").pathname;
-        const routeFile = apiRoutes.find((route) => route.pattern.test(pathname))?.routeFile;
+        const routeFile =
+          apiRoutes.find((route) => route.pattern.test(pathname))?.routeFile ||
+          (pathname.startsWith("/api/") &&
+          fs.existsSync(path.resolve(process.cwd(), fallbackApiRoute))
+            ? fallbackApiRoute
+            : undefined);
         if (!routeFile) return next();
 
         try {

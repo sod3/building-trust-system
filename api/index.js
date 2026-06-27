@@ -50,6 +50,15 @@ import webhookMoyasarHandler from "../server/api-routes/webhooks/moyasar.js";
 const app = express();
 
 app.use((req, _res, next) => {
+  const requestUrl = new URL(req.url, "http://localhost");
+  const rewrittenPath = requestUrl.searchParams.get("path");
+
+  if ((requestUrl.pathname === "/api" || requestUrl.pathname === "/api/") && rewrittenPath) {
+    requestUrl.searchParams.delete("path");
+    const query = requestUrl.searchParams.toString();
+    req.url = `/api/${rewrittenPath.replace(/^\/+/, "")}${query ? `?${query}` : ""}`;
+  }
+
   if (!req.url.startsWith("/api")) {
     req.url = `/api${req.url.startsWith("/") ? req.url : `/${req.url}`}`;
   }
